@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz Fitness - Connexion</title>
+    <title>FitnessWithRaph - Connexion</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
-    <!-- Header placeholder -->
     <div id="header-placeholder"></div>
 
     <main class="container">
         <div class="form-container">
-            <h2>Connexion</h2>
+            <h2>Se connecter</h2>
             <div id="errorMessage" class="alert alert-error" style="display: none;"></div>
+            <div id="successMessage" class="alert alert-success" style="display: none;"></div>
             <form id="loginForm" class="auth-form">
                 <div class="form-group">
                     <label for="email">Email</label>
@@ -29,15 +29,18 @@
                     <i class="fas fa-sign-in-alt"></i> Se connecter
                 </button>
                 <div class="auth-links">
-                    <a href="/forgot-password.html">Mot de passe oublié ?</a>
-                    <span class="auth-separator">•</span>
-                    <a href="/signup.html">Créer un compte</a>
+                    <p>Mot de passe oublié ? <a href="/forgot-password.html">Réinitialiser</a></p>
+                    <p>Pas encore de compte ? <a href="/signup.html">S'inscrire</a></p>
                 </div>
             </form>
         </div>
     </main>
 
+    <div id="footer-placeholder"></div>
+
     <script src="/js/header-loader.js"></script>
+    <script src="/js/footer-loader.js"></script>
+    <script src="/js/auth.js"></script>
     <script>
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();

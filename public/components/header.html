@@ -2,19 +2,47 @@
     <nav class="nav-container">
         <div class="logo">
             <a href="/" class="logo-link">
-                <h1>Quiz Fitness</h1>
+                <i class="fas fa-dumbbell logo-icon"></i>
+                <h1>FitnessWithRaph</h1>
             </a>
         </div>
+        
+        <!-- Menu de navigation pour utilisateurs connectés -->
+        <div id="nav-menu" class="nav-menu" style="display: none;">
+            <a href="/" class="nav-link">
+                <i class="fas fa-home"></i> Accueil
+            </a>
+            <a href="/quiz.html" class="nav-link">
+                <i class="fas fa-tasks"></i> Quiz
+            </a>
+            <a href="/profile.html" class="nav-link">
+                <i class="fas fa-user"></i> Mon Profil
+            </a>
+            <a href="#" id="logoutBtn" class="nav-link">
+                <i class="fas fa-sign-out-alt"></i> Déconnexion
+            </a>
+        </div>
+
         <div id="user-info" class="user-info" style="display: none;">
             <!-- Les informations de l'utilisateur seront injectées ici -->
         </div>
+        
+        <!-- Conteneur pour les boutons d'authentification -->
         <div id="auth-container" class="auth-buttons">
-            <a href="/login.html" class="btn btn-secondary">
+            <a href="/login.html" class="btn btn-primary">
                 <i class="fas fa-sign-in-alt"></i> Connexion
             </a>
             <a href="/signup.html" class="btn btn-primary">
                 <i class="fas fa-user-plus"></i> Inscription
             </a>
         </div>
+
+        <!-- Menu utilisateur pour mobile -->
+        <button id="mobile-menu-btn" class="mobile-menu-btn" style="display: none;">
+            <i class="fas fa-bars"></i>
+        </button>
     </nav>
 </header>
+
+<!-- Scripts -->
+<script src="/js/header-nav.js"></script>
