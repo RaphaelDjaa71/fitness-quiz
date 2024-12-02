@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil - Quiz Fitness</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <main class="container fade-in">
+        <div class="profile-container">
+            <div class="card profile-header">
+                <h1>Mon Profil</h1>
+                <button id="logoutBtn" class="btn btn-outline">Déconnexion</button>
+            </div>
+
+            <div class="grid">
+                <div class="card profile-info">
+                    <h2>Informations personnelles</h2>
+                    <form id="profileForm" class="profile-form">
+                        <div class="form-group">
+                            <label for="name" class="form-label">Nom</label>
+                            <input type="text" id="name" name="name" class="form-control" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" id="email" name="email" class="form-control" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Mettre à jour</button>
+                    </form>
+                </div>
+
+                <div class="card quiz-history">
+                    <h2>Historique des Quiz</h2>
+                    <div id="quizResults" class="quiz-results-list">
+                        <!-- Les résultats seront injectés ici dynamiquement -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Vérification de l'authentification
+        async function checkAuth() {
+            try {
+                const response = await fetch('/api/auth/profile', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    window.location.href = '/login.html';
+                    return;
+                }
+
+                const userData = await response.json();
+                populateUserData(userData);
+            } catch (error) {
+                console.error('Erreur:', error);
+                window.location.href = '/login.html';
+            }
+        }
+
+        // Remplir les données utilisateur
+        function populateUserData(user) {
+            document.getElementById('name').value = user.name;
+            document.getElementById('email').value = user.email;
+            
+            // Afficher l'historique des quiz
+            const quizResultsContainer = document.getElementById('quizResults');
+            if (user.quizResults && user.quizResults.length > 0) {
+                const resultsList = user.quizResults.map(result => `
+                    <div class="quiz-result-item">
+                        <div class="quiz-date">${new Date(result.completedAt).toLocaleDateString()}</div>
+                        <a href="/resultats.html?id=${result._id}" class="btn btn-outline btn-sm">Voir les résultats</a>
+                    </div>
+                `).join('');
+                quizResultsContainer.innerHTML = resultsList;
+            } else {
+                quizResultsContainer.innerHTML = '<p>Aucun quiz complété pour le moment</p>';
+            }
+        }
+
+        // Mise à jour du profil
+        document.getElementById('profileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value
+            };
+
+            try {
+                const response = await fetch('/api/auth/profile', {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.ok) {
+                    alert('Profil mis à jour avec succès');
+                } else {
+                    const data = await response.json();
+                    alert(data.error || 'Erreur lors de la mise à jour');
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                alert('Erreur de connexion au serveur');
+            }
+        });
+
+        // Déconnexion
+        document.getElementById('logoutBtn').addEventListener('click', async () => {
+            try {
+                await fetch('/api/auth/logout', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                localStorage.removeItem('token');
+                window.location.href = '/login.html';
+            } catch (error) {
+                console.error('Erreur:', error);
+                alert('Erreur lors de la déconnexion');
+            }
+        });
+
+        // Vérifier l'authentification au chargement de la page
+        checkAuth();
+    </script>
+</body>
+</html>

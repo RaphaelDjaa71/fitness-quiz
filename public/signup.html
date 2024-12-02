@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Fitness - Inscription</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <!-- Header placeholder -->
+    <div id="header-placeholder"></div>
+
+    <main class="container fade-in">
+        <div class="auth-container card form-container">
+            <h1>Inscription</h1>
+            <div id="errorMessage" class="alert alert-error" style="display: none;"></div>
+            <form id="signupForm" class="auth-form">
+                <div class="form-group">
+                    <label for="name" class="form-label">Nom complet</label>
+                    <input type="text" id="name" name="name" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" id="email" name="email" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="form-label">Mot de passe</label>
+                    <input type="password" id="password" name="password" class="form-control" 
+                           required minlength="8" 
+                           pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+                           title="Le mot de passe doit contenir au moins 8 caractères, dont une majuscule, une minuscule et un chiffre">
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword" class="form-label">Confirmer le mot de passe</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block">
+                    <i class="fas fa-user-plus"></i> S'inscrire
+                </button>
+
+                <div class="auth-links mt-4">
+                    <a href="/login.html">Déjà un compte ? Se connecter</a>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script src="/js/header-loader.js"></script>
+    <script>
+        const form = document.getElementById('signupForm');
+        const errorMessage = document.getElementById('errorMessage');
+        const submitButton = document.querySelector('button[type="submit"]');
+        const password = document.getElementById('password');
+        const confirmPassword = document.getElementById('confirmPassword');
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+            submitButton.disabled = false;
+            submitButton.textContent = 'S\'inscrire';
+        }
+
+        function clearError() {
+            errorMessage.style.display = 'none';
+            errorMessage.textContent = '';
+        }
+
+        function validatePassword() {
+            if (password.value !== confirmPassword.value) {
+                confirmPassword.setCustomValidity('Les mots de passe ne correspondent pas');
+            } else {
+                confirmPassword.setCustomValidity('');
+            }
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            clearError();
+            
+            if (password.value !== confirmPassword.value) {
+                showError('Les mots de passe ne correspondent pas');
+                return;
+            }
+
+            submitButton.disabled = true;
+            submitButton.textContent = 'Inscription en cours...';
+
+            const formData = {
+                name: document.getElementById('name').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                password: password.value
+            };
+
+            try {
+                const response = await fetch('/api/auth/signup', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData),
+                    credentials: 'include'
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Redirection vers la page de profil
+                    window.location.href = '/profile.html';
+                } else {
+                    // Afficher le message d'erreur du serveur
+                    showError(data.message || 'Une erreur est survenue lors de l\'inscription');
+                }
+            } catch (error) {
+                console.error('Erreur lors de l\'inscription:', error);
+                showError('Une erreur de connexion est survenue. Veuillez réessayer.');
+            }
+        });
+
+        // Validation en temps réel des mots de passe
+        password.addEventListener('input', validatePassword);
+        confirmPassword.addEventListener('input', validatePassword);
+
+        // Nettoyer les erreurs quand l'utilisateur commence à taper
+        const inputs = form.querySelectorAll('input');
+        inputs.forEach(input => {
+            input.addEventListener('input', () => {
+                clearError();
+                input.classList.remove('error');
+            });
+        });
+    </script>
+</body>
+</html>

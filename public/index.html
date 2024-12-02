@@ -3,47 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz Fitness - Programme Personnalisé</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <title>Quiz Fitness - Accueil</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
-    <main class="container fade-in">
-        <div class="welcome-container">
-            <h1>Découvrez Votre Programme Fitness Personnalisé</h1>
-            <p class="subtitle">Un questionnaire rapide pour créer votre programme sur mesure</p>
-            
-            <div class="features-grid">
-                <div class="feature-card">
-                    <img src="images/personalization.svg" alt="Personnalisation" class="feature-icon" data-critical="true">
-                    <h3 class="feature-title">100% Personnalisé</h3>
-                    <p class="feature-description">Programme adapté à vos objectifs et votre morphologie</p>
-                </div>
-                
-                <div class="feature-card">
-                    <img src="images/scientific.svg" alt="Scientifique" class="feature-icon" data-critical="true">
-                    <h3 class="feature-title">Base Scientifique</h3>
-                    <p class="feature-description">Calculs basés sur des études scientifiques</p>
-                </div>
-                
-                <div class="feature-card">
-                    <img src="images/instant.svg" alt="Instantané" class="feature-icon" data-critical="true">
-                    <h3 class="feature-title">Résultat Immédiat</h3>
-                    <p class="feature-description">Obtenez votre programme en quelques minutes</p>
-                </div>
+    <header class="main-header">
+        <nav class="nav-container">
+            <div class="logo">
+                <h1>Quiz Fitness</h1>
             </div>
+            <div id="user-info" class="user-info" style="display: none;">
+                <!-- Les informations de l'utilisateur seront injectées ici -->
+            </div>
+            <div id="auth-container" class="auth-buttons">
+                <a href="/login.html" class="btn btn-secondary">
+                    <i class="fas fa-sign-in-alt"></i> Connexion
+                </a>
+                <a href="/signup.html" class="btn btn-primary">
+                    <i class="fas fa-user-plus"></i> Inscription
+                </a>
+            </div>
+        </nav>
+    </header>
 
-            <a href="objectif.html" class="start-button">Commencer le Quiz</a>
-            
-            <p class="privacy-notice">Vos données restent confidentielles et ne sont jamais partagées</p>
-        </div>
+    <main class="container">
+        <section class="hero">
+            <h2>Découvrez votre programme fitness idéal</h2>
+            <p>Répondez à notre quiz personnalisé et obtenez un programme d'entraînement adapté à vos objectifs.</p>
+            <button id="startQuiz" class="btn btn-primary btn-large">
+                <i class="fas fa-play-circle"></i> Commencer le quiz
+            </button>
+        </section>
     </main>
 
-    <script src="js/quizConfig.js"></script>
-    <script src="js/navigation.js"></script>
-    <script src="js/imageOptimizer.js"></script>
+    <script src="/components/header.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            Navigation.init();
+        document.getElementById('startQuiz').addEventListener('click', async () => {
+            try {
+                const response = await fetch('/api/auth/me', {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+
+                if (response.ok) {
+                    window.location.href = '/quiz.html';
+                } else {
+                    window.location.href = '/login.html';
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                window.location.href = '/login.html';
+            }
         });
     </script>
 </body>

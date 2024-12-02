@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Niveau d'Activité - Quiz Fitness</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
     <div class="progress-container">
@@ -85,12 +83,10 @@
             Navigation.validateAndProceed('niveauActiviteForm', () => {
                 const selectedOption = document.querySelector('input[name="niveau-activite"]:checked');
                 if (!selectedOption) {
-                    alert('Veuillez sélectionner votre niveau d\'activité.');
                     return false;
                 }
 
                 Navigation.saveAnswer('niveau-activite', selectedOption.value);
-                window.location.href = 'experience-musculation.html';
                 return true;
             });
         });

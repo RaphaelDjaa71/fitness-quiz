@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Fitness Personnalisé</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="progress-container">
+        <div class="progress-bar">
+            <div class="progress" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+    </div>
+
+    <main class="container fade-in">
+        <div class="welcome-section">
+            <h1>Découvrez Votre Programme Fitness Personnalisé</h1>
+            <p class="subtitle">Répondez à quelques questions pour obtenir un programme d'entraînement adapté à vos objectifs et votre mode de vie.</p>
+
+            <div class="features-grid grid mt-4">
+                <div class="card">
+                    <h3>Programme Sur Mesure</h3>
+                    <p>Un programme adapté à votre niveau, vos objectifs et votre emploi du temps.</p>
+                </div>
+
+                <div class="card">
+                    <h3>Conseils Nutritionnels</h3>
+                    <p>Des recommandations alimentaires personnalisées pour optimiser vos résultats.</p>
+                </div>
+
+                <div class="card">
+                    <h3>Suivi Progressif</h3>
+                    <p>Un plan d'entraînement évolutif pour progresser à votre rythme.</p>
+                </div>
+            </div>
+
+            <div class="action-section mt-4">
+                <a href="objectif.html" class="btn btn-primary">Commencer le Quiz</a>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/quizConfig.js"></script>
+    <script src="js/navigation.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            Navigation.init();
+            // Réinitialiser le quiz au démarrage
+            Navigation.resetQuiz();
+        });
+    </script>
+</body>
+</html>

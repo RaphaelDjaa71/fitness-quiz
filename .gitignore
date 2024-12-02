@@ -1,8 +1,5 @@
 # Dependencies
 node_modules/
-npm-debug.log
-yarn-debug.log
-yarn-error.log
 package-lock.json
 
 # Environment variables
@@ -10,32 +7,20 @@ package-lock.json
 .env.local
 .env.*.local
 
-# IDE specific files
-.idea/
-.vscode/
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Editor directories and files
+.idea
+.vscode
 *.swp
 *.swo
 .DS_Store
-
-# Build output
-dist/
-build/
-out/
-
-# Logs
-logs/
-*.log
-
-# Cache directories
-.cache/
-.npm/
-.eslintcache
-
-# Coverage directory used by tools like istanbul
-coverage/
-
-# Temporary files
-*.tmp
-*.temp
-.DS_Store
-Thumbs.db
