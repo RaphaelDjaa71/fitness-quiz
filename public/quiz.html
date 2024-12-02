@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Fitness - Évaluation Personnalisée</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/quiz.css">
+    <style>
+        .quiz-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .quiz-welcome {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .quiz-welcome h1 {
+            color: #333;
+            margin-bottom: 1.5rem;
+        }
+
+        .quiz-welcome p {
+            color: #666;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .start-button {
+            background: #4CAF50;
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .start-button:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div id="header-placeholder"></div>
+
+    <main class="quiz-container">
+        <div class="quiz-welcome">
+            <h1>Bienvenue dans votre évaluation fitness</h1>
+            <p>
+                Ce quiz personnalisé nous permettra de mieux comprendre vos objectifs et votre niveau actuel.
+                Répondez honnêtement à chaque question pour obtenir les meilleures recommandations.
+            </p>
+            <button id="startQuiz" class="start-button">
+                <i class="fas fa-play"></i> Commencer l'évaluation
+            </button>
+        </div>
+        <div id="quiz-content" style="display: none;">
+            <!-- Le contenu du quiz sera ajouté ici dynamiquement -->
+        </div>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="/js/header-loader.js"></script>
+    <script src="/js/footer-loader.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/quiz.js"></script>
+    <script>
+        document.getElementById('startQuiz').addEventListener('click', function() {
+            document.querySelector('.quiz-welcome').style.display = 'none';
+            document.getElementById('quiz-content').style.display = 'block';
+            // Le contenu du quiz sera chargé ici selon vos spécifications futures
+        });
+    </script>
+</body>
+</html>

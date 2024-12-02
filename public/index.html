@@ -16,12 +16,12 @@
             <h1>Découvrez votre potentiel fitness</h1>
             <p>Commencez votre voyage vers une meilleure santé avec notre quiz personnalisé</p>
             <div class="cta-buttons">
-                <a href="/quiz.html" class="btn btn-primary btn-large">
+                <a href="/quiz-start.html" class="btn btn-primary btn-large">
                     <i class="fas fa-play"></i> Commencer le Quiz
                 </a>
-                <a href="/about.html" class="btn btn-secondary btn-large">
+                <button id="learnMoreBtn" class="btn btn-secondary btn-large">
                     <i class="fas fa-info-circle"></i> En savoir plus
-                </a>
+                </button>
             </div>
         </section>
     </main>
@@ -32,5 +32,18 @@
     <script src="/js/footer-loader.js"></script>
     <script src="/js/header-scroll.js"></script>
     <script src="/js/auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const learnMoreBtn = document.getElementById('learnMoreBtn');
+
+            learnMoreBtn.addEventListener('click', () => {
+                const footer = document.getElementById('footer-placeholder');
+                footer.scrollIntoView({ 
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            });
+        });
+    </script>
 </body>
 </html>

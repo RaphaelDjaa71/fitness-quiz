@@ -4,6 +4,7 @@ class AuthManager {
         this.baseUrl = '/api/auth';
         this.setupFormValidation();
         this.setupEventListeners();
+        this.checkAuthState();
     }
 
     // Configuration de la validation des formulaires
@@ -30,6 +31,84 @@ class AuthManager {
                     }
                 }
             });
+        });
+    }
+
+    // Vérifier l'état de l'authentification
+    async checkAuthState() {
+        const currentPath = window.location.pathname;
+        const publicPages = ['/login.html', '/signup.html', '/forgot-password.html', '/reset-password.html', '/'];
+        
+        if (!publicPages.includes(currentPath)) {
+            // Si on n'est pas sur une page publique, vérifier l'authentification
+            const isAuthenticated = await this.verifyAuth();
+            if (!isAuthenticated) {
+                window.location.href = '/login.html';
+            }
+        } else {
+            // Si on est sur une page publique et qu'on est authentifié, rediriger vers le profil
+            const isAuthenticated = await this.verifyAuth();
+            if (isAuthenticated && publicPages.includes(currentPath) && currentPath !== '/') {
+                window.location.href = '/profile.html';
+            }
+        }
+    }
+
+    // Vérifier l'authentification
+    async verifyAuth() {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            return false;
+        }
+
+        try {
+            const response = await fetch('/api/auth/me', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            return response.ok;
+        } catch (error) {
+            console.error('Erreur de vérification d\'authentification:', error);
+            return false;
+        }
+    }
+
+    // Gérer la déconnexion
+    async handleLogout() {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch('/api/auth/logout', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                this.clearAuthData();
+                window.location.href = '/login.html';
+            }
+        } catch (error) {
+            console.error('Erreur lors de la déconnexion:', error);
+        }
+    }
+
+    // Nettoyer les données d'authentification
+    clearAuthData() {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        sessionStorage.clear();
+        
+        // Réinitialiser tous les formulaires
+        document.querySelectorAll('form').forEach(form => {
+            form.reset();
+        });
+        
+        // Effacer les messages d'erreur/succès
+        document.querySelectorAll('.alert').forEach(alert => {
+            alert.style.display = 'none';
         });
     }
 
@@ -253,22 +332,18 @@ class AuthManager {
 
     // Envoi des requêtes API
     async sendRequest(endpoint, method, data) {
+        const csrfToken = getCsrfToken();
         const response = await fetch(this.baseUrl + endpoint, {
             method,
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRF-Token': this.getCsrfToken()
+                'CSRF-Token': csrfToken
             },
             credentials: 'include',
             body: JSON.stringify(data)
         });
 
         return response;
-    }
-
-    // Récupération du token CSRF
-    getCsrfToken() {
-        return document.querySelector('meta[name="csrf-token"]')?.content;
     }
 
     // Affichage du chargement
@@ -314,6 +389,23 @@ class AuthManager {
             successDiv.remove();
         }, 5000);
     }
+}
+
+// Fonction pour obtenir le token CSRF depuis les cookies
+function getCsrfToken() {
+    const name = 'XSRF-TOKEN=';
+    const decodedCookie = decodeURIComponent(document.cookie);
+    const cookieArray = decodedCookie.split(';');
+    
+    for (let cookie of cookieArray) {
+        while (cookie.charAt(0) === ' ') {
+            cookie = cookie.substring(1);
+        }
+        if (cookie.indexOf(name) === 0) {
+            return cookie.substring(name.length, cookie.length);
+        }
+    }
+    return '';
 }
 
 // Fonction pour vérifier l'utilisateur actuel
@@ -388,4 +480,18 @@ async function updateAuthUI() {
 document.addEventListener('DOMContentLoaded', async () => {
     new AuthManager();
     await updateAuthUI();
+});
+
+// Initialiser le gestionnaire d'authentification
+const authManager = new AuthManager();
+
+// Ajouter l'écouteur pour le bouton de déconnexion
+document.addEventListener('DOMContentLoaded', () => {
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            authManager.handleLogout();
+        });
+    }
 });

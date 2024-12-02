@@ -1,8 +1,10 @@
 const express = require('express');
+const passport = require('passport');
 const { body, validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const { auth, authLimiter } = require('../middleware/auth');
+const path = require('path');
 
 const router = express.Router();
 
@@ -103,80 +105,98 @@ router.post('/signup', signupValidation, async (req, res) => {
     }
 });
 
-// Connexion
-router.post('/login', authLimiter, loginValidation, async (req, res) => {
-    try {
-        const { email, password, rememberMe } = req.body;
+// Connexion avec Passport
+router.post('/login', authLimiter, loginValidation, (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({
+            status: 'error',
+            message: errors.array()[0].msg
+        });
+    }
 
-        // Trouver l'utilisateur
-        const user = await User.findOne({ email }).select('+password');
-        if (!user || !(await user.comparePassword(password))) {
+    passport.authenticate('local', (err, user, info) => {
+        if (err) {
+            return next(err);
+        }
+        
+        if (!user) {
             return res.status(401).json({
                 status: 'error',
-                message: 'Email ou mot de passe incorrect'
+                message: info.message || 'Email ou mot de passe incorrect'
             });
         }
 
-        // Générer le token
-        const token = jwt.sign(
-            { _id: user._id.toString() },
-            process.env.JWT_SECRET,
-            { expiresIn: rememberMe ? '30d' : '24h' }
-        );
+        req.logIn(user, async (err) => {
+            if (err) {
+                return next(err);
+            }
 
-        // Sauvegarder le token
-        user.tokens = user.tokens || [];
-        user.tokens.push(token);
-        await user.save();
+            try {
+                // Générer le token JWT
+                const token = jwt.sign(
+                    { _id: user._id.toString() },
+                    process.env.JWT_SECRET,
+                    { expiresIn: '24h' }
+                );
 
-        // Mettre à jour la dernière connexion
-        await user.updateLastLogin();
+                // Sauvegarder le token
+                user.tokens = user.tokens || [];
+                user.tokens.push(token);
+                await user.save();
 
-        // Configurer le cookie
-        res.cookie('token', token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict',
-            maxAge: rememberMe ? 30 * 24 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000
+                // Configurer la session
+                req.session.userId = user._id;
+                req.session.email = user.email;
+
+                res.json({
+                    status: 'success',
+                    message: 'Connexion réussie',
+                    data: {
+                        user: {
+                            id: user._id,
+                            name: user.name,
+                            email: user.email
+                        },
+                        token
+                    }
+                });
+            } catch (error) {
+                next(error);
+            }
         });
+    })(req, res, next);
+});
 
-        res.json({
-            status: 'success',
-            message: 'Connexion réussie',
-            data: {
-                user: {
-                    id: user._id,
-                    name: user.name,
-                    email: user.email
+// Route de déconnexion
+router.post('/logout', (req, res) => {
+    try {
+        // Détruire la session
+        if (req.session) {
+            req.session.destroy((err) => {
+                if (err) {
+                    console.error('Erreur lors de la destruction de la session:', err);
                 }
+            });
+        }
+
+        // Déconnexion de Passport
+        req.logout((err) => {
+            if (err) {
+                console.error('Erreur lors de la déconnexion Passport:', err);
             }
         });
 
-    } catch (error) {
-        console.error('Erreur de connexion:', error);
-        res.status(500).json({
-            status: 'error',
-            message: 'Une erreur est survenue lors de la connexion'
-        });
-    }
-});
-
-// Déconnexion
-router.post('/logout', auth, async (req, res) => {
-    try {
-        // Retirer le token actuel
-        req.user.tokens = req.user.tokens.filter(token => token !== req.token);
-        await req.user.save();
-
-        // Supprimer le cookie
+        // Supprimer le token JWT
         res.clearCookie('token');
 
         res.json({
             status: 'success',
-            message: 'Déconnexion réussie'
+            message: 'Déconnexion réussie',
+            resetRequired: true
         });
     } catch (error) {
-        console.error('Erreur de déconnexion:', error);
+        console.error('Erreur lors de la déconnexion:', error);
         res.status(500).json({
             status: 'error',
             message: 'Une erreur est survenue lors de la déconnexion'
@@ -298,6 +318,38 @@ router.get('/me', auth, async (req, res) => {
             message: 'Erreur lors de la vérification de l\'utilisateur'
         });
     }
+});
+
+// Route de vérification d'authentification
+router.get('/check-auth', (req, res) => {
+    try {
+        res.json({
+            isAuthenticated: req.isAuthenticated(),
+            user: req.user ? { 
+                id: req.user._id,
+                email: req.user.email 
+            } : null
+        });
+    } catch (error) {
+        console.error('Erreur lors de la vérification de l\'authentification:', error);
+        res.status(500).json({
+            status: 'error',
+            message: 'Erreur lors de la vérification de l\'authentification'
+        });
+    }
+});
+
+// Middleware de vérification d'authentification
+const checkAuth = (req, res, next) => {
+    if (req.isAuthenticated()) {
+        return next();
+    }
+    res.redirect('/login.html?redirect=' + encodeURIComponent(req.originalUrl));
+};
+
+// Route protégée pour le quiz
+router.get('/quiz.html', checkAuth, (req, res) => {
+    res.sendFile(path.join(__dirname, '../public/quiz.html'));
 });
 
 module.exports = router;
