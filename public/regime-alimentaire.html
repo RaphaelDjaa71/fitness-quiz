@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Régime Alimentaire - Quiz Fitness</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="progress-container">
+        <div class="progress-bar">
+            <div class="progress" role="progressbar" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+    </div>
+
+    <main class="container fade-in">
+        <h1>Votre Régime Alimentaire</h1>
+        <p class="subtitle">Sélectionnez votre régime et vos restrictions alimentaires</p>
+
+        <form id="regimeAlimentaireForm" class="card">
+            <div class="form-group">
+                <h3>Type de Régime</h3>
+                <div class="radio-grid">
+                    <label class="radio-card">
+                        <input type="radio" name="regime-alimentaire" value="omnivore" required>
+                        <span class="radio-label">Omnivore</span>
+                        <span class="radio-description">Tous types d'aliments</span>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="regime-alimentaire" value="vegetarien" required>
+                        <span class="radio-label">Végétarien</span>
+                        <span class="radio-description">Sans viande ni poisson</span>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="regime-alimentaire" value="vegan" required>
+                        <span class="radio-label">Vegan</span>
+                        <span class="radio-description">Aucun produit animal</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group mt-4">
+                <h3>Restrictions Alimentaires</h3>
+                <div class="checkbox-grid">
+                    <label class="checkbox-card">
+                        <input type="checkbox" name="restrictions-alimentaires" value="aucune">
+                        <span class="checkbox-label">Aucune Restriction</span>
+                    </label>
+                    <label class="checkbox-card">
+                        <input type="checkbox" name="restrictions-alimentaires" value="sans-gluten">
+                        <span class="checkbox-label">Sans Gluten</span>
+                    </label>
+                    <label class="checkbox-card">
+                        <input type="checkbox" name="restrictions-alimentaires" value="sans-lactose">
+                        <span class="checkbox-label">Sans Lactose</span>
+                    </label>
+                    <label class="checkbox-card">
+                        <input type="checkbox" name="restrictions-alimentaires" value="sans-noix">
+                        <span class="checkbox-label">Sans Noix</span>
+                    </label>
+                </div>
+            </div>
+        </form>
+
+        <div class="flex flex-between mt-4">
+            <a href="equipement.html" class="btn btn-outline btn-previous">Retour</a>
+            <button type="submit" form="regimeAlimentaireForm" class="btn btn-primary btn-next">Continuer</button>
+        </div>
+    </main>
+
+    <script src="js/quizConfig.js"></script>
+    <script src="js/navigation.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            Navigation.init();
+
+            // Restaurer les réponses précédentes
+            const savedRegime = Navigation.getAnswer('regime-alimentaire');
+            const savedRestrictions = Navigation.getAnswer('restrictions-alimentaires');
+
+            if (savedRegime) {
+                document.querySelector(`input[name="regime-alimentaire"][value="${savedRegime}"]`).checked = true;
+            }
+
+            if (savedRestrictions) {
+                const restrictionsArray = Array.isArray(savedRestrictions) ? savedRestrictions : [savedRestrictions];
+                restrictionsArray.forEach(restriction => {
+                    const checkbox = document.querySelector(`input[name="restrictions-alimentaires"][value="${restriction}"]`);
+                    if (checkbox) checkbox.checked = true;
+                });
+            }
+
+            // Gestion de l'exclusivité "Aucune Restriction"
+            const aucuneRestrictionCheckbox = document.querySelector('input[name="restrictions-alimentaires"][value="aucune"]');
+            const autresRestrictions = document.querySelectorAll('input[name="restrictions-alimentaires"]:not([value="aucune"])');
+
+            aucuneRestrictionCheckbox.addEventListener('change', (e) => {
+                if (e.target.checked) {
+                    autresRestrictions.forEach(checkbox => {
+                        checkbox.checked = false;
+                    });
+                }
+            });
+
+            autresRestrictions.forEach(checkbox => {
+                checkbox.addEventListener('change', (e) => {
+                    if (e.target.checked) {
+                        aucuneRestrictionCheckbox.checked = false;
+                    }
+                });
+            });
+
+            // Validation et navigation
+            Navigation.validateAndProceed('regimeAlimentaireForm', () => {
+                const regimeForm = document.getElementById('regimeAlimentaireForm');
+                const regimeInputs = regimeForm.querySelectorAll('input[name="regime-alimentaire"]:checked');
+                const restrictionInputs = regimeForm.querySelectorAll('input[name="restrictions-alimentaires"]:checked');
+
+                if (regimeInputs.length === 0) {
+                    alert('Veuillez sélectionner un type de régime.');
+                    return false;
+                }
+
+                // Sauvegarder le régime
+                Navigation.saveAnswer('regime-alimentaire', regimeInputs[0].value);
+
+                // Sauvegarder les restrictions
+                const restrictions = Array.from(restrictionInputs).map(input => input.value);
+                Navigation.saveAnswer('restrictions-alimentaires', restrictions);
+
+                return true;
+            });
+        });
+    </script>
+</body>
+</html>

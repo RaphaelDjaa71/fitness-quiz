@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Niveau d'Activité - Quiz Fitness</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="progress-container">
+        <div class="progress-bar">
+            <div class="progress" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+    </div>
+
+    <main class="container fade-in">
+        <h1>Votre Niveau d'Activité</h1>
+        <p class="subtitle">Sélectionnez l'option qui correspond le mieux à votre mode de vie actuel</p>
+
+        <form id="niveauActiviteForm" class="card">
+            <div class="radio-group">
+                <div class="radio-option">
+                    <input type="radio" id="sedentaire" name="niveau-activite" value="sedentaire" required>
+                    <label for="sedentaire">
+                        <strong>Sédentaire</strong>
+                        <span>Peu ou pas d'exercice, travail de bureau</span>
+                    </label>
+                </div>
+
+                <div class="radio-option">
+                    <input type="radio" id="legerement-actif" name="niveau-activite" value="legerement-actif">
+                    <label for="legerement-actif">
+                        <strong>Légèrement Actif</strong>
+                        <span>Exercice léger 1-3 fois par semaine</span>
+                    </label>
+                </div>
+
+                <div class="radio-option">
+                    <input type="radio" id="moderement-actif" name="niveau-activite" value="moderement-actif">
+                    <label for="moderement-actif">
+                        <strong>Modérément Actif</strong>
+                        <span>Exercice modéré 3-5 fois par semaine</span>
+                    </label>
+                </div>
+
+                <div class="radio-option">
+                    <input type="radio" id="tres-actif" name="niveau-activite" value="tres-actif">
+                    <label for="tres-actif">
+                        <strong>Très Actif</strong>
+                        <span>Exercice intense 6-7 fois par semaine</span>
+                    </label>
+                </div>
+
+                <div class="radio-option">
+                    <input type="radio" id="extremement-actif" name="niveau-activite" value="extremement-actif">
+                    <label for="extremement-actif">
+                        <strong>Extrêmement Actif</strong>
+                        <span>Exercice très intense quotidien ou athlète professionnel</span>
+                    </label>
+                </div>
+            </div>
+        </form>
+
+        <div class="flex flex-between mt-4">
+            <a href="objectif-poids.html" class="btn btn-outline btn-previous">Retour</a>
+            <button type="submit" form="niveauActiviteForm" class="btn btn-primary btn-next">Continuer</button>
+        </div>
+    </main>
+
+    <script src="js/quizConfig.js"></script>
+    <script src="js/navigation.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            Navigation.init();
+
+            // Restaurer la valeur précédente si elle existe
+            const savedNiveauActivite = Navigation.getAnswer('niveau-activite');
+            if (savedNiveauActivite) {
+                document.querySelector(`input[value="${savedNiveauActivite}"]`).checked = true;
+            }
+
+            // Validation et sauvegarde
+            Navigation.validateAndProceed('niveauActiviteForm', () => {
+                const selectedOption = document.querySelector('input[name="niveau-activite"]:checked');
+                if (!selectedOption) {
+                    alert('Veuillez sélectionner votre niveau d\'activité.');
+                    return false;
+                }
+
+                Navigation.saveAnswer('niveau-activite', selectedOption.value);
+                window.location.href = 'experience-musculation.html';
+                return true;
+            });
+        });
+    </script>
+</body>
+</html>

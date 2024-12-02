@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vos Résultats - Programme Personnalisé</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="progress-container">
+        <div class="progress-bar">
+            <div class="progress" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+    </div>
+
+    <main class="container fade-in">
+        <div class="results-section">
+            <h1>Votre Programme Personnalisé</h1>
+            
+            <div class="profile-summary card">
+                <h2>Informations Personnelles</h2>
+                <div class="personal-details">
+                    <div class="detail-item">
+                        <span class="label">Objectif Principal</span>
+                        <span id="detail-objectif" class="value">--</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">Sexe</span>
+                        <span id="detail-sexe" class="value">--</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">Âge</span>
+                        <span id="detail-age" class="value">--</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">Taille</span>
+                        <span id="detail-taille" class="value">--</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">Tour de Poignet</span>
+                        <span id="detail-poignet" class="value">--</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="weight-summary card mt-4">
+                <h2>Résumé du Poids</h2>
+                <div class="weight-grid">
+                    <div class="weight-card">
+                        <div class="weight-label">Poids Actuel</div>
+                        <div id="poids-actuel" class="weight-value">--</div>
+                    </div>
+                    
+                    <div class="weight-card">
+                        <div class="weight-label">Poids Idéal</div>
+                        <div id="poids-ideal" class="weight-value">--</div>
+                    </div>
+                    
+                    <div class="weight-card">
+                        <div class="weight-label">Objectif</div>
+                        <div id="objectif-poids" class="weight-value">--</div>
+                    </div>
+                </div>
+                
+                <div id="weight-analysis" class="weight-analysis"></div>
+            </div>
+
+            <div class="training-program card mt-4">
+                <h2>Programme d'Entraînement</h2>
+                <div class="program-details">
+                    <div class="detail-item">
+                        <span class="label">Niveau d'Activité</span>
+                        <span id="niveau-activite" class="value">--</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">Expérience en Musculation</span>
+                        <span id="experience-musculation" class="value">--</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">Fréquence d'Entraînement</span>
+                        <span id="frequence-entrainement" class="value">--</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">Équipement Disponible</span>
+                        <span id="equipement" class="value">--</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="nutrition-program card mt-4">
+                <h2>Programme Nutritionnel</h2>
+                <div class="nutrition-details">
+                    <div class="detail-item">
+                        <span class="label">Régime Alimentaire</span>
+                        <span id="regime-alimentaire" class="value">--</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">Restrictions Alimentaires</span>
+                        <span id="restrictions-alimentaires" class="value">--</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="recommendations card mt-4">
+                <h2>Recommandations Personnalisées</h2>
+                <ul id="recommendations-list"></ul>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button id="print-results" class="btn btn-primary">Imprimer les Résultats</button>
+            <a href="index.html" class="btn btn-outline">Recommencer le Quiz</a>
+        </div>
+    </main>
+
+    <script src="js/quizConfig.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/fitnessCalculator.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            Navigation.init();
+
+            // Récupérer toutes les réponses
+            const answers = Navigation.getAllAnswers();
+            console.log('Réponses complètes:', answers);
+            console.log('Clés des réponses:', Object.keys(answers));
+            
+            // Convertir les réponses en format uniforme
+            const normalizedAnswers = {};
+            Object.keys(answers).forEach(key => {
+                // Convertir les clés avec des tirets
+                const normalizedKey = key.replace(/_/g, '-');
+                normalizedAnswers[normalizedKey] = answers[key];
+            });
+
+            // Vérifier les données nécessaires
+            const requiredFields = [
+                'sexe', 'age', 'taille', 'poignet', 'poids', 
+                'objectif-poids', 'niveau-activite', 'experience-musculation', 
+                'frequence-entrainement', 'equipement', 
+                'regime-alimentaire', 'restrictions-alimentaires'
+            ];
+            
+            const missingFields = requiredFields.filter(field => {
+                // Essayer plusieurs variantes de noms de champs
+                const fieldVariants = [
+                    field,
+                    field.replace(/-/g, '_'),
+                    field.replace(/-/g, '')
+                ];
+                return !fieldVariants.some(variant => normalizedAnswers[variant]);
+            });
+
+            if (missingFields.length > 0) {
+                console.error('Données manquantes:', missingFields);
+                
+                // Afficher tous les champs existants pour le débogage
+                console.log('Champs existants:', Object.keys(normalizedAnswers));
+                
+                // Message d'erreur plus informatif
+                const missingFieldsMessage = missingFields.join(', ');
+                alert(`Les champs suivants sont manquants : ${missingFieldsMessage}. Veuillez recommencer le quiz.`);
+                
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // Fonction utilitaire pour trouver la valeur d'un champ avec différentes variantes
+            function findFieldValue(field) {
+                const fieldVariants = [
+                    field,
+                    field.replace(/-/g, '_'),
+                    field.replace(/-/g, '')
+                ];
+                for (const variant of fieldVariants) {
+                    if (normalizedAnswers[variant]) return normalizedAnswers[variant];
+                }
+                return '--';
+            }
+
+            // Afficher les informations personnelles
+            document.getElementById('detail-objectif').textContent = findFieldValue('objectif');
+            document.getElementById('detail-sexe').textContent = findFieldValue('sexe');
+            document.getElementById('detail-age').textContent = `${findFieldValue('age')} ans`;
+            document.getElementById('detail-taille').textContent = `${findFieldValue('taille')} cm`;
+            document.getElementById('detail-poignet').textContent = `${findFieldValue('poignet')} cm`;
+
+            // Calculs de poids
+            const poidsActuel = parseFloat(findFieldValue('poids'));
+            const poidsIdeal = FitnessCalculator.calculerPoidsIdeal(
+                parseFloat(findFieldValue('poignet')),
+                parseFloat(findFieldValue('taille')),
+                findFieldValue('sexe')
+            );
+            const objectifPoids = parseFloat(findFieldValue('objectif-poids'));
+
+            // Afficher les poids
+            document.getElementById('poids-actuel').textContent = `${poidsActuel} kg`;
+            document.getElementById('poids-ideal').textContent = `${poidsIdeal} kg`;
+            document.getElementById('objectif-poids').textContent = `${objectifPoids} kg`;
+
+            // Analyse du poids
+            const analyse = FitnessCalculator.analyserDifferencePoids(poidsActuel, poidsIdeal);
+            document.getElementById('weight-analysis').innerHTML = `
+                <p class="analysis ${analyse.classe}">${analyse.message}</p>
+            `;
+
+            // Afficher les détails d'entraînement
+            document.getElementById('niveau-activite').textContent = findFieldValue('niveau-activite');
+            document.getElementById('experience-musculation').textContent = findFieldValue('experience-musculation');
+            document.getElementById('frequence-entrainement').textContent = findFieldValue('frequence-entrainement');
+            
+            const equipement = findFieldValue('equipement');
+            document.getElementById('equipement').textContent = Array.isArray(equipement) 
+                ? equipement.join(', ') 
+                : equipement;
+
+            // Afficher les détails nutritionnels
+            document.getElementById('regime-alimentaire').textContent = findFieldValue('regime-alimentaire');
+            
+            const restrictions = findFieldValue('restrictions-alimentaires');
+            document.getElementById('restrictions-alimentaires').textContent = 
+                Array.isArray(restrictions)
+                    ? restrictions.join(', ')
+                    : (restrictions || 'Aucune restriction');
+
+            // Générer les recommandations
+            const recommendations = [];
+
+            // Recommandations basées sur l'objectif de poids
+            if (Math.abs(poidsActuel - objectifPoids) > 2) {
+                const difference = Math.abs(poidsActuel - objectifPoids);
+                const dureeEstimee = Math.ceil(difference / 0.5); // Perte/gain de 0.5kg par semaine
+                recommendations.push(`Objectif atteignable en environ ${dureeEstimee} semaines avec un rythme sain.`);
+            }
+
+            // Recommandations basées sur le niveau d'activité
+            const activiteRecommandations = {
+                'sedentaire': 'Commencez par augmenter votre activité quotidienne avec des marches de 30 minutes.',
+                'peu-actif': 'Visez 150 minutes d\'activité modérée par semaine.',
+                'actif': 'Maintenez votre niveau d\'activité actuel et variez vos exercices.',
+                'tres-actif': 'Assurez-vous d\'avoir suffisamment de repos entre les sessions.'
+            };
+            recommendations.push(activiteRecommandations[findFieldValue('niveau-activite')]);
+
+            // Recommandations basées sur l'expérience en musculation
+            const muscleRecommandations = {
+                'debutant': 'Commencez avec des exercices de base et apprenez les bonnes techniques.',
+                'intermediaire': 'Concentrez-vous sur la progression et la variété des exercices.',
+                'avance': 'Explorez des techniques d\'entraînement plus complexes et des programmes avancés.'
+            };
+            recommendations.push(muscleRecommandations[findFieldValue('experience-musculation')]);
+
+            // Recommandations basées sur l'équipement
+            if (Array.isArray(equipement) && equipement.includes('aucun')) {
+                recommendations.push('Commencez avec des exercices au poids du corps : pompes, squats, planches.');
+            }
+
+            // Recommandations nutritionnelles
+            if (findFieldValue('regime-alimentaire') === 'vegetarien') {
+                recommendations.push('Assurez-vous de consommer suffisamment de protéines végétales et de compléments B12.');
+            }
+
+            // Afficher les recommandations
+            const recommendationsHtml = recommendations
+                .map(rec => `<li>${rec}</li>`)
+                .join('');
+            document.getElementById('recommendations-list').innerHTML = recommendationsHtml;
+
+            // Gestionnaire d'impression
+            document.getElementById('print-results').addEventListener('click', () => {
+                window.print();
+            });
+        });
+    </script>
+</body>
+</html>

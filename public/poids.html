@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Votre Poids - Quiz Fitness</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="progress-container">
+        <div class="progress-bar">
+            <div class="progress" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+    </div>
+
+    <main class="container fade-in">
+        <h1>Quel est votre poids actuel ?</h1>
+        <p class="subtitle">Cette information nous aide à personnaliser votre programme</p>
+
+        <form id="poidsForm" class="card">
+            <div class="form-group">
+                <label for="poids">Votre poids (en kg)</label>
+                <input type="number" 
+                       id="poids" 
+                       name="poids" 
+                       min="40" 
+                       max="200" 
+                       step="0.1" 
+                       required
+                       placeholder="Entrez votre poids en kilogrammes"
+                       class="form-control">
+                <div class="alert alert-error hidden" id="poidsError"></div>
+            </div>
+
+            <div class="info-text mt-2">
+                <p>Votre poids doit être compris entre 40 kg et 200 kg</p>
+            </div>
+        </form>
+
+        <div class="flex flex-between mt-4">
+            <a href="taille.html" class="btn btn-outline btn-previous">Retour</a>
+            <button type="submit" form="poidsForm" class="btn btn-primary btn-next">Continuer</button>
+        </div>
+    </main>
+
+    <script src="js/quizConfig.js"></script>
+    <script src="js/navigation.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialisation de la navigation
+            Navigation.init();
+
+            const poidsInput = document.getElementById('poids');
+            const poidsError = document.getElementById('poidsError');
+
+            // Restaurer la valeur précédente si elle existe
+            const savedPoids = Navigation.getAnswer('poids');
+            if (savedPoids) {
+                poidsInput.value = savedPoids;
+            }
+
+            // Validation et sauvegarde
+            Navigation.validateAndProceed('poidsForm', () => {
+                const poids = parseFloat(poidsInput.value);
+                
+                // Vérification du poids
+                if (isNaN(poids) || poids < 40 || poids > 200) {
+                    poidsError.textContent = 'Veuillez entrer un poids valide entre 40 kg et 200 kg';
+                    poidsError.classList.remove('hidden');
+                    return false;
+                }
+
+                // Cacher le message d'erreur
+                poidsError.classList.add('hidden');
+
+                // Sauvegarder la réponse
+                Navigation.saveAnswer('poids', poids);
+
+                return true;
+            });
+
+            // Validation en temps réel
+            poidsInput.addEventListener('input', () => {
+                const poids = parseFloat(poidsInput.value);
+                if (!isNaN(poids) && poids >= 40 && poids <= 200) {
+                    poidsError.classList.add('hidden');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

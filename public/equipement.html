@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Équipement Disponible - Quiz Fitness</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="progress-container">
+        <div class="progress-bar">
+            <div class="progress" role="progressbar" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+    </div>
+
+    <main class="container fade-in">
+        <h1>Votre Équipement</h1>
+        <p class="subtitle">Sélectionnez l'équipement dont vous disposez</p>
+
+        <form id="equipementForm" class="card">
+            <div class="checkbox-group">
+                <div class="checkbox-option">
+                    <input type="checkbox" id="salle" name="equipement" value="salle">
+                    <label for="salle">
+                        <strong>Salle de Sport</strong>
+                        <span>Accès à une salle de sport complète</span>
+                    </label>
+                </div>
+
+                <div class="checkbox-option">
+                    <input type="checkbox" id="halteres" name="equipement" value="halteres">
+                    <label for="halteres">
+                        <strong>Haltères</strong>
+                        <span>Haltères ajustables ou fixes</span>
+                    </label>
+                </div>
+
+                <div class="checkbox-option">
+                    <input type="checkbox" id="barre" name="equipement" value="barre">
+                    <label for="barre">
+                        <strong>Barre de Traction</strong>
+                        <span>Barre de traction fixe ou portable</span>
+                    </label>
+                </div>
+
+                <div class="checkbox-option">
+                    <input type="checkbox" id="elastiques" name="equipement" value="elastiques">
+                    <label for="elastiques">
+                        <strong>Bandes Élastiques</strong>
+                        <span>Bandes de résistance élastiques</span>
+                    </label>
+                </div>
+
+                <div class="checkbox-option">
+                    <input type="checkbox" id="kettlebell" name="equipement" value="kettlebell">
+                    <label for="kettlebell">
+                        <strong>Kettlebell</strong>
+                        <span>Un ou plusieurs kettlebells</span>
+                    </label>
+                </div>
+
+                <div class="checkbox-option">
+                    <input type="checkbox" id="banc" name="equipement" value="banc">
+                    <label for="banc">
+                        <strong>Banc de Musculation</strong>
+                        <span>Banc plat ou inclinable</span>
+                    </label>
+                </div>
+
+                <div class="checkbox-option">
+                    <input type="checkbox" id="aucun" name="equipement" value="aucun">
+                    <label for="aucun">
+                        <strong>Aucun Équipement</strong>
+                        <span>Exercices au poids du corps uniquement</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="info-text mt-2">
+                <p>Votre programme sera adapté en fonction de l'équipement disponible</p>
+            </div>
+        </form>
+
+        <div class="flex flex-between mt-4">
+            <a href="frequence-entrainement.html" class="btn btn-outline btn-previous">Retour</a>
+            <button type="submit" form="equipementForm" class="btn btn-primary btn-next">Continuer</button>
+        </div>
+    </main>
+
+    <script src="js/quizConfig.js"></script>
+    <script src="js/navigation.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            Navigation.init();
+
+            const form = document.getElementById('equipementForm');
+            const aucunEquipement = document.getElementById('aucun');
+            const autresEquipements = document.querySelectorAll('input[name="equipement"]:not([value="aucun"])');
+
+            // Restaurer les valeurs précédentes si elles existent
+            const savedEquipement = Navigation.getAnswer('equipement');
+            if (savedEquipement) {
+                const equipements = JSON.parse(savedEquipement);
+                equipements.forEach(value => {
+                    const checkbox = document.querySelector(`input[value="${value}"]`);
+                    if (checkbox) checkbox.checked = true;
+                });
+            }
+
+            // Gérer l'exclusivité de "Aucun équipement"
+            aucunEquipement.addEventListener('change', function() {
+                if (this.checked) {
+                    autresEquipements.forEach(checkbox => {
+                        checkbox.checked = false;
+                    });
+                }
+            });
+
+            autresEquipements.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    if (this.checked) {
+                        aucunEquipement.checked = false;
+                    }
+                });
+            });
+
+            // Validation et sauvegarde
+            Navigation.validateAndProceed('equipementForm', () => {
+                const selectedEquipements = Array.from(document.querySelectorAll('input[name="equipement"]:checked'))
+                    .map(checkbox => checkbox.value);
+
+                if (selectedEquipements.length === 0) {
+                    alert('Veuillez sélectionner au moins un équipement ou "Aucun Équipement".');
+                    return false;
+                }
+
+                Navigation.saveAnswer('equipement', JSON.stringify(selectedEquipements));
+                window.location.href = 'regime-alimentaire.html';
+                return true;
+            });
+        });
+    </script>
+</body>
+</html>

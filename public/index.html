@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Fitness - Programme Personnalisé</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <main class="container fade-in">
+        <div class="welcome-container">
+            <h1>Découvrez Votre Programme Fitness Personnalisé</h1>
+            <p class="subtitle">Un questionnaire rapide pour créer votre programme sur mesure</p>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <img src="images/personalization.svg" alt="Personnalisation" class="feature-icon" data-critical="true">
+                    <h3 class="feature-title">100% Personnalisé</h3>
+                    <p class="feature-description">Programme adapté à vos objectifs et votre morphologie</p>
+                </div>
+                
+                <div class="feature-card">
+                    <img src="images/scientific.svg" alt="Scientifique" class="feature-icon" data-critical="true">
+                    <h3 class="feature-title">Base Scientifique</h3>
+                    <p class="feature-description">Calculs basés sur des études scientifiques</p>
+                </div>
+                
+                <div class="feature-card">
+                    <img src="images/instant.svg" alt="Instantané" class="feature-icon" data-critical="true">
+                    <h3 class="feature-title">Résultat Immédiat</h3>
+                    <p class="feature-description">Obtenez votre programme en quelques minutes</p>
+                </div>
+            </div>
+
+            <a href="objectif.html" class="start-button">Commencer le Quiz</a>
+            
+            <p class="privacy-notice">Vos données restent confidentielles et ne sont jamais partagées</p>
+        </div>
+    </main>
+
+    <script src="js/quizConfig.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/imageOptimizer.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            Navigation.init();
+        });
+    </script>
+</body>
+</html>

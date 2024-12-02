@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Indiquez votre poids actuel">
+    <title>Votre Poids Actuel - Quiz Fitness</title>
+    
+    <!-- Préchargement des polices -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .input-container {
+            max-width: 400px;
+            margin: 2rem auto;
+            text-align: center;
+        }
+
+        .weight-info {
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background: var(--color-card-bg);
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .info-icon {
+            color: var(--color-primary);
+            margin-right: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar">
+        <div class="progress" role="progressbar" aria-valuenow="35" aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+
+    <main class="quiz-page">
+        <div class="container fade-in">
+            <h1>Quel est votre poids actuel ?</h1>
+            <p class="subtitle">Cette information nous permettra de calculer votre poids idéal et d'adapter votre programme.</p>
+            
+            <div class="input-container">
+                <div class="number-input">
+                    <input type="number" 
+                           id="weight-input" 
+                           min="40" 
+                           max="200" 
+                           step="0.1" 
+                           placeholder="75.5"
+                           required
+                           aria-label="Poids en kilogrammes">
+                    <span class="unit">kg</span>
+                </div>
+                <div class="input-error" id="error-message"></div>
+            </div>
+
+            <div class="navigation-buttons">
+                <button class="btn btn-secondary btn-prev" aria-label="Retour à la page précédente">
+                    Retour
+                </button>
+                <button class="btn btn-primary btn-next" aria-label="Passer à la question suivante">
+                    Continuer
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="js/quizConfig.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/fitnessCalculator.js"></script>
+    <script>
+        class WeightPage extends QuizNavigation {
+            static validatePage() {
+                const input = document.getElementById('weight-input');
+                const error = this.validateInput(input.value);
+                return error === null;
+            }
+
+            static validateInput(value) {
+                const weight = parseFloat(value);
+                if (isNaN(weight)) {
+                    return "Veuillez entrer un nombre valide";
+                }
+                if (weight < 40 || weight > 200) {
+                    return "Le poids doit être entre 40 et 200 kg";
+                }
+                return null;
+            }
+
+            static saveAnswer(value) {
+                const quizState = JSON.parse(localStorage.getItem('fitnessQuizState') || '{}');
+                if (!quizState.answers) {
+                    quizState.answers = {};
+                }
+
+                // Sauvegarder le poids actuel
+                quizState.answers['poids-actuel'] = value;
+
+                // Calculer et sauvegarder le poids idéal
+                const height = parseFloat(this.getAnswer('taille'));
+                const wristCircumference = parseFloat(this.getAnswer('poignet'));
+                if (height && wristCircumference) {
+                    const idealWeight = fitnessCalculator.calculateIdealWeight(height, wristCircumference);
+                    quizState.answers['poids-ideal'] = idealWeight.toFixed(1);
+                }
+
+                localStorage.setItem('fitnessQuizState', JSON.stringify(quizState));
+            }
+
+            static initialize() {
+                super.initializePage();
+                
+                const input = document.getElementById('weight-input');
+                const errorMessage = document.getElementById('error-message');
+                
+                // Restaurer la valeur précédente
+                const savedValue = this.getAnswer('poids-actuel');
+                if (savedValue) {
+                    input.value = savedValue;
+                    this.enableNextButton();
+                }
+
+                input.addEventListener('input', (e) => {
+                    const error = this.validateInput(e.target.value);
+                    if (error) {
+                        errorMessage.textContent = error;
+                        this.disableNextButton();
+                        return;
+                    }
+                    
+                    errorMessage.textContent = '';
+                    this.saveAnswer(e.target.value);
+                    this.enableNextButton();
+                });
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            WeightPage.initialize();
+        });
+    </script>
+</body>
+</html>

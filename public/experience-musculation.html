@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expérience en Musculation - Quiz Fitness</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="progress-container">
+        <div class="progress-bar">
+            <div class="progress" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+    </div>
+
+    <main class="container fade-in">
+        <h1>Votre Expérience en Musculation</h1>
+        <p class="subtitle">Sélectionnez votre niveau d'expérience en musculation</p>
+
+        <form id="experienceForm" class="card">
+            <div class="radio-group">
+                <div class="radio-option">
+                    <input type="radio" id="debutant" name="experience" value="debutant" required>
+                    <label for="debutant">
+                        <strong>Débutant</strong>
+                        <span>Jamais pratiqué ou moins de 6 mois d'expérience</span>
+                    </label>
+                </div>
+
+                <div class="radio-option">
+                    <input type="radio" id="intermediaire" name="experience" value="intermediaire">
+                    <label for="intermediaire">
+                        <strong>Intermédiaire</strong>
+                        <span>6 mois à 2 ans d'expérience régulière</span>
+                    </label>
+                </div>
+
+                <div class="radio-option">
+                    <input type="radio" id="avance" name="experience" value="avance">
+                    <label for="avance">
+                        <strong>Avancé</strong>
+                        <span>Plus de 2 ans d'expérience régulière</span>
+                    </label>
+                </div>
+
+                <div class="radio-option">
+                    <input type="radio" id="expert" name="experience" value="expert">
+                    <label for="expert">
+                        <strong>Expert</strong>
+                        <span>Plus de 5 ans d'expérience, connaissances approfondies</span>
+                    </label>
+                </div>
+            </div>
+        </form>
+
+        <div class="flex flex-between mt-4">
+            <a href="niveau-activite.html" class="btn btn-outline btn-previous">Retour</a>
+            <button type="submit" form="experienceForm" class="btn btn-primary btn-next">Continuer</button>
+        </div>
+    </main>
+
+    <script src="js/quizConfig.js"></script>
+    <script src="js/navigation.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            Navigation.init();
+
+            // Restaurer la valeur précédente si elle existe
+            const savedExperience = Navigation.getAnswer('experience-musculation');
+            if (savedExperience) {
+                document.querySelector(`input[value="${savedExperience}"]`).checked = true;
+            }
+
+            // Validation et sauvegarde
+            Navigation.validateAndProceed('experienceForm', () => {
+                const selectedOption = document.querySelector('input[name="experience"]:checked');
+                if (!selectedOption) {
+                    alert('Veuillez sélectionner votre niveau d\'expérience.');
+                    return false;
+                }
+
+                Navigation.saveAnswer('experience-musculation', selectedOption.value);
+                window.location.href = 'frequence-entrainement.html';
+                return true;
+            });
+        });
+    </script>
+</body>
+</html>

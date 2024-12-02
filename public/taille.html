@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Votre Taille - Quiz Fitness</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="progress-container">
+        <div class="progress-bar">
+            <div class="progress" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+    </div>
+
+    <main class="container fade-in">
+        <h1>Quelle est votre taille ?</h1>
+        <p class="subtitle">Cette information nous permet de calculer votre poids idéal</p>
+
+        <form id="tailleForm" class="card">
+            <div class="form-group">
+                <label for="taille">Votre taille (en cm)</label>
+                <input type="number" 
+                       id="taille" 
+                       name="taille" 
+                       min="140" 
+                       max="220" 
+                       step="1" 
+                       required
+                       placeholder="Entrez votre taille en centimètres"
+                       class="form-control">
+                <div class="alert alert-error hidden" id="tailleError"></div>
+            </div>
+
+            <div class="info-text mt-2">
+                <p>Votre taille doit être comprise entre 140 cm et 220 cm</p>
+            </div>
+        </form>
+
+        <div class="flex flex-between mt-4">
+            <a href="age.html" class="btn btn-outline btn-previous">Retour</a>
+            <button type="submit" form="tailleForm" class="btn btn-primary btn-next">Continuer</button>
+        </div>
+    </main>
+
+    <script src="js/quizConfig.js"></script>
+    <script src="js/navigation.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialisation de la navigation
+            Navigation.init();
+
+            const tailleInput = document.getElementById('taille');
+            const tailleError = document.getElementById('tailleError');
+
+            // Restaurer la valeur précédente si elle existe
+            const savedTaille = Navigation.getAnswer('taille');
+            if (savedTaille) {
+                tailleInput.value = savedTaille;
+            }
+
+            // Validation et sauvegarde
+            Navigation.validateAndProceed('tailleForm', () => {
+                const taille = parseInt(tailleInput.value);
+                
+                // Vérification de la taille
+                if (isNaN(taille) || taille < 140 || taille > 220) {
+                    tailleError.textContent = 'Veuillez entrer une taille valide entre 140 cm et 220 cm';
+                    tailleError.classList.remove('hidden');
+                    return false;
+                }
+
+                // Cacher le message d'erreur
+                tailleError.classList.add('hidden');
+
+                // Sauvegarder la réponse
+                Navigation.saveAnswer('taille', taille);
+
+                return true;
+            });
+
+            // Validation en temps réel
+            tailleInput.addEventListener('input', () => {
+                const taille = parseInt(tailleInput.value);
+                if (!isNaN(taille) && taille >= 140 && taille <= 220) {
+                    tailleError.classList.add('hidden');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

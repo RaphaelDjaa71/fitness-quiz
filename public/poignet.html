@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tour de Poignet - Quiz Fitness</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="progress-container">
+        <div class="progress-bar">
+            <div class="progress" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+    </div>
+
+    <main class="container fade-in">
+        <h1>Quel est votre tour de poignet ?</h1>
+        <p class="subtitle">Cette mesure nous aide à déterminer votre morphologie</p>
+
+        <form id="poignetForm" class="card">
+            <div class="measurement-guide mb-4">
+                <img src="images/wrist-measurement.svg" alt="Guide de mesure du poignet" class="guide-image">
+                <div class="measurement-tips">
+                    <h3>Comment mesurer correctement ?</h3>
+                    <ul>
+                        <li>Utilisez un mètre ruban souple</li>
+                        <li>Mesurez au niveau le plus fin du poignet</li>
+                        <li>Le mètre doit être à plat sur la peau</li>
+                        <li>Ne serrez pas trop le mètre</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="poignet">Tour de poignet (en cm)</label>
+                <input type="number" 
+                       id="poignet" 
+                       name="poignet" 
+                       min="13" 
+                       max="25" 
+                       step="0.1" 
+                       required
+                       placeholder="Entrez votre tour de poignet en centimètres"
+                       class="form-control">
+                <div class="alert alert-error hidden" id="poignetError"></div>
+            </div>
+
+            <div class="info-text mt-2">
+                <p>Le tour de poignet doit être compris entre 13 cm et 25 cm</p>
+            </div>
+        </form>
+
+        <div class="flex flex-between mt-4">
+            <a href="poids.html" class="btn btn-outline btn-previous">Retour</a>
+            <button type="submit" form="poignetForm" class="btn btn-primary btn-next">Continuer</button>
+        </div>
+    </main>
+
+    <script src="js/quizConfig.js"></script>
+    <script src="js/navigation.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialisation de la navigation
+            Navigation.init();
+
+            const poignetInput = document.getElementById('poignet');
+            const poignetError = document.getElementById('poignetError');
+
+            // Restaurer la valeur précédente si elle existe
+            const savedPoignet = Navigation.getAnswer('poignet');
+            if (savedPoignet) {
+                poignetInput.value = savedPoignet;
+            }
+
+            // Validation et sauvegarde
+            Navigation.validateAndProceed('poignetForm', () => {
+                const poignet = parseFloat(poignetInput.value);
+                
+                // Vérification du tour de poignet
+                if (isNaN(poignet) || poignet < 13 || poignet > 25) {
+                    poignetError.textContent = 'Veuillez entrer un tour de poignet valide entre 13 cm et 25 cm';
+                    poignetError.classList.remove('hidden');
+                    return false;
+                }
+
+                // Cacher le message d'erreur
+                poignetError.classList.add('hidden');
+
+                // Sauvegarder la réponse
+                Navigation.saveAnswer('poignet', poignet);
+
+                return true;
+            });
+
+            // Validation en temps réel
+            poignetInput.addEventListener('input', () => {
+                const poignet = parseFloat(poignetInput.value);
+                if (!isNaN(poignet) && poignet >= 13 && poignet <= 25) {
+                    poignetError.classList.add('hidden');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

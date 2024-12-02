@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Objectif de Poids - Quiz Fitness</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .weight-info {
+            background: var(--color-card-bg);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .weight-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .weight-card {
+            background: var(--color-background);
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .weight-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .weight-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--color-primary);
+            margin: 0.5rem 0;
+        }
+
+        .weight-label {
+            font-size: 1rem;
+            color: var(--color-text-light);
+        }
+
+        .weight-difference {
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        .weight-difference.positive {
+            background: rgba(255, 0, 0, 0.1);
+            color: #ff4444;
+        }
+
+        .weight-difference.negative {
+            background: rgba(0, 255, 0, 0.1);
+            color: #44bb44;
+        }
+
+        .weight-difference.neutral {
+            background: rgba(0, 0, 255, 0.1);
+            color: #4444ff;
+        }
+
+        .recommendation {
+            margin: 2rem 0;
+            padding: 1rem;
+            border-radius: 8px;
+            background: var(--color-card-bg);
+            text-align: center;
+            font-size: 1.1rem;
+            color: var(--color-text);
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-container">
+        <div class="progress-bar">
+            <div class="progress" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+    </div>
+
+    <main class="container fade-in">
+        <h1>Votre Objectif de Poids</h1>
+        <p class="subtitle">D'après vos mesures, voici une analyse de votre situation</p>
+
+        <div class="weight-grid">
+            <div class="weight-card">
+                <div class="weight-label">Poids Actuel</div>
+                <div id="current-weight" class="weight-value">--</div>
+            </div>
+            
+            <div class="weight-card">
+                <div class="weight-label">Poids Idéal</div>
+                <div id="ideal-weight" class="weight-value">--</div>
+                <div id="ideal-weight-info" class="weight-difference"></div>
+            </div>
+        </div>
+
+        <p class="recommendation" id="weight-recommendation"></p>
+
+        <form id="objectifPoidsForm" class="card">
+            <div class="form-group">
+                <label for="objectifPoids">Votre objectif de poids (en kg)</label>
+                <input type="number" 
+                       id="objectifPoids" 
+                       name="objectifPoids" 
+                       min="40" 
+                       max="200" 
+                       step="0.1" 
+                       required
+                       placeholder="Entrez votre objectif de poids en kilogrammes"
+                       class="form-control">
+                <div class="alert alert-error hidden" id="objectifPoidsError"></div>
+            </div>
+
+            <div class="info-text mt-2">
+                <p>Votre objectif doit rester réaliste (maximum 30kg de différence avec votre poids actuel)</p>
+            </div>
+        </form>
+
+        <div class="flex flex-between mt-4">
+            <a href="poignet.html" class="btn btn-outline btn-previous">Retour</a>
+            <button type="submit" form="objectifPoidsForm" class="btn btn-primary btn-next">Continuer</button>
+        </div>
+    </main>
+
+    <script src="js/quizConfig.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/fitnessCalculator.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            Navigation.init();
+
+            const objectifPoidsInput = document.getElementById('objectifPoids');
+            const objectifPoidsError = document.getElementById('objectifPoidsError');
+
+            // Récupérer les données nécessaires
+            const currentWeight = parseFloat(Navigation.getAnswer('poids'));
+            const height = parseFloat(Navigation.getAnswer('taille'));
+            const wristCircumference = parseFloat(Navigation.getAnswer('poignet'));
+            const sex = Navigation.getAnswer('sexe');
+
+            // Calculer le poids idéal avec la formule de Monnerot-Dumaine
+            const idealWeight = FitnessCalculator.calculerPoidsIdeal(wristCircumference, height, sex);
+            
+            // Afficher le poids actuel
+            if (currentWeight) {
+                document.getElementById('current-weight').textContent = `${currentWeight} kg`;
+            }
+            
+            // Afficher le poids idéal et l'analyse
+            if (idealWeight) {
+                document.getElementById('ideal-weight').textContent = `${idealWeight} kg`;
+                
+                // Analyser la différence de poids
+                const analyse = FitnessCalculator.analyserDifferencePoids(currentWeight, idealWeight);
+                
+                // Mettre à jour l'interface
+                const idealWeightInfo = document.getElementById('ideal-weight-info');
+                idealWeightInfo.textContent = analyse.difference > 0 ? `+${analyse.difference} kg` : `${analyse.difference} kg`;
+                idealWeightInfo.className = `weight-difference ${analyse.classe}`;
+                
+                // Mettre à jour la recommandation
+                document.getElementById('weight-recommendation').textContent = analyse.message;
+
+                // Sauvegarder le poids idéal
+                Navigation.saveAnswer('poids-ideal', idealWeight);
+            }
+
+            // Restaurer la valeur précédente si elle existe
+            const savedObjectifPoids = Navigation.getAnswer('objectif-poids');
+            if (savedObjectifPoids) {
+                objectifPoidsInput.value = savedObjectifPoids;
+            }
+
+            // Validation et sauvegarde
+            Navigation.validateAndProceed('objectifPoidsForm', () => {
+                const objectifPoids = parseFloat(objectifPoidsInput.value);
+                
+                // Vérification de base
+                if (isNaN(objectifPoids) || objectifPoids < 40 || objectifPoids > 200) {
+                    objectifPoidsError.textContent = 'Veuillez entrer un poids valide entre 40 kg et 200 kg';
+                    objectifPoidsError.classList.remove('hidden');
+                    return false;
+                }
+
+                // Vérification de la différence avec le poids actuel
+                const difference = Math.abs(currentWeight - objectifPoids);
+                if (difference > 30) {
+                    objectifPoidsError.textContent = 'L\'objectif doit rester réaliste (maximum 30kg de différence)';
+                    objectifPoidsError.classList.remove('hidden');
+                    return false;
+                }
+
+                // Cacher le message d'erreur
+                objectifPoidsError.classList.add('hidden');
+
+                // Sauvegarder la réponse
+                Navigation.saveAnswer('objectif-poids', objectifPoids);
+
+                return true;
+            });
+
+            // Validation en temps réel
+            objectifPoidsInput.addEventListener('input', () => {
+                const objectifPoids = parseFloat(objectifPoidsInput.value);
+                if (!isNaN(objectifPoids) && objectifPoids >= 40 && objectifPoids <= 200) {
+                    const difference = Math.abs(currentWeight - objectifPoids);
+                    if (difference <= 30) {
+                        objectifPoidsError.classList.add('hidden');
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

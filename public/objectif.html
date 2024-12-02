@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Votre Objectif - Quiz Fitness</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="progress-container">
+        <div class="progress-bar">
+            <div class="progress" role="progressbar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+    </div>
+
+    <main class="container fade-in">
+        <h1>Quel est votre objectif principal ?</h1>
+        <p class="subtitle">Choisissez l'objectif qui correspond le mieux à vos attentes</p>
+
+        <form id="objectifForm" class="grid grid-2">
+            <div class="card option-card" data-value="perte-poids">
+                <img src="images/perte-poids.svg" alt="Perte de poids" class="feature-icon" data-critical="true">
+                <h3>Perte de Poids</h3>
+                <p>Perdre du poids tout en préservant votre masse musculaire</p>
+            </div>
+
+            <div class="card option-card" data-value="prise-masse">
+                <img src="images/prise-masse.svg" alt="Prise de masse" class="feature-icon" data-critical="true">
+                <h3>Prise de Masse</h3>
+                <p>Gagner de la masse musculaire de manière saine</p>
+            </div>
+
+            <div class="card option-card" data-value="recomposition">
+                <img src="images/recomposition.svg" alt="Recomposition corporelle" class="feature-icon" data-critical="true">
+                <h3>Recomposition</h3>
+                <p>Perdre de la graisse tout en gagnant du muscle</p>
+            </div>
+
+            <div class="card option-card" data-value="maintien">
+                <img src="images/maintien.svg" alt="Maintien" class="feature-icon" data-critical="true">
+                <h3>Maintien</h3>
+                <p>Maintenir votre poids tout en améliorant votre condition</p>
+            </div>
+
+            <input type="hidden" name="objectif" id="objectifInput" required>
+        </form>
+
+        <div class="flex flex-between mt-4">
+            <a href="index.html" class="btn btn-outline btn-previous">Retour</a>
+            <button type="submit" form="objectifForm" class="btn btn-primary btn-next" disabled>Continuer</button>
+        </div>
+    </main>
+
+    <script src="js/quizConfig.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/imageOptimizer.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialisation de la navigation
+            Navigation.init();
+
+            const cards = document.querySelectorAll('.option-card');
+            const input = document.getElementById('objectifInput');
+            const submitButton = document.querySelector('.btn-next');
+
+            cards.forEach(card => {
+                card.addEventListener('click', () => {
+                    // Retirer la sélection précédente
+                    cards.forEach(c => c.classList.remove('selected'));
+                    
+                    // Ajouter la nouvelle sélection
+                    card.classList.add('selected');
+                    
+                    // Mettre à jour l'input caché
+                    input.value = card.dataset.value;
+                    
+                    // Activer le bouton
+                    submitButton.disabled = false;
+                });
+            });
+
+            // Validation et sauvegarde
+            Navigation.validateAndProceed('objectifForm', () => {
+                if (!input.value) {
+                    alert('Veuillez sélectionner votre objectif');
+                    return false;
+                }
+
+                // Sauvegarder la réponse
+                Navigation.saveAnswer('objectif', input.value);
+
+                return true;
+            });
+
+            // Restaurer la sélection précédente si elle existe
+            const savedObjectif = Navigation.getAnswer('objectif');
+            if (savedObjectif) {
+                const card = document.querySelector(`[data-value="${savedObjectif}"]`);
+                if (card) {
+                    card.click();
+                }
+            }
+        });
+    </script>
+</body>
+</html>
