@@ -3,98 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Résultats du Quiz Fitness</title>
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="css/quiz.css">
+    <title>Résultats de votre Quiz Fitness</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/quiz-results.css">
 </head>
 <body>
-    <!-- Header -->
-    <header class="main-header">
-        <div class="header-content">
-            <div class="logo">
-                <a href="/">
-                    <i class="fas fa-dumbbell"></i>
-                    FitnessQuiz
-                </a>
-            </div>
-            <nav class="main-nav">
-                <ul>
-                    <li><a href="/">Accueil</a></li>
-                    <li><a href="/quiz-start.html">Quiz</a></li>
-                    <li><a href="/login.html">Connexion</a></li>
-                    <li><a href="/signup.html" class="btn-primary">Inscription</a></li>
-                </ul>
-            </nav>
+    <div id="header-placeholder"></div>
+
+    <div class="results-container">
+        <div class="results-header">
+            <h1>Votre Profil Fitness Personnalisé</h1>
+            <p>Découvrez vos points forts, vos défis et des recommandations sur mesure pour atteindre vos objectifs de santé et de forme.</p>
         </div>
-    </header>
 
-    <!-- Main Content -->
-    <main class="results-page">
-        <div class="results-container">
-            <div class="page-header">
-                <h1 class="results-title">Vos Résultats Personnalisés</h1>
-                <p class="subtitle">Découvrez votre programme sur mesure basé sur vos objectifs et préférences</p>
+        <section class="results-section summary">
+            <div class="section-title">
+                <i class="fas fa-user-check"></i>
+                <h2>Votre Profil en Résumé</h2>
             </div>
-
-            <!-- Résumé du profil -->
-            <section class="results-section profile-section">
-                <h2><i class="fas fa-user-circle"></i> Votre Profil</h2>
-                <div class="summary-grid"></div>
-            </section>
-
-            <!-- Recommandations -->
-            <section class="results-section recommendations-section">
-                <h2><i class="fas fa-star"></i> Vos Recommandations</h2>
-                <div class="recommendations"></div>
-            </section>
-
-            <!-- Prochaines étapes -->
-            <section class="results-section next-steps-section">
-                <h2><i class="fas fa-forward"></i> Prochaines Étapes</h2>
-                <div class="next-steps"></div>
-            </section>
-        </div>
-    </main>
-
-    <!-- Footer -->
-    <footer class="main-footer">
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>FitnessQuiz</h3>
-                <p>Votre partenaire pour atteindre vos objectifs fitness</p>
-            </div>
-            <div class="footer-section">
-                <h3>Navigation</h3>
-                <ul>
-                    <li><a href="/">Accueil</a></li>
-                    <li><a href="/quiz-start.html">Quiz</a></li>
-                    <li><a href="/login.html">Connexion</a></li>
-                    <li><a href="/signup.html">Inscription</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Contact</h3>
-                <ul>
-                    <li><i class="fas fa-envelope"></i> contact@fitnessquiz.com</li>
-                    <li><i class="fas fa-phone"></i> +33 1 23 45 67 89</li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Suivez-nous</h3>
-                <div class="social-links">
-                    <a href="#"><i class="fab fa-facebook"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-youtube"></i></a>
+            <div class="summary-grid">
+                <div class="summary-item">
+                    <div class="summary-item-icon">
+                        <i class="fas fa-dumbbell"></i>
+                    </div>
+                    <div class="summary-item-text">
+                        <h3>Niveau de Fitness</h3>
+                        <p id="fitness-level">Intermédiaire</p>
+                    </div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-item-icon">
+                        <i class="fas fa-heartbeat"></i>
+                    </div>
+                    <div class="summary-item-text">
+                        <h3>Condition Physique</h3>
+                        <p id="physical-condition">Bonne</p>
+                    </div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-item-icon">
+                        <i class="fas fa-weight"></i>
+                    </div>
+                    <div class="summary-item-text">
+                        <h3>Objectif Principal</h3>
+                        <p id="main-goal">Prise de Muscle</p>
+                    </div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-item-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="summary-item-text">
+                        <h3>Temps Disponible</h3>
+                        <p id="available-time">4-5h/semaine</p>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2024 FitnessQuiz. Tous droits réservés.</p>
-        </div>
-    </footer>
+        </section>
 
-    <script src="js/quiz-results.js"></script>
+        <section class="results-section recommendations">
+            <div class="section-title">
+                <i class="fas fa-chart-line"></i>
+                <h2>Recommandations Personnalisées</h2>
+            </div>
+            <div class="recommendations">
+                <div class="recommendation-card">
+                    <div class="recommendation-icon">
+                        <i class="fas fa-running"></i>
+                    </div>
+                    <h3>Entraînement Cardio</h3>
+                    <p>2-3 séances par semaine, 30-45 minutes. Alternez course, vélo et natation.</p>
+                </div>
+                <div class="recommendation-card">
+                    <div class="recommendation-icon">
+                        <i class="fas fa-dumbbell"></i>
+                    </div>
+                    <h3>Musculation</h3>
+                    <p>3 séances par semaine. Focus sur musculation des grands groupes musculaires.</p>
+                </div>
+                <div class="recommendation-card">
+                    <div class="recommendation-icon">
+                        <i class="fas fa-apple-alt"></i>
+                    </div>
+                    <h3>Nutrition</h3>
+                    <p>Augmentez l'apport protéiné. Privilégiez les protéines maigres et les légumes.</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="/js/header-loader.js"></script>
+    <script src="/js/footer-loader.js"></script>
+    <script src="/js/quiz-results.js"></script>
 </body>
 </html>
