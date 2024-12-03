@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Résultats du Quiz Fitness</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/quiz.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="main-header">
+        <div class="header-content">
+            <div class="logo">
+                <a href="/">
+                    <i class="fas fa-dumbbell"></i>
+                    FitnessQuiz
+                </a>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="/">Accueil</a></li>
+                    <li><a href="/quiz-start.html">Quiz</a></li>
+                    <li><a href="/login.html">Connexion</a></li>
+                    <li><a href="/signup.html" class="btn-primary">Inscription</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="results-page">
+        <div class="results-container">
+            <div class="page-header">
+                <h1 class="results-title">Vos Résultats Personnalisés</h1>
+                <p class="subtitle">Découvrez votre programme sur mesure basé sur vos objectifs et préférences</p>
+            </div>
+
+            <!-- Résumé du profil -->
+            <section class="results-section profile-section">
+                <h2><i class="fas fa-user-circle"></i> Votre Profil</h2>
+                <div class="summary-grid"></div>
+            </section>
+
+            <!-- Recommandations -->
+            <section class="results-section recommendations-section">
+                <h2><i class="fas fa-star"></i> Vos Recommandations</h2>
+                <div class="recommendations"></div>
+            </section>
+
+            <!-- Prochaines étapes -->
+            <section class="results-section next-steps-section">
+                <h2><i class="fas fa-forward"></i> Prochaines Étapes</h2>
+                <div class="next-steps"></div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>FitnessQuiz</h3>
+                <p>Votre partenaire pour atteindre vos objectifs fitness</p>
+            </div>
+            <div class="footer-section">
+                <h3>Navigation</h3>
+                <ul>
+                    <li><a href="/">Accueil</a></li>
+                    <li><a href="/quiz-start.html">Quiz</a></li>
+                    <li><a href="/login.html">Connexion</a></li>
+                    <li><a href="/signup.html">Inscription</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Contact</h3>
+                <ul>
+                    <li><i class="fas fa-envelope"></i> contact@fitnessquiz.com</li>
+                    <li><i class="fas fa-phone"></i> +33 1 23 45 67 89</li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Suivez-nous</h3>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 FitnessQuiz. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <script src="js/quiz-results.js"></script>
+</body>
+</html>

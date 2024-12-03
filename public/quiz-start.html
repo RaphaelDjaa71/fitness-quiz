@@ -4,63 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quiz Fitness - Évaluation Personnalisée</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="/css/quiz.css">
-    <style>
-        .quiz-container {
-            max-width: 800px;
-            margin: 2rem auto;
-            padding: 2rem;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .quiz-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .quiz-description {
-            background-color: #f4f4f4;
-            padding: 1.5rem;
-            border-radius: 8px;
-            margin-bottom: 2rem;
-        }
-
-        .quiz-start-btn {
-            display: block;
-            width: 100%;
-            padding: 1rem;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 1.2rem;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        .quiz-start-btn:hover {
-            background-color: #45a049;
-        }
-
-        .quiz-info {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 1rem;
-            color: #666;
-        }
-    </style>
 </head>
 <body>
     <div id="header-placeholder"></div>
 
-    <main class="quiz-container">
-        <!-- Le contenu sera généré dynamiquement par quiz.js -->
-    </main>
+    <div class="quiz-container">
+        <div class="quiz-progress">
+            <div class="quiz-progress-bar"></div>
+        </div>
+        
+        <div class="quiz-content">
+            <!-- Le contenu du quiz sera injecté ici par JavaScript -->
+        </div>
+
+        <div class="quiz-navigation">
+            <button class="prev-button">
+                <i class="fas fa-arrow-left"></i> Précédent
+            </button>
+            <button class="next-button">
+                Suivant <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
 
     <div id="footer-placeholder"></div>
 
