@@ -37,20 +37,18 @@ class AuthManager {
     // Vérifier l'état de l'authentification
     async checkAuthState() {
         const currentPath = window.location.pathname;
-        const publicPages = ['/login.html', '/signup.html', '/forgot-password.html', '/reset-password.html', '/'];
+        const authPages = ['/login.html', '/signup.html', '/forgot-password.html', '/reset-password.html'];
+        const isAuthenticated = await this.verifyAuth();
         
-        if (!publicPages.includes(currentPath)) {
-            // Si on n'est pas sur une page publique, vérifier l'authentification
-            const isAuthenticated = await this.verifyAuth();
-            if (!isAuthenticated) {
-                window.location.href = '/login.html';
-            }
-        } else if (currentPath !== '/') {
-            // Si on est sur une page d'auth et qu'on est authentifié, rediriger vers l'accueil
-            const isAuthenticated = await this.verifyAuth();
-            if (isAuthenticated) {
-                window.location.href = '/';
-            }
+        // Si l'utilisateur est authentifié et essaie d'accéder aux pages d'auth
+        if (isAuthenticated && authPages.includes(currentPath)) {
+            window.location.href = '/'; // Rediriger vers l'accueil
+            return;
+        }
+        
+        // Si l'utilisateur n'est pas authentifié et essaie d'accéder à une page protégée
+        if (!isAuthenticated && !authPages.includes(currentPath) && currentPath !== '/') {
+            window.location.href = '/login.html';
         }
     }
 
