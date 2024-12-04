@@ -42,6 +42,17 @@ class FitnessQuiz {
                 defaultValue: 170
             },
             {
+                id: 'wristCircumference',
+                question: 'Quel est le tour de votre poignet (en cm) ?',
+                type: 'slider',
+                min: 14,
+                max: 21,
+                step: 1,
+                unit: 'cm',
+                defaultValue: 17,
+                description: 'Mesurez le tour de votre poignet au niveau le plus fin, sans serrer'
+            },
+            {
                 id: 'current-weight',
                 question: 'Quel est votre poids actuel ?',
                 type: 'slider',
@@ -96,14 +107,12 @@ class FitnessQuiz {
                 ]
             },
             {
-                id: 'equipment',
-                question: 'De quel équipement disposez-vous ?',
+                id: 'location',
+                question: 'Où souhaitez-vous vous entraîner ?',
                 type: 'multiple-choice',
                 options: [
-                    { id: 'none', text: 'Aucun', icon: 'fa-person' },
-                    { id: 'dumbbells', text: 'Haltères', icon: 'fa-dumbbell' },
-                    { id: 'gym', text: 'Salle de sport', icon: 'fa-dumbbell' },
-                    { id: 'home-gym', text: 'Équipement maison', icon: 'fa-house' }
+                    { id: 'gym', text: 'En salle de sport', icon: 'fa-dumbbell' },
+                    { id: 'home', text: 'À la maison', icon: 'fa-house' }
                 ]
             },
             {
@@ -222,6 +231,38 @@ class FitnessQuiz {
         slider.step = question.step;
         slider.value = value;
 
+        // Si c'est la question du poids cible et qu'on a déjà le poids actuel
+        if (question.id === 'target-weight' && this.answers['current-weight']) {
+            const currentWeight = parseFloat(this.answers['current-weight']);
+            const goal = this.answers['goal'];
+
+            if (goal === 'weight-loss') {
+                // Pour la perte de poids, le poids cible doit être inférieur au poids actuel
+                slider.max = currentWeight;
+                slider.value = Math.min(value, currentWeight);
+                
+                // Ajouter un message d'information
+                const infoMessage = document.createElement('div');
+                infoMessage.className = 'info-message';
+                infoMessage.textContent = 'Pour un objectif de perte de poids, votre poids cible doit être inférieur à votre poids actuel.';
+                sliderContainer.appendChild(infoMessage);
+            } 
+            else if (goal === 'muscle-gain') {
+                // Pour la prise de muscle, le poids cible doit être supérieur au poids actuel
+                slider.min = currentWeight;
+                slider.value = Math.max(value, currentWeight);
+                
+                // Ajouter un message d'information
+                const infoMessage = document.createElement('div');
+                infoMessage.className = 'info-message';
+                infoMessage.textContent = 'Pour un objectif de prise de muscle, votre poids cible doit être supérieur à votre poids actuel.';
+                sliderContainer.appendChild(infoMessage);
+            }
+
+            // Mettre à jour la valeur affichée
+            valueDisplay.textContent = `${slider.value}${question.unit || ''}`;
+        }
+
         slider.addEventListener('input', (e) => {
             valueDisplay.textContent = `${e.target.value}${question.unit || ''}`;
             this.answers[question.id] = parseFloat(e.target.value);
@@ -230,6 +271,14 @@ class FitnessQuiz {
         sliderContainer.appendChild(valueDisplay);
         sliderContainer.appendChild(slider);
         container.appendChild(sliderContainer);
+
+        // Ajouter la description si elle existe
+        if (question.description) {
+            const descriptionElement = document.createElement('p');
+            descriptionElement.className = 'question-description';
+            descriptionElement.textContent = question.description;
+            container.appendChild(descriptionElement);
+        }
     }
 
     selectOption(questionId, optionId) {

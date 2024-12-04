@@ -10,7 +10,9 @@ const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const compression = require('compression');
 
-const config = require('./config/config');
+// Importer les configurations
+const config = process.env.NODE_ENV === 'test' ? require('./config/test') : require('./config/config');
+
 require('./utils/database');
 const errorHandler = require('./utils/errorHandler');
 const authRoutes = require('./routes/auth');
@@ -21,8 +23,10 @@ const app = express();
 // Middleware de logging détaillé
 app.use((req, res, next) => {
     console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
-    console.log('Headers:', req.headers);
-    if (req.body) console.log('Body:', req.body);
+    if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
+        console.log('Headers:', req.headers);
+        if (req.body) console.log('Body:', req.body);
+    }
     next();
 });
 

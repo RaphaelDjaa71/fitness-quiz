@@ -56,7 +56,7 @@ router.post('/forgot-password', [
         };
 
         await transporter.sendMail(mailOptions);
-        res.json({ message: 'Email de réinitialisation envoyé' });
+        return res.status(200).json({ message: 'Email de réinitialisation envoyé' });
 
     } catch (error) {
         console.error('Erreur lors de la demande de réinitialisation:', error);
@@ -108,7 +108,7 @@ router.post('/reset-password', [
         };
 
         await transporter.sendMail(mailOptions);
-        res.json({ message: 'Mot de passe réinitialisé avec succès' });
+        return res.status(200).json({ message: 'Mot de passe réinitialisé avec succès' });
 
     } catch (error) {
         console.error('Erreur lors de la réinitialisation:', error);

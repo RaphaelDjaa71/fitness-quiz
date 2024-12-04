@@ -363,12 +363,259 @@ body {
     font-weight: 600;
 }
 
+.recommendations-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.recommendation-card {
+    background: linear-gradient(145deg, #ffffff, #f5f5f5);
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.recommendation-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.recommendation-title {
+    font-size: 1.2rem;
+    color: #333;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.recommendation-title i {
+    color: #007bff;
+}
+
+.recommendation-content {
+    color: #666;
+    line-height: 1.6;
+}
+
+.recommendation-list {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0;
+}
+
+.recommendation-list li {
+    margin-bottom: 0.5rem;
+    padding-left: 1.5rem;
+    position: relative;
+}
+
+.recommendation-list li::before {
+    content: '•';
+    color: #007bff;
+    position: absolute;
+    left: 0;
+    font-weight: bold;
+}
+
+.recommendation-emphasis {
+    color: #007bff;
+    font-weight: 500;
+}
+
 #footer-placeholder {
     padding: 2rem 0;
     margin-top: auto;
 }
 
+/* Profil et Morphotype */
+.profil-content {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+}
+
+.profile-type {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 2rem;
+    margin-bottom: 3rem;
+    padding: 2rem;
+    background: #f8f9fa;
+    border-radius: 12px;
+}
+
+.morphotype-illustration {
+    width: 200px;
+    height: 200px;
+    background-color: white;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.morphotype-illustration i {
+    color: #2196f3;
+}
+
+.morphotype-illustration i.fa-circle {
+    color: #2196f3;
+    position: relative;
+    z-index: -1;
+}
+
+.morphotype-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.profile-info {
+    flex: 1;
+}
+
+.profile-info h3 {
+    color: #2196f3;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+}
+
+.profile-info .morphotype {
+    font-size: 1.2rem;
+    color: #333;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.profile-info .description {
+    color: #666;
+    line-height: 1.6;
+}
+
+/* Programme Alimentaire */
+.meal-plan {
+    margin-top: 2rem;
+}
+
+.meal-plan h3 {
+    color: #333;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-size: 1.5rem;
+}
+
+.meals-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.meal-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.meal-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.meal-card-content {
+    padding: 1.5rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    border-left: 4px solid #2196f3;
+}
+
+.meal-title {
+    color: #2196f3;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.meal-title i {
+    color: #2196f3;
+    font-size: 1.1em;
+}
+
+.meal-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.meal-list li {
+    color: #666;
+    padding: 0.5rem 0;
+    padding-left: 1.5rem;
+    position: relative;
+    line-height: 1.4;
+}
+
+.meal-list li:before {
+    content: "•";
+    color: #2196f3;
+    position: absolute;
+    left: 0.5rem;
+}
+
 /* Responsive Design */
+@media (max-width: 768px) {
+    .meals-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .profile-type {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    
+    .profile-info {
+        text-align: center;
+    }
+    
+    .morphotype-illustration {
+        width: 150px;
+        height: 150px;
+    }
+
+    .morphotype-illustration i.fa-4x {
+        font-size: 3em;
+    }
+
+    .morphotype-illustration i.fa-3x {
+        font-size: 2.5em;
+    }
+
+    .morphotype-illustration i.fa-2x {
+        font-size: 1.5em;
+    }
+}
+
 @media (max-width: 992px) {
     .results-container {
         margin: 1rem;

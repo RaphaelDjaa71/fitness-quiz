@@ -534,6 +534,18 @@ input[type="range"]::-webkit-slider-thumb:hover {
     margin-top: 1rem;
 }
 
+/* Message d'information */
+.info-message {
+    margin-top: 1rem;
+    padding: 0.8rem;
+    background-color: #e3f2fd;
+    border-radius: 8px;
+    color: #1565c0;
+    font-size: 0.9rem;
+    text-align: center;
+    border-left: 4px solid #1565c0;
+}
+
 /* Responsive */
 @media (max-width: 992px) {
     .quiz-container {

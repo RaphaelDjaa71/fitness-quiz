@@ -83,10 +83,16 @@ userSchema.pre('save', async function(next) {
 
 // Méthode pour comparer les mots de passe
 userSchema.methods.comparePassword = async function(candidatePassword) {
+    // Vérifier si le mot de passe est défini
+    if (!this.password) {
+        return false;
+    }
+
     try {
         return await bcrypt.compare(candidatePassword, this.password);
     } catch (error) {
-        throw new Error(error);
+        console.error('Erreur lors de la comparaison des mots de passe:', error);
+        return false;
     }
 };
 

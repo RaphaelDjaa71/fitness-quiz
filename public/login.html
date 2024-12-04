@@ -75,9 +75,7 @@
                 if (response.ok) {
                     document.getElementById('successMessage').textContent = data.message;
                     document.getElementById('successMessage').style.display = 'block';
-                    setTimeout(() => {
-                        window.location.href = '/';
-                    }, 2000);
+                    window.location.href = '/';
                 } else {
                     document.getElementById('errorMessage').textContent = data.message;
                     document.getElementById('errorMessage').style.display = 'block';

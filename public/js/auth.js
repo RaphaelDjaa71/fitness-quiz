@@ -45,11 +45,11 @@ class AuthManager {
             if (!isAuthenticated) {
                 window.location.href = '/login.html';
             }
-        } else {
-            // Si on est sur une page publique et qu'on est authentifié, rediriger vers le profil
+        } else if (currentPath !== '/') {
+            // Si on est sur une page d'auth et qu'on est authentifié, rediriger vers l'accueil
             const isAuthenticated = await this.verifyAuth();
-            if (isAuthenticated && publicPages.includes(currentPath) && currentPath !== '/') {
-                window.location.href = '/profile.html';
+            if (isAuthenticated) {
+                window.location.href = '/';
             }
         }
     }
@@ -237,7 +237,7 @@ class AuthManager {
             const response = await this.sendRequest('/login', 'POST', data);
             
             if (response.ok) {
-                window.location.href = '/profile.html';
+                window.location.href = '/';
             } else {
                 const error = await response.json();
                 this.showError(form, error.message || 'Erreur de connexion');
@@ -263,7 +263,7 @@ class AuthManager {
             const response = await this.sendRequest('/signup', 'POST', data);
             
             if (response.ok) {
-                window.location.href = '/profile.html';
+                window.location.href = '/';
             } else {
                 const error = await response.json();
                 this.showError(form, error.message || 'Erreur lors de l\'inscription');
