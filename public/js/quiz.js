@@ -372,16 +372,19 @@ class FitnessQuiz {
             this.updateNavigationButtons();
             this.updateProgressBar();
         } else {
-            this.showResults();
+            this.finishQuiz();
         }
     }
 
-    showResults() {
-        // Sauvegarder les réponses
+    finishQuiz() {
+        // Sauvegarder les réponses dans le localStorage
         localStorage.setItem('quizAnswers', JSON.stringify(this.answers));
-        
-        // Rediriger vers la page des résultats
-        window.location.href = '/quiz-results.html';
+
+        // Déclencher un événement personnalisé
+        const quizCompletedEvent = new CustomEvent('quiz-completed', {
+            detail: { answers: this.answers }
+        });
+        document.dispatchEvent(quizCompletedEvent);
     }
 }
 

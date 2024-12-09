@@ -257,7 +257,7 @@
                 "exec": [
                     "// Générer un email unique à chaque test",
                     "const randomString = Math.random().toString(36).substring(7);",
-                    "pm.environment.set('testEmail', `test_${randomString}@example.com`);"
+                    "pm.environment.set('testEmail', `test_${randomString}@testdomain.io`);"
                 ]
             }
         }

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <style>
+        .primary { fill: #007AFF; }
+        .secondary { fill: #5856D6; }
+    </style>
+    <rect x="40" y="80" width="120" height="40" rx="20" class="primary"/>
+    <circle cx="40" cy="100" r="25" class="secondary"/>
+    <circle cx="160" cy="100" r="25" class="secondary"/>
+</svg>

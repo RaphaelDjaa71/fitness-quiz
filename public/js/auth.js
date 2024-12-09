@@ -37,77 +37,260 @@ class AuthManager {
     // Vérifier l'état de l'authentification
     async checkAuthState() {
         const currentPath = window.location.pathname;
-        const authPages = ['/login.html', '/signup.html', '/forgot-password.html', '/reset-password.html'];
+        const authPages = ['/login.html', '/signup.html', '/forgot-password.html', '/reset-password.html', '/admin'];
+        const publicPages = ['/admin']; // Pages accessibles sans authentification
         const isAuthenticated = await this.verifyAuth();
         
         // Si l'utilisateur est authentifié et essaie d'accéder aux pages d'auth
-        if (isAuthenticated && authPages.includes(currentPath)) {
-            window.location.href = '/'; // Rediriger vers l'accueil
+        if (isAuthenticated && authPages.includes(currentPath) && !publicPages.includes(currentPath)) {
+            window.location.href = '/quiz-start.html'; // Rediriger vers la page de démarrage du quiz
             return;
         }
         
         // Si l'utilisateur n'est pas authentifié et essaie d'accéder à une page protégée
-        if (!isAuthenticated && !authPages.includes(currentPath) && currentPath !== '/') {
+        if (!isAuthenticated && !authPages.includes(currentPath) && !publicPages.includes(currentPath) && currentPath !== '/') {
             window.location.href = '/login.html';
+        }
+    }
+
+    // Gestion des requêtes authentifiées
+    async authenticatedRequest(url, options = {}) {
+        const token = localStorage.getItem('token');
+        
+        console.log('🔐 Token récupéré:', !!token);
+        
+        if (!token) {
+            console.error('❌ Aucun token disponible');
+            throw new Error('Authentification requise');
+        }
+
+        const defaultHeaders = {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        };
+
+        const mergedOptions = {
+            ...options,
+            headers: {
+                ...defaultHeaders,
+                ...options.headers
+            }
+        };
+
+        console.log('📡 Requête authentifiée:', {
+            url,
+            method: mergedOptions.method,
+            hasToken: !!mergedOptions.headers.Authorization
+        });
+
+        try {
+            const response = await fetch(url, mergedOptions);
+            
+            console.log('📥 Réponse de la requête:', {
+                status: response.status,
+                ok: response.ok
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.error('❌ Erreur de requête:', errorData);
+                throw new Error(errorData.message || 'Erreur de requête');
+            }
+
+            return response.json();
+        } catch (error) {
+            console.error('❌ Erreur de requête authentifiée:', error);
+            throw error;
         }
     }
 
     // Vérifier l'authentification
     async verifyAuth() {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            return false;
-        }
-
         try {
-            const response = await fetch('/api/auth/me', {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
+            const token = localStorage.getItem('token');
+            console.log('🔐 Token de vérification:', !!token);
+
+            if (!token) return false;
+
+            const response = await this.authenticatedRequest('/api/auth/verify', {
+                method: 'GET'
             });
 
-            return response.ok;
+            console.log('✅ Vérification réussie:', response);
+            return true;
         } catch (error) {
-            console.error('Erreur de vérification d\'authentification:', error);
+            console.error('❌ Erreur de vérification:', error);
+            this.logout(); // Déconnexion automatique en cas d'erreur
             return false;
         }
     }
 
     // Gérer la déconnexion
-    async handleLogout() {
+    logout() {
         try {
-            const token = localStorage.getItem('token');
-            const response = await fetch('/api/auth/logout', {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-
-            if (response.ok) {
-                this.clearAuthData();
-                window.location.href = '/login.html';
-            }
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = '/login.html';
         } catch (error) {
-            console.error('Erreur lors de la déconnexion:', error);
+            console.error('❌ Erreur de déconnexion:', error);
         }
     }
 
-    // Nettoyer les données d'authentification
-    clearAuthData() {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        sessionStorage.clear();
-        
-        // Réinitialiser tous les formulaires
-        document.querySelectorAll('form').forEach(form => {
-            form.reset();
-        });
-        
-        // Effacer les messages d'erreur/succès
-        document.querySelectorAll('.alert').forEach(alert => {
-            alert.style.display = 'none';
-        });
+    // Gestion de la connexion
+    async handleLogin(form) {
+        try {
+            this.showLoading(form);
+            
+            // Récupérer les données du formulaire
+            const formData = new FormData(form);
+            const email = formData.get('email');
+            const password = formData.get('password');
+
+            console.log('🔐 Tentative de connexion', { email });
+
+            // Envoi de la requête de connexion
+            const response = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email, password })
+            });
+
+            // Analyser la réponse
+            const result = await response.json();
+            console.log('📡 Réponse du serveur:', result);
+
+            if (response.ok && result.token) {
+                // Stocker le token
+                localStorage.setItem('token', result.token);
+                
+                // Stocker les infos utilisateur
+                if (result.user) {
+                    localStorage.setItem('user', JSON.stringify(result.user));
+                }
+                
+                // Redirection
+                window.location.href = '/quiz-start.html';
+            } else {
+                // Afficher l'erreur
+                this.showError(form, result.message || 'Erreur de connexion');
+            }
+        } catch (error) {
+            console.error('❌ Erreur de connexion:', error);
+            this.showError(form, 'Erreur de connexion au serveur');
+        } finally {
+            this.hideLoading(form);
+        }
+    }
+
+    // Gestion de l'inscription
+    async handleSignup(form) {
+        const formData = new FormData(form);
+        const data = {
+            name: formData.get('name'),
+            email: formData.get('email'),
+            password: formData.get('password')
+        };
+
+        try {
+            this.showLoading(form);
+            const response = await fetch('/api/auth/signup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            
+            const result = await response.json();
+            
+            if (response.ok) {
+                this.showSuccess(form, 'Inscription réussie ! Un email de vérification a été envoyé à votre adresse. Veuillez vérifier votre email avant de vous connecter.');
+                form.reset();
+                
+                // Redirection vers la page de connexion après 3 secondes
+                setTimeout(() => {
+                    window.location.href = '/login.html';
+                }, 3000);
+            } else {
+                const signupStatus = document.getElementById('signup-status');
+                const errorMessage = document.getElementById('error-message');
+                errorMessage.textContent = result.message || 'Erreur lors de l\'inscription';
+                errorMessage.style.display = 'block';
+                
+                // Masquer le message après 5 secondes
+                setTimeout(() => {
+                    errorMessage.style.display = 'none';
+                }, 5000);
+            }
+        } catch (error) {
+            console.error('❌ Erreur lors de l\'inscription:', error);
+            this.showError(form, 'Erreur de connexion au serveur');
+        } finally {
+            this.hideLoading(form);
+        }
+    }
+
+    // Gestion de la mise à jour du profil
+    async handleProfileUpdate(form) {
+        const formData = new FormData(form);
+        const data = {
+            name: formData.get('name'),
+            email: formData.get('email')
+        };
+
+        if (formData.get('currentPassword')) {
+            data.currentPassword = formData.get('currentPassword');
+            data.newPassword = formData.get('newPassword');
+        }
+
+        try {
+            this.showLoading(form);
+            const response = await this.authenticatedRequest('/profile', {
+                method: 'PUT',
+                body: JSON.stringify(data)
+            });
+            
+            if (response.ok) {
+                this.showSuccess(form, 'Profil mis à jour avec succès');
+            } else {
+                const error = await response.json();
+                this.showError(form, error.message || 'Erreur lors de la mise à jour');
+            }
+        } catch (error) {
+            this.showError(form, 'Erreur de connexion au serveur');
+        } finally {
+            this.hideLoading(form);
+        }
+    }
+
+    // Gestion de la réinitialisation du mot de passe
+    async handlePasswordReset(form) {
+        const formData = new FormData(form);
+        const data = {
+            email: formData.get('email')
+        };
+
+        try {
+            this.showLoading(form);
+            const response = await this.authenticatedRequest('/forgot-password', {
+                method: 'POST',
+                body: JSON.stringify(data)
+            });
+            
+            if (response.ok) {
+                this.showSuccess(form, 'Instructions envoyées par email');
+                form.reset();
+            } else {
+                const error = await response.json();
+                this.showError(form, error.message || 'Erreur lors de la réinitialisation');
+            }
+        } catch (error) {
+            this.showError(form, 'Erreur de connexion au serveur');
+        } finally {
+            this.hideLoading(form);
+        }
     }
 
     // Configuration des écouteurs d'événements
@@ -141,9 +324,10 @@ class AuthManager {
 
         switch (field) {
             case 'name':
-                if (value.length < 2) {
+                const nameRegex = /^[a-zA-ZÀ-ÿ\s'-]{2,}$/;
+                if (!nameRegex.test(value)) {
                     isValid = false;
-                    message = 'Le nom doit contenir au moins 2 caractères';
+                    message = '';
                 }
                 break;
 
@@ -151,7 +335,7 @@ class AuthManager {
                 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                 if (!emailRegex.test(value)) {
                     isValid = false;
-                    message = 'Email invalide';
+                    message = '';
                 }
                 break;
 
@@ -159,7 +343,9 @@ class AuthManager {
                 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
                 if (!passwordRegex.test(value)) {
                     isValid = false;
-                    message = 'Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule et un chiffre';
+                    if (!isValid) {
+                        message = '';
+                    }
                 }
                 break;
         }
@@ -221,124 +407,23 @@ class AuthManager {
         return isValid;
     }
 
-    // Gestion de la connexion
-    async handleLogin(form) {
-        const formData = new FormData(form);
-        const data = {
-            email: formData.get('email'),
-            password: formData.get('password'),
-            rememberMe: formData.get('rememberMe') === 'on'
-        };
-
-        try {
-            this.showLoading(form);
-            const response = await this.sendRequest('/login', 'POST', data);
-            
-            if (response.ok) {
-                window.location.href = '/';
-            } else {
-                const error = await response.json();
-                this.showError(form, error.message || 'Erreur de connexion');
-            }
-        } catch (error) {
-            this.showError(form, 'Erreur de connexion au serveur');
-        } finally {
-            this.hideLoading(form);
-        }
-    }
-
-    // Gestion de l'inscription
-    async handleSignup(form) {
-        const formData = new FormData(form);
-        const data = {
-            name: formData.get('name'),
-            email: formData.get('email'),
-            password: formData.get('password')
-        };
-
-        try {
-            this.showLoading(form);
-            const response = await this.sendRequest('/signup', 'POST', data);
-            
-            if (response.ok) {
-                window.location.href = '/';
-            } else {
-                const error = await response.json();
-                this.showError(form, error.message || 'Erreur lors de l\'inscription');
-            }
-        } catch (error) {
-            this.showError(form, 'Erreur de connexion au serveur');
-        } finally {
-            this.hideLoading(form);
-        }
-    }
-
-    // Gestion de la mise à jour du profil
-    async handleProfileUpdate(form) {
-        const formData = new FormData(form);
-        const data = {
-            name: formData.get('name'),
-            email: formData.get('email')
-        };
-
-        if (formData.get('currentPassword')) {
-            data.currentPassword = formData.get('currentPassword');
-            data.newPassword = formData.get('newPassword');
-        }
-
-        try {
-            this.showLoading(form);
-            const response = await this.sendRequest('/profile', 'PUT', data);
-            
-            if (response.ok) {
-                this.showSuccess(form, 'Profil mis à jour avec succès');
-            } else {
-                const error = await response.json();
-                this.showError(form, error.message || 'Erreur lors de la mise à jour');
-            }
-        } catch (error) {
-            this.showError(form, 'Erreur de connexion au serveur');
-        } finally {
-            this.hideLoading(form);
-        }
-    }
-
-    // Gestion de la réinitialisation du mot de passe
-    async handlePasswordReset(form) {
-        const formData = new FormData(form);
-        const data = {
-            email: formData.get('email')
-        };
-
-        try {
-            this.showLoading(form);
-            const response = await this.sendRequest('/forgot-password', 'POST', data);
-            
-            if (response.ok) {
-                this.showSuccess(form, 'Instructions envoyées par email');
-                form.reset();
-            } else {
-                const error = await response.json();
-                this.showError(form, error.message || 'Erreur lors de la réinitialisation');
-            }
-        } catch (error) {
-            this.showError(form, 'Erreur de connexion au serveur');
-        } finally {
-            this.hideLoading(form);
-        }
-    }
-
     // Envoi des requêtes API
     async sendRequest(endpoint, method, data) {
-        const csrfToken = getCsrfToken();
-        const response = await fetch(this.baseUrl + endpoint, {
+        const headers = {
+            'Content-Type': 'application/json'
+        };
+
+        // Ajouter le token d'authentification si disponible
+        const token = localStorage.getItem('token');
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+        }
+
+        const response = await fetch(`${this.baseUrl}${endpoint}`, {
             method,
-            headers: {
-                'Content-Type': 'application/json',
-                'CSRF-Token': csrfToken
-            },
-            credentials: 'include',
-            body: JSON.stringify(data)
+            headers,
+            body: JSON.stringify(data),
+            credentials: 'include' // Inclure les cookies
         });
 
         return response;
@@ -360,32 +445,40 @@ class AuthManager {
 
     // Affichage des erreurs
     showError(form, message) {
-        const errorDiv = form.querySelector('.alert-error') || document.createElement('div');
-        errorDiv.className = 'alert alert-error';
-        errorDiv.textContent = message;
+        const notificationContainer = document.getElementById('notification-container');
+        const errorNotification = notificationContainer.querySelector('.notification.error');
         
-        if (!form.querySelector('.alert-error')) {
-            form.insertBefore(errorDiv, form.firstChild);
-        }
-
+        errorNotification.textContent = message;
+        errorNotification.style.display = 'block';
+        
         setTimeout(() => {
-            errorDiv.remove();
+            errorNotification.style.display = 'none';
         }, 5000);
     }
 
     // Affichage des succès
     showSuccess(form, message) {
-        const successDiv = form.querySelector('.alert-success') || document.createElement('div');
-        successDiv.className = 'alert alert-success';
-        successDiv.textContent = message;
+        const notificationContainer = document.getElementById('notification-container');
+        const successNotification = notificationContainer.querySelector('.notification.success');
         
-        if (!form.querySelector('.alert-success')) {
-            form.insertBefore(successDiv, form.firstChild);
+        successNotification.textContent = message;
+        successNotification.style.display = 'block';
+        
+        setTimeout(() => {
+            successNotification.style.display = 'none';
+        }, 5000);
+    }
+
+    // Récupération des données du formulaire
+    getFormData(form) {
+        const formData = new FormData(form);
+        const data = {};
+
+        for (const [key, value] of formData.entries()) {
+            data[key] = value;
         }
 
-        setTimeout(() => {
-            successDiv.remove();
-        }, 5000);
+        return data;
     }
 }
 
@@ -489,7 +582,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (logoutBtn) {
         logoutBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            authManager.handleLogout();
+            authManager.logout();
         });
     }
 });

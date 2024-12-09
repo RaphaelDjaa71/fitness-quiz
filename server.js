@@ -17,6 +17,7 @@ require('./utils/database');
 const errorHandler = require('./utils/errorHandler');
 const authRoutes = require('./routes/auth');
 const quizRoutes = require('./routes/quiz');
+const adminRoutes = require('./routes/admin');  // Nouvelle route admin
 
 const app = express();
 
@@ -75,11 +76,22 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Routes API avec logging
 app.use('/api/auth', (req, res, next) => {
-    console.log('🔐 Requête Auth:', req.method, req.url, req.body);
+    console.log(' Requête Auth:', req.method, req.url, req.body);
     next();
 }, authRoutes);
 
 app.use('/api/quiz', quizRoutes);
+app.use('/api/admin', adminRoutes);  // Ajouter la route admin
+
+// Route spécifique pour la page admin
+app.get('/admin', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'admin/dashboard.html'));
+});
+
+// Redirection de l'ancienne URL vers la nouvelle
+app.get('/admin.html', (req, res) => {
+    res.redirect(301, '/admin/dashboard.html');
+});
 
 // Route par défaut pour le SPA
 app.get('*', (req, res) => {
@@ -110,7 +122,7 @@ async function connectDB() {
             useNewUrlParser: true,
             useUnifiedTopology: true
         });
-        console.log('✅ Connexion à MongoDB réussie');
+        console.log(' Connexion à MongoDB réussie');
         
         // Vérifier la connexion
         const admin = new mongoose.mongo.Admin(mongoose.connection.db);
@@ -121,7 +133,7 @@ async function connectDB() {
             connections: serverStatus.connections
         });
     } catch (err) {
-        console.error('❌ Erreur de connexion MongoDB:', {
+        console.error(' Erreur de connexion MongoDB:', {
             message: err.message,
             code: err.code,
             uri: process.env.MONGODB_URI
@@ -148,7 +160,7 @@ const port = config.server.port;
 
 connectDB().then(() => {
     app.listen(port, () => {
-        console.log('🚀 Serveur démarré:');
+        console.log(' Serveur démarré:');
         console.log(`   - Port: ${port}`);
         console.log(`   - Mode: ${process.env.NODE_ENV || 'development'}`);
         console.log(`   - Dossier statique: ${path.join(__dirname, 'public')}`);

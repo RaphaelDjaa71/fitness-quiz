@@ -2,185 +2,151 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const rateLimit = require('express-rate-limit');
 
+// Middleware d'authentification principal
 const auth = async (req, res, next) => {
     try {
-        // Mode test : bypass de l'authentification
-        if (process.env.NODE_ENV === 'test') {
-            console.log('🧪 Mode test : Authentification simulée');
-            req.user = {
-                _id: '000000000000000000000001',
-                name: 'Test User',
-                email: 'test@example.com',
-                isActive: true,
-                tokens: ['test-token']
-            };
-            req.token = 'test-token';
-            return next();
-        }
-
-        console.log('🔐 Vérification de l\'authentification');
-        
-        // Récupérer le token
+        // Récupérer le token depuis le cookie ou l'en-tête Authorization
         const token = req.cookies.token || 
-                     req.header('Authorization')?.replace('Bearer ', '') ||
-                     null;
+                      req.header('Authorization')?.replace('Bearer ', '');
 
         if (!token) {
-            console.log('❌ Aucun token trouvé');
             return res.status(401).json({
                 status: 'error',
-                message: 'Veuillez vous connecter'
+                message: 'Authentification requise'
             });
         }
 
-        console.log('🔍 Token trouvé, vérification...');
+        // Vérifier et décoder le token
+        const decoded = jwt.verify(
+            token, 
+            process.env.JWT_SECRET || 'test_secret_key'
+        );
 
-        // Vérifier le token
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'test_secret_key');
-        console.log('✅ Token décodé pour l\'utilisateur:', decoded._id);
-        
-        // Vérifier si l'utilisateur existe toujours et est actif
-        const user = await User.findOne({ 
-            _id: decoded._id,
-            isActive: true 
-        });
+        // Rechercher l'utilisateur
+        const user = await User.findById(decoded.userId);
 
         if (!user) {
-            console.log('❌ Utilisateur non trouvé ou inactif:', decoded._id);
             return res.status(401).json({
                 status: 'error',
-                message: 'Session invalide'
+                message: 'Utilisateur non trouvé'
             });
         }
 
-        // Vérifier si le token n'a pas été révoqué
-        const isValidToken = user.tokens.includes(token);
-        if (!isValidToken) {
-            console.log('❌ Token révoqué pour l\'utilisateur:', user._id);
-            return res.status(401).json({
+        // Vérifier si le compte est actif et vérifié
+        if (!user.isActive || !user.isVerified) {
+            return res.status(403).json({
                 status: 'error',
-                message: 'Session expirée'
+                message: 'Compte inactif ou non vérifié'
             });
         }
 
-        console.log('✅ Authentification réussie pour:', user.email);
-
-        // Ajouter l'utilisateur et le token à la requête
+        // Attacher l'utilisateur à la requête
         req.token = token;
         req.user = user;
-        
         next();
+
     } catch (error) {
-        console.error('❌ Erreur d\'authentification:', {
-            message: error.message,
-            stack: process.env.NODE_ENV === 'development' ? error.stack : undefined,
-            path: req.path,
-            method: req.method
-        });
-        
-        // Nettoyer le cookie si présent
-        res.clearCookie('token');
-        
-        // Envoyer une réponse appropriée selon le type d'erreur
+        console.error('Erreur d\'authentification:', error);
+
+        // Gestion spécifique des erreurs de token
         if (error.name === 'JsonWebTokenError') {
             return res.status(401).json({
                 status: 'error',
-                message: 'Session invalide'
-            });
-        } else if (error.name === 'TokenExpiredError') {
-            return res.status(401).json({
-                status: 'error',
-                message: 'Session expirée'
+                message: 'Token invalide'
             });
         }
-        
-        res.status(401).json({ 
+
+        if (error.name === 'TokenExpiredError') {
+            return res.status(401).json({
+                status: 'error',
+                message: 'Token expiré'
+            });
+        }
+
+        res.status(500).json({
             status: 'error',
-            message: 'Veuillez vous connecter',
-            details: process.env.NODE_ENV === 'development' ? error.message : undefined
+            message: 'Erreur serveur lors de l\'authentification'
         });
     }
 };
 
-// Middleware pour les routes qui nécessitent une authentification facultative
+// Middleware d'authentification optionnel
 const optionalAuth = async (req, res, next) => {
     try {
-        // Mode test : bypass de l'authentification
-        if (process.env.NODE_ENV === 'test') {
-            req.user = {
-                _id: '000000000000000000000001',
-                name: 'Test User',
-                email: 'test@example.com',
-                isActive: true,
-                tokens: ['test-token']
-            };
-            req.token = 'test-token';
-            return next();
-        }
-
+        // Récupérer le token depuis le cookie ou l'en-tête Authorization
         const token = req.cookies.token || 
-                     req.header('Authorization')?.replace('Bearer ', '') ||
-                     null;
-
+                      req.header('Authorization')?.replace('Bearer ', '');
+        
         if (token) {
-            const decoded = jwt.verify(token, process.env.JWT_SECRET || 'test_secret_key');
-            const user = await User.findOne({ 
-                _id: decoded._id,
-                isActive: true 
-            });
+            try {
+                // Vérifier et décoder le token
+                const decoded = jwt.verify(
+                    token, 
+                    process.env.JWT_SECRET || 'test_secret_key'
+                );
 
-            if (user && user.tokens.includes(token)) {
-                req.token = token;
-                req.user = user;
+                // Rechercher l'utilisateur
+                const user = await User.findById(decoded.userId);
+
+                if (user) {
+                    req.user = user;
+                    req.token = token;
+                    req.isAuthenticated = true;
+                } else {
+                    req.isAuthenticated = false;
+                }
+            } catch (error) {
+                req.isAuthenticated = false;
             }
+        } else {
+            req.isAuthenticated = false;
         }
 
         next();
     } catch (error) {
-        // En cas d'erreur, continuer sans authentification
+        console.error('Erreur d\'authentification optionnelle:', error);
         next();
     }
 };
 
-// Middleware pour vérifier les rôles
-const checkRole = (roles) => {
-    return (req, res, next) => {
-        // Mode test : bypass de la vérification des rôles
-        if (process.env.NODE_ENV === 'test') {
-            return next();
-        }
-
-        if (!req.user) {
-            return res.status(401).json({
-                status: 'error',
-                message: 'Veuillez vous connecter'
-            });
-        }
-
-        if (!roles.includes(req.user.role)) {
-            return res.status(403).json({
-                status: 'error',
-                message: 'Accès non autorisé'
-            });
-        }
-
-        next();
-    };
-};
-
-// Middleware pour la limitation des requêtes
+// Middleware de limitation de requêtes pour prévenir les attaques par force brute
 const authLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: process.env.NODE_ENV === 'test' ? 0 : 5, // Désactiver en mode test
+    max: 100, // Limite de 100 requêtes par fenêtre
+    standardHeaders: true, // Retourne les informations de limite dans les en-têtes `RateLimit-*`
+    legacyHeaders: false, // Désactiver les en-têtes `X-RateLimit-*`
     message: {
         status: 'error',
-        message: 'Trop de tentatives de connexion. Veuillez réessayer dans 15 minutes.'
+        message: 'Trop de tentatives. Veuillez réessayer plus tard.'
     }
 });
+
+// Middleware pour les rôles admin
+const adminAuth = async (req, res, next) => {
+    try {
+        // D'abord, passer par l'authentification principale
+        await auth(req, res, async () => {
+            // Vérifier si l'utilisateur est un admin
+            if (req.user.role !== 'admin') {
+                return res.status(403).json({
+                    status: 'error',
+                    message: 'Accès refusé. Droits administrateur requis.'
+                });
+            }
+            next();
+        });
+    } catch (error) {
+        console.error('Erreur d\'authentification admin:', error);
+        res.status(500).json({
+            status: 'error',
+            message: 'Erreur serveur lors de l\'authentification admin'
+        });
+    }
+};
 
 module.exports = {
     auth,
     optionalAuth,
-    checkRole,
+    adminAuth,
     authLimiter
 };

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Utilisateurs - FitnessWithRaph</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/admin/css/admin.css">
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body class="admin-body" data-required-roles="admin">
+    <div class="admin-layout">
+        <!-- Sidebar (même que dashboard.html) -->
+        <aside class="admin-sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-dumbbell"></i>
+                <h1>Admin Panel</h1>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="/admin/dashboard.html" class="nav-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/admin/users.html" class="nav-item active">
+                    <i class="fas fa-users"></i>
+                    <span>Utilisateurs</span>
+                </a>
+                <a href="/admin/programs.html" class="nav-item">
+                    <i class="fas fa-dumbbell"></i>
+                    <span>Programmes</span>
+                </a>
+                <a href="/admin/quiz.html" class="nav-item">
+                    <i class="fas fa-tasks"></i>
+                    <span>Quiz</span>
+                </a>
+                <a href="/admin/settings.html" class="nav-item">
+                    <i class="fas fa-cog"></i>
+                    <span>Paramètres</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <!-- Top Bar (même que dashboard.html) -->
+            <header class="admin-header">
+                <div class="header-search">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="userSearch" placeholder="Rechercher un utilisateur...">
+                </div>
+                <div class="header-actions">
+                    <button class="btn-icon" id="notificationsBtn">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </button>
+                    <div class="admin-profile">
+                        <img src="/images/default-avatar.png" alt="Admin" class="profile-avatar">
+                        <div class="profile-info">
+                            <span class="profile-name">Admin</span>
+                            <button class="btn-text" onclick="logout()">
+                                <i class="fas fa-sign-out-alt"></i> Déconnexion
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Users Content -->
+            <div class="users-content">
+                <!-- Users Header -->
+                <div class="content-header">
+                    <h2>Gestion des Utilisateurs</h2>
+                    <button class="btn btn-primary" onclick="showAddUserModal()">
+                        <i class="fas fa-plus"></i> Ajouter un Utilisateur
+                    </button>
+                </div>
+
+                <!-- Users Filters -->
+                <div class="filters-bar">
+                    <div class="filters-group">
+                        <label>Rôle:</label>
+                        <select id="roleFilter">
+                            <option value="">Tous</option>
+                            <option value="user">Utilisateur</option>
+                            <option value="admin">Admin</option>
+                            <option value="trainer">Coach</option>
+                        </select>
+                    </div>
+                    <div class="filters-group">
+                        <label>Statut:</label>
+                        <select id="statusFilter">
+                            <option value="">Tous</option>
+                            <option value="active">Actif</option>
+                            <option value="inactive">Inactif</option>
+                            <option value="pending">En attente</option>
+                        </select>
+                    </div>
+                    <div class="filters-group">
+                        <label>Trier par:</label>
+                        <select id="sortFilter">
+                            <option value="name">Nom</option>
+                            <option value="date">Date d'inscription</option>
+                            <option value="last_login">Dernière connexion</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Users Table -->
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <input type="checkbox" id="selectAll">
+                                </th>
+                                <th>Utilisateur</th>
+                                <th>Email</th>
+                                <th>Rôle</th>
+                                <th>Statut</th>
+                                <th>Dernière Connexion</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <!-- Users will be inserted here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination">
+                    <button class="btn-icon" id="prevPage">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <span id="pageInfo">Page 1 sur 1</span>
+                    <button class="btn-icon" id="nextPage">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add/Edit User Modal -->
+    <div class="modal" id="userModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Ajouter un Utilisateur</h3>
+                <button class="btn-icon" onclick="closeUserModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="userForm">
+                <div class="form-group">
+                    <label for="userName">Nom</label>
+                    <input type="text" id="userName" required>
+                </div>
+                <div class="form-group">
+                    <label for="userEmail">Email</label>
+                    <input type="email" id="userEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="userRole">Rôle</label>
+                    <select id="userRole" required>
+                        <option value="user">Utilisateur</option>
+                        <option value="admin">Admin</option>
+                        <option value="trainer">Coach</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="userStatus">Statut</label>
+                    <select id="userStatus" required>
+                        <option value="active">Actif</option>
+                        <option value="inactive">Inactif</option>
+                        <option value="pending">En attente</option>
+                    </select>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeUserModal()">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Sauvegarder</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal" id="deleteModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Confirmer la Suppression</h3>
+                <button class="btn-icon" onclick="closeDeleteModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Êtes-vous sûr de vouloir supprimer cet utilisateur ? Cette action est irréversible.</p>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeDeleteModal()">Annuler</button>
+                <button class="btn btn-danger" onclick="confirmDelete()">Supprimer</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/role-service.js"></script>
+    <script src="/admin/js/admin-users.js"></script>
+</body>
+</html>

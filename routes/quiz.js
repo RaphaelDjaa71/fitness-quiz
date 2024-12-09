@@ -8,20 +8,92 @@ const router = express.Router();
 router.use(auth);
 
 // Sauvegarder les résultats du quiz
-router.post('/results', async (req, res) => {
+router.post('/save-results', async (req, res) => {
     try {
+        const { userId, answers, completedAt } = req.body;
+
+        // Créer un nouveau résultat de quiz
         const quizResult = new QuizResult({
-            userId: req.user._id,
-            answers: req.body.answers,
-            recommendations: req.body.recommendations
+            user: userId,
+            answers: answers,
+            completedAt: completedAt
         });
 
         await quizResult.save();
+
         res.status(201).json(quizResult);
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        console.error('Erreur lors de la sauvegarde des résultats:', error);
+        res.status(500).json({ message: 'Erreur lors de la sauvegarde des résultats' });
     }
 });
+
+// Générer un programme personnalisé
+router.post('/generate-program', async (req, res) => {
+    try {
+        const answers = req.body;
+
+        // Logique de génération de programme personnalisé
+        const program = generatePersonalizedProgram(answers);
+
+        res.status(200).json(program);
+    } catch (error) {
+        console.error('Erreur lors de la génération du programme:', error);
+        res.status(500).json({ message: 'Erreur lors de la génération du programme' });
+    }
+});
+
+// Fonction de génération de programme personnalisé
+function generatePersonalizedProgram(answers) {
+    // Logique complexe basée sur les réponses du quiz
+    const program = {
+        goal: getGoalProgram(answers.goal),
+        workouts: getWorkoutPlan(answers),
+        nutrition: getNutritionPlan(answers),
+        duration: '12 semaines'
+    };
+
+    return program;
+}
+
+function getGoalProgram(goal) {
+    switch (goal) {
+        case 'weight-loss':
+            return 'Programme de perte de poids';
+        case 'muscle-gain':
+            return 'Programme de prise de muscle';
+        case 'fitness':
+            return 'Programme de remise en forme générale';
+        default:
+            return 'Programme personnalisé';
+    }
+}
+
+function getWorkoutPlan(answers) {
+    // Générer un plan d'entraînement basé sur l'expérience, l'objectif et la fréquence
+    return [
+        { day: 1, type: 'Cardio', duration: 45 },
+        { day: 2, type: 'Force', duration: 60 },
+        { day: 3, type: 'Repos actif' }
+    ];
+}
+
+function getNutritionPlan(answers) {
+    // Générer un plan nutritionnel basé sur l'objectif et le régime
+    return {
+        calories: calculateCalories(answers),
+        macronutrients: {
+            protein: '30%',
+            carbs: '40%',
+            fat: '30%'
+        }
+    };
+}
+
+function calculateCalories(answers) {
+    // Calcul complexe basé sur l'âge, le sexe, le poids, l'activité
+    return 2000; // Exemple simplifié
+}
 
 // Récupérer tous les résultats de quiz d'un utilisateur
 router.get('/results', async (req, res) => {

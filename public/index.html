@@ -3,48 +3,240 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FitnessWithRaph - Votre Coach Personnel</title>
+    <title>FitnessWithRaph - Votre Programme Fitness Personnalisé</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/home.css">
 </head>
 <body>
     <div id="header-placeholder"></div>
 
-    <main class="container">
-        <section class="hero">
-            <h1>Découvrez votre potentiel fitness</h1>
-            <p>Commencez votre voyage vers une meilleure santé avec notre quiz personnalisé</p>
-            <div class="cta-buttons">
-                <a href="/quiz-start.html" class="btn btn-primary btn-large">
-                    <i class="fas fa-play"></i> Commencer le Quiz
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <span class="hero-badge">Programme Fitness Personnalisé</span>
+            <h1 class="hero-title">Transformez Votre Corps et Votre Vie</h1>
+            <p class="hero-subtitle">
+                Un programme d'entraînement sur mesure<br>
+                basé sur vos objectifs, votre niveau et vos préférences.<br>
+            </p>
+            <div class="cta-container">
+                <a href="/quiz-start.html" class="cta-button">
+                    <span class="cta-text">Commencer le Quiz</span>
+                    <span class="cta-icon"><i class="fas fa-arrow-right"></i></span>
                 </a>
-                <button id="learnMoreBtn" class="btn btn-secondary btn-large">
-                    <i class="fas fa-info-circle"></i> En savoir plus
-                </button>
+                <p class="time-estimate"><i class="far fa-clock"></i>   Votre programme personnalisé en 5 minutes.</p>                
             </div>
-        </section>
-    </main>
+        </div>
+        <div class="hero-media">
+            <div class="hero-image"></div>
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <span class="stat-number">100+</span>
+                    <span class="stat-label">Utilisateurs Satisfaits</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">88%</span>
+                    <span class="stat-label">Taux de Réussite</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section class="benefits-section">
+        <div class="section-header">
+            <h2>Pourquoi Choisir Notre Programme ?</h2>
+            <p>Des solutions adaptées à vos besoins spécifiques</p>
+        </div>
+        <div class="benefits-grid">
+            <div class="benefit-card">
+                <div class="benefit-icon">
+                    <i class="fas fa-dumbbell"></i>
+                </div>
+                <h3>Programme Sur Mesure</h3>
+                <p>Exercices adaptés à votre niveau et vos objectifs</p>
+                <ul class="benefit-features">
+                    <li><i class="fas fa-check"></i> Adapté à votre niveau</li>
+                    <li><i class="fas fa-check"></i> Progression optimisée</li>
+                    <li><i class="fas fa-check"></i> Exercices vidéo détaillés</li>
+                </ul>
+            </div>
+            <div class="benefit-card">
+                <div class="benefit-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3>Suivi Personnalisé</h3>
+                <p>Suivez vos progrès et adaptez votre programme</p>
+                <ul class="benefit-features">
+                    <li><i class="fas fa-check"></i> Statistiques détaillées</li>
+                    <li><i class="fas fa-check"></i> Ajustements automatiques</li>
+                    <li><i class="fas fa-check"></i> Objectifs personnalisés</li>
+                </ul>
+            </div>
+            <div class="benefit-card">
+                <div class="benefit-icon">
+                    <i class="fas fa-medal"></i>
+                </div>
+                <h3>Résultats Garantis</h3>
+                <p>Une méthode prouvée pour atteindre vos objectifs</p>
+                <ul class="benefit-features">
+                    <li><i class="fas fa-check"></i> Satisfaction garantie</li>
+                    <li><i class="fas fa-check"></i> Support continu</li>
+                    <li><i class="fas fa-check"></i> Communauté active</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section">
+        <div class="section-header">
+            <h2>Comment ça marche ?</h2>
+            <p>Un processus simple et efficace en 3 étapes</p>
+        </div>
+        <div class="features-container">
+            <div class="feature-block">
+                <div class="feature-content">
+                    <div class="feature-number">01</div>
+                    <h3>Quiz Personnalisé</h3>
+                    <p>Répondez à quelques questions sur vos objectifs, votre niveau et vos préférences.</p>
+                    <ul class="feature-list">
+                        <li>Analyse de vos objectifs</li>
+                        <li>Évaluation de votre niveau</li>
+                        <li>Préférences d'entraînement</li>
+                    </ul>
+                </div>
+                <div class="feature-image">
+                    <img src="/images/sections/workout.jpg" alt="Quiz personnalisé" loading="lazy">
+                </div>
+            </div>
+
+            <div class="feature-block reverse">
+                <div class="feature-content">
+                    <div class="feature-number">02</div>
+                    <h3>Programme Sur Mesure</h3>
+                    <p>Recevez un programme d'entraînement et de nutrition adapté à vos besoins.</p>
+                    <ul class="feature-list">
+                        <li>Exercices détaillés</li>
+                        <li>Plan nutritionnel</li>
+                        <li>Planning hebdomadaire</li>
+                    </ul>
+                </div>
+                <div class="feature-image">
+                    <img src="/images/sections/nutrition.jpg" alt="Programme sur mesure" loading="lazy">
+                </div>
+            </div>
+
+            <div class="feature-block">
+                <div class="feature-content">
+                    <div class="feature-number">03</div>
+                    <h3>Suivi des Progrès</h3>
+                    <p>Suivez vos progrès et adaptez votre programme pour des résultats optimaux.</p>
+                    <ul class="feature-list">
+                        <li>Statistiques détaillées</li>
+                        <li>Ajustements automatiques</li>
+                        <li>Support continu</li>
+                    </ul>
+                </div>
+                <div class="feature-image">
+                    <img src="/images/sections/progress.jpg" alt="Suivi des progrès" loading="lazy">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials-section">
+        <div class="section-header">
+            <h2>Ce que disent nos utilisateurs</h2>
+            <p>Des résultats concrets et durables</p>
+        </div>
+        <div class="testimonials-grid">
+            <div class="testimonial-card">
+                <div class="testimonial-avatar">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <p class="testimonial-text">"J'ai obtenu des résultats incroyables en seulement 3 mois. Le programme est vraiment adapté à mes besoins."</p>
+                <div class="testimonial-author">
+                    <strong>Marie L.</strong>
+                    <span>-15kg en 3 mois</span>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-avatar">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <p class="testimonial-text">"Le suivi personnalisé fait toute la différence. Je me sens plus fort et en meilleure santé."</p>
+                <div class="testimonial-author">
+                    <strong>Thomas M.</strong>
+                    <span>+10kg de muscle</span>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-avatar">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <p class="testimonial-text">"Enfin un programme qui s'adapte à mon emploi du temps chargé. Les résultats sont au rendez-vous !"</p>
+                <div class="testimonial-author">
+                    <strong>Sophie K.</strong>
+                    <span>Objectif atteint</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section">
+        <div class="section-header">
+            <h2>Questions Fréquentes</h2>
+            <p>Tout ce que vous devez savoir</p>
+        </div>
+        <div class="faq-grid">
+            <details class="faq-item">
+                <summary>Combien de temps dure le quiz ?</summary>
+                <div class="faq-content">
+                    <p>Le quiz prend environ 5 minutes à compléter. Il est conçu pour être rapide mais précis, nous permettant de créer un programme parfaitement adapté à vos besoins.</p>
+                </div>
+            </details>
+            <details class="faq-item">
+                <summary>Le programme est-il vraiment personnalisé ?</summary>
+                <div class="faq-content">
+                    <p>Oui, absolument ! Chaque programme est créé sur mesure en fonction de vos réponses au quiz, de vos objectifs, de votre niveau actuel et de vos préférences d'entraînement.</p>
+                </div>
+            </details>
+            <details class="faq-item">
+                <summary>Puis-je modifier mon programme ?</summary>
+                <div class="faq-content">
+                    <p>Bien sûr ! Vous pouvez ajuster votre programme à tout moment en fonction de vos progrès et de vos préférences. Notre système s'adapte automatiquement à vos besoins.</p>
+                </div>
+            </details>
+        </div>
+        <div class="faq-more">
+            <a href="/faq.html" class="text-link">Voir toutes les questions <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </section>
+
+    <!-- Final CTA Section -->
+    <section class="final-cta">
+        <div class="cta-content">
+            <h2>Prêt à transformer votre vie ?</h2>
+            <p>Commencez dès maintenant et obtenez votre programme personnalisé en quelques minutes.</p>
+            <a href="/quiz-start.html" class="cta-button large">
+                <span class="cta-text">Commencer le Quiz</span>
+                <span class="cta-icon"><i class="fas fa-arrow-right"></i></span>
+            </a>
+            <p class="guarantee"><i class="fas fa-shield-alt"></i> Satisfait ou remboursé sous 30 jours</p>
+        </div>
+    </section>
 
     <div id="footer-placeholder"></div>
 
     <script src="/js/header-loader.js"></script>
     <script src="/js/footer-loader.js"></script>
-    <script src="/js/header-scroll.js"></script>
-    <script src="/js/auth.js"></script>
-    <script src="/js/auth-check.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const learnMoreBtn = document.getElementById('learnMoreBtn');
-
-            learnMoreBtn.addEventListener('click', () => {
-                const footer = document.getElementById('footer-placeholder');
-                footer.scrollIntoView({ 
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            });
-        });
-    </script>
+    <script src="/js/home.js"></script>
 </body>
 </html>

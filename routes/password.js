@@ -69,7 +69,7 @@ router.post('/reset-password', [
     body('password')
         .isLength({ min: 8 })
         .matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).*$/)
-        .withMessage('Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule et un chiffre'),
+        .withMessage(''),
     body('token').notEmpty()
 ], async (req, res) => {
     try {

@@ -5,49 +5,54 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const { auth, authLimiter } = require('../middleware/auth');
 const path = require('path');
+const { sendPasswordResetEmail, sendVerificationEmail } = require('../services/emailService');
+const bcrypt = require('bcrypt');
+const crypto = require('crypto');
 
 const router = express.Router();
 
 // Validation des champs
 const signupValidation = [
     body('name')
-        .trim()
-        .isLength({ min: 2 })
-        .withMessage('Le nom doit contenir au moins 2 caractères'),
+        .notEmpty().withMessage('Nom requis')
+        .isLength({ min: 2 }).withMessage('Le nom doit contenir au moins 2 caractères'),
     body('email')
-        .trim()
-        .isEmail()
-        .normalizeEmail()
-        .withMessage('Email invalide'),
+        .notEmpty().withMessage('Email requis')
+        .isEmail().withMessage('Email invalide'),
     body('password')
-        .isLength({ min: 8 })
-        .matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).*$/)
-        .withMessage('Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule et un chiffre')
+        .notEmpty().withMessage('Mot de passe requis')
+        .isLength({ min: 8 }).withMessage('Le mot de passe doit contenir au moins 8 caractères')
+        .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]{8,}$/)
+        .withMessage('Le mot de passe doit contenir au moins une minuscule, une majuscule et un chiffre')
 ];
 
 const loginValidation = [
-    body('email').trim().isEmail().normalizeEmail(),
-    body('password').notEmpty()
+    body('email')
+        .notEmpty().withMessage('Email requis')
+        .isEmail().withMessage('Email invalide'),
+    body('password')
+        .notEmpty().withMessage('Mot de passe requis')
 ];
 
 // Inscription
 router.post('/signup', signupValidation, async (req, res) => {
-    console.log('📝 Début de la route /signup');
-    console.log('🚀 Requête d\'inscription reçue:', req.body);
-    
+    console.log(' Tentative d\'inscription');
+    console.log(' Données reçues:', JSON.stringify(req.body, null, 2));
+
     try {
-        // Vérification des erreurs de validation
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.status(400).json({
-                status: 'error',
-                message: 'Données invalides',
-                errors: errors.array()
+            return res.status(400).json({ 
+                status: 'error', 
+                message: errors.array()[0].msg,
+                errors: errors.array() 
             });
         }
 
-        // Vérifier si l'email existe déjà
-        const existingUser = await User.findOne({ email: req.body.email });
+        const { name, email, password } = req.body;
+
+        // Vérifier si l'utilisateur existe déjà
+        const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.status(400).json({
                 status: 'error',
@@ -55,258 +60,195 @@ router.post('/signup', signupValidation, async (req, res) => {
             });
         }
 
-        // Mode test : simuler un utilisateur
-        if (process.env.NODE_ENV === 'test') {
-            console.log('🧪 Mode test : Création utilisateur simulée');
-            const token = jwt.sign(
-                { _id: '000000000000000000000001' },
-                process.env.JWT_SECRET || 'test_secret_key',
-                { expiresIn: '1d' }
-            );
+        // Créer un nouvel utilisateur
+        const user = new User({ name, email, password });
 
-            return res.status(201).json({
-                status: 'success',
-                data: {
-                    user: {
-                        _id: '000000000000000000000001',
-                        name: req.body.name,
-                        email: req.body.email
-                    },
-                    token
-                }
+        // Générer un token de vérification d'email
+        const verificationToken = user.generateEmailVerificationToken();
+        await user.save();
+
+        console.log(' Utilisateur créé avec succès');
+        console.log(' Token de vérification:', verificationToken);
+
+        // Envoyer un email de vérification
+        const verificationUrl = `http://localhost:3000/verify-email?token=${verificationToken}`;
+        
+        try {
+            await sendVerificationEmail(email, verificationUrl);
+            console.log(' Email de vérification envoyé');
+        } catch (emailError) {
+            console.error(' Erreur lors de l\'envoi de l\'email:', emailError);
+        }
+
+        res.status(201).json({
+            status: 'success',
+            message: 'Compte créé avec succès. Veuillez vérifier votre email.',
+            data: {
+                userId: user._id,
+                email: user.email
+            }
+        });
+
+    } catch (error) {
+        console.error(' ERREUR COMPLETE LORS DE L\'INSCRIPTION:', error);
+        res.status(500).json({
+            status: 'error',
+            message: 'Erreur lors de la création du compte'
+        });
+    }
+});
+
+// Vérification d'email
+router.get('/verify-email', async (req, res) => {
+    const { token } = req.query;
+
+    console.log(' Tentative de vérification d\'email');
+    console.log(' Token reçu:', token);
+
+    try {
+        const hashedToken = crypto
+            .createHash('sha256')
+            .update(token)
+            .digest('hex');
+
+        const user = await User.findOne({ 
+            emailVerificationToken: hashedToken,
+            emailVerificationTokenExpires: { $gt: Date.now() }
+        });
+
+        console.log(' Résultat de recherche de l\'utilisateur:', {
+            userFound: !!user,
+            token: token
+        });
+
+        if (!user) {
+            console.log(' Utilisateur non trouvé ou token expiré');
+            return res.status(400).json({
+                status: 'error',
+                message: 'Le lien de vérification est invalide ou a expiré.'
             });
         }
 
-        const { name, email, password } = req.body;
-        console.log('📦 Données reçues:', { name, email, passwordLength: password?.length });
-
-        // Créer le nouvel utilisateur
-        const user = new User({ name, email, password });
-        console.log('✨ Nouvel utilisateur créé:', user._id);
-
-        // Générer le token
-        const token = jwt.sign(
-            { _id: user._id.toString() },
-            process.env.JWT_SECRET || 'test_secret_key',
-            { expiresIn: '7d' }
-        );
-
-        // Sauvegarder le token
-        user.tokens = [token];
+        user.verifyEmail();
         await user.save();
-        console.log('💾 Utilisateur sauvegardé avec succès');
 
-        // Configurer le cookie
-        res.cookie('token', token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
-            maxAge: 7 * 24 * 60 * 60 * 1000 // 7 jours
-        });
+        console.log(' Email vérifié avec succès pour:', user.email);
 
-        // Envoyer la réponse
-        res.status(201).json({
+        res.status(200).json({
             status: 'success',
-            message: 'Inscription réussie',
-            data: {
-                user: {
-                    id: user._id,
-                    name: user.name,
-                    email: user.email
-                },
-                token
-            }
+            message: 'Email vérifié avec succès'
         });
-        console.log('✅ Réponse envoyée avec succès');
 
     } catch (error) {
-        console.error('❌ Erreur lors de l\'inscription:', error);
+        console.error(' Erreur lors de la vérification d\'email:', error);
         res.status(500).json({
             status: 'error',
-            message: 'Erreur lors de l\'inscription',
-            details: process.env.NODE_ENV === 'development' ? error.message : undefined
+            message: 'Erreur lors de la vérification de l\'email'
         });
     }
 });
 
 // Connexion
 router.post('/login', loginValidation, async (req, res) => {
-    console.log('🔐 Début de la route /login');
-    
+    console.log(' Tentative de connexion');
+    console.log(' Email reçu:', req.body.email);
+
     try {
-        // Mode test : gérer les cas d'erreur
-        if (process.env.NODE_ENV === 'test') {
-            console.log('🧪 Mode test : Connexion simulée');
-            
-            // Vérifier si l'email est correct en mode test
-            if (req.body.email !== 'test@example.com') {
-                return res.status(401).json({
-                    status: 'error',
-                    message: 'Email ou mot de passe incorrect'
-                });
-            }
-
-            // Vérifier si le mot de passe est correct en mode test
-            if (req.body.password !== 'Test1234!') {
-                return res.status(401).json({
-                    status: 'error',
-                    message: 'Email ou mot de passe incorrect'
-                });
-            }
-
-            const token = jwt.sign(
-                { _id: '000000000000000000000001' },
-                process.env.JWT_SECRET || 'test_secret_key',
-                { expiresIn: '7d' }
-            );
-
-            // Définir le cookie de session
-            res.cookie('token', token, {
-                httpOnly: true,
-                secure: false,
-                sameSite: 'lax',
-                maxAge: 7 * 24 * 60 * 60 * 1000 // 7 jours
-            });
-
-            // Définir req.session.user pour la persistance de session
-            if (req.session) {
-                req.session.user = {
-                    id: '000000000000000000000001',
-                    name: 'Test User',
-                    email: req.body.email
-                };
-            }
-
-            return res.status(200).json({
-                status: 'success',
-                message: 'Connexion réussie (test)',
-                data: {
-                    user: {
-                        id: '000000000000000000000001',
-                        name: 'Test User',
-                        email: req.body.email
-                    },
-                    token
-                }
-            });
-        }
-
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            console.log('❌ Erreurs de validation:', errors.array());
-            return res.status(400).json({
-                status: 'error',
-                message: 'Email ou mot de passe invalide'
+            return res.status(400).json({ 
+                status: 'error', 
+                message: errors.array()[0].msg 
             });
         }
 
         const { email, password } = req.body;
-        console.log('📦 Tentative de connexion pour:', email);
 
-        // Rechercher l'utilisateur
-        const user = await User.findOne({ email });
+        // Rechercher l'utilisateur avec son email
+        const user = await User.findOne({ email }).select('+password');
+        
         if (!user) {
-            console.log('❌ Utilisateur non trouvé:', email);
-            return res.status(401).json({
+            return res.status(403).json({
                 status: 'error',
                 message: 'Email ou mot de passe incorrect'
+            });
+        }
+
+        // Vérifier si le compte est vérifié
+        if (!user.isVerified) {
+            return res.status(403).json({
+                status: 'error',
+                message: 'Veuillez vérifier votre email avant de vous connecter'
             });
         }
 
         // Vérifier le mot de passe
-        const isMatch = await user.comparePassword(password);
-        if (!isMatch) {
-            console.log('❌ Mot de passe incorrect pour:', email);
-            return res.status(401).json({
+        const isPasswordValid = await user.comparePassword(password);
+        
+        if (!isPasswordValid) {
+            return res.status(403).json({
                 status: 'error',
                 message: 'Email ou mot de passe incorrect'
             });
         }
 
-        // Générer le token
+        // Mettre à jour la date de dernière connexion
+        user.lastLoginAt = Date.now();
+        await user.save();
+
+        // Générer un token JWT
         const token = jwt.sign(
-            { _id: user._id.toString() },
-            process.env.JWT_SECRET || 'test_secret_key',
-            { expiresIn: '7d' }
+            { 
+                userId: user._id, 
+                email: user.email 
+            }, 
+            process.env.JWT_SECRET, 
+            { expiresIn: '1h' }
         );
 
-        // Sauvegarder le token
-        user.tokens = user.tokens.concat(token);
-        await user.save();
-        console.log('💾 Token sauvegardé pour:', email);
-
-        // Configurer le cookie
+        // Stocker le token dans un cookie sécurisé
         res.cookie('token', token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
-            maxAge: 7 * 24 * 60 * 60 * 1000 // 7 jours
+            sameSite: 'strict',
+            maxAge: 3600000 // 1 heure
         });
 
-        // Envoyer la réponse
+        // Réponse de connexion réussie
         res.status(200).json({
             status: 'success',
             message: 'Connexion réussie',
             data: {
+                token,
                 user: {
                     id: user._id,
                     name: user.name,
                     email: user.email
-                },
-                token
+                }
             }
         });
-        console.log('✅ Connexion réussie pour:', email);
 
     } catch (error) {
-        console.error('❌ Erreur lors de la connexion:', error);
+        console.error(' ERREUR DE CONNEXION:', error);
         res.status(500).json({
             status: 'error',
-            message: 'Erreur lors de la connexion',
-            details: process.env.NODE_ENV === 'development' ? error.message : undefined
+            message: 'Erreur lors de la connexion'
         });
     }
 });
 
 // Déconnexion
-router.post('/logout', (req, res) => {
+router.post('/logout', async (req, res) => {
     try {
-        // Mode test : simuler la déconnexion
-        if (process.env.NODE_ENV === 'test') {
-            if (req.session) {
-                req.session.destroy();
-            }
-            res.clearCookie('token');
-            return res.status(200).json({
-                status: 'success',
-                message: 'Déconnexion réussie'
-            });
-        }
+        // Effacer le cookie de token
+        res.clearCookie('token');
 
-        // Détruire la session
-        if (req.session) {
-            req.session.destroy((err) => {
-                if (err) {
-                    return res.status(500).json({
-                        status: 'error',
-                        message: 'Erreur lors de la déconnexion'
-                    });
-                }
-                res.clearCookie('token');
-                res.json({
-                    status: 'success',
-                    message: 'Déconnexion réussie'
-                });
-            });
-        } else {
-            res.clearCookie('token');
-            res.json({
-                status: 'success',
-                message: 'Déconnexion réussie'
-            });
-        }
+        res.status(200).json({
+            status: 'success',
+            message: 'Déconnexion réussie'
+        });
     } catch (error) {
-        console.error('❌ Erreur lors de la déconnexion:', error);
+        console.error(' ERREUR LORS DE LA DÉCONNEXION:', error);
         res.status(500).json({
             status: 'error',
             message: 'Erreur lors de la déconnexion'
@@ -430,41 +372,65 @@ router.get('/me', auth, async (req, res) => {
     }
 });
 
-// Route de vérification d'authentification
-router.get('/check-auth', (req, res) => {
+// Vérification de l'authentification
+router.get('/check-auth', async (req, res) => {
     try {
-        // Mode test : vérifier le cookie token
-        if (process.env.NODE_ENV === 'test') {
-            const token = req.cookies.token;
-            const isAuthenticated = !!token;
+        // Vérifier si l'utilisateur est connecté via la session ou le token
+        const token = req.cookies.token || 
+                      req.header('Authorization')?.replace('Bearer ', '');
 
+        if (!token) {
             return res.status(200).json({
-                isAuthenticated,
-                user: isAuthenticated ? {
-                    id: '000000000000000000000001',
-                    name: 'Test User',
-                    email: 'test@example.com'
-                } : null
+                authenticated: false
             });
         }
 
-        // En mode normal, utiliser req.isAuthenticated()
-        const isAuthenticated = req.isAuthenticated() || !!req.cookies.token;
+        // Vérifier la validité du token
+        const decoded = jwt.verify(
+            token, 
+            process.env.JWT_SECRET || 'test_secret_key'
+        );
+
+        const user = await User.findById(decoded.userId);
+
+        if (!user) {
+            return res.status(200).json({
+                authenticated: false
+            });
+        }
+
+        // Vérifier si l'utilisateur a été supprimé ou désactivé
+        if (user.deletedAt || !user.isActive) {
+            return res.status(200).json({
+                authenticated: false
+            });
+        }
+
         res.status(200).json({
-            isAuthenticated,
-            user: req.user ? {
-                id: req.user._id,
-                name: req.user.name,
-                email: req.user.email
-            } : null
+            authenticated: true,
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email
+            }
         });
+
     } catch (error) {
-        console.error('❌ Erreur lors de la vérification de l\'authentification:', error);
-        res.status(500).json({
-            status: 'error',
-            message: 'Erreur lors de la vérification de l\'authentification'
+        console.error(' ERREUR DE VÉRIFICATION D\'AUTHENTIFICATION:', error);
+        res.status(200).json({
+            authenticated: false
         });
     }
+});
+
+// Route de vérification du token
+router.get('/verify', auth, (req, res) => {
+    console.log(' Token vérifié pour l\'utilisateur:', req.user.email);
+    
+    res.json({
+        status: 'success',
+        user: req.user
+    });
 });
 
 // Middleware de vérification d'authentification
@@ -478,6 +444,110 @@ const checkAuth = (req, res, next) => {
 // Route protégée pour le quiz
 router.get('/quiz.html', checkAuth, (req, res) => {
     res.sendFile(path.join(__dirname, '../public/quiz.html'));
+});
+
+// Demande de réinitialisation de mot de passe
+router.post('/forgot-password', [
+    body('email').isEmail().normalizeEmail()
+], async (req, res) => {
+    try {
+        const { email } = req.body;
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(404).json({
+                status: 'error',
+                message: 'Aucun compte associé à cet email'
+            });
+        }
+
+        // Générer un token de réinitialisation
+        const resetToken = jwt.sign(
+            { _id: user._id },
+            process.env.JWT_SECRET || 'test_secret_key',
+            { expiresIn: '1h' }
+        );
+
+        // Sauvegarder le token de réinitialisation
+        user.resetPasswordToken = resetToken;
+        user.resetPasswordExpires = Date.now() + 3600000; // 1 heure
+        await user.save();
+
+        // Construire le lien de réinitialisation
+        const resetLink = `${req.protocol}://${req.get('host')}/reset-password.html?token=${resetToken}`;
+        
+        // Envoyer l'email
+        const emailSent = await sendPasswordResetEmail(email, resetLink);
+
+        // En mode développement, renvoyer le lien
+        if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
+            return res.json({
+                status: 'success',
+                message: 'Instructions envoyées par email',
+                devMessage: `En mode développement, utilisez ce lien : ${resetLink}`,
+                emailPreview: emailSent
+            });
+        }
+
+        // En production
+        res.json({
+            status: 'success',
+            message: 'Si un compte existe avec cet email, vous recevrez les instructions de réinitialisation.'
+        });
+
+    } catch (error) {
+        console.error('Erreur lors de la demande de réinitialisation:', error);
+        res.status(500).json({
+            status: 'error',
+            message: 'Erreur lors de la demande de réinitialisation'
+        });
+    }
+});
+
+// Réinitialisation du mot de passe
+router.post('/reset-password', [
+    body('token').notEmpty(),
+    body('password').isLength({ min: 8 })
+        .matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).*$/)
+], async (req, res) => {
+    try {
+        const { token, password } = req.body;
+
+        // Vérifier le token
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'test_secret_key');
+        
+        // Trouver l'utilisateur
+        const user = await User.findOne({
+            _id: decoded._id,
+            resetPasswordToken: token,
+            resetPasswordExpires: { $gt: Date.now() }
+        });
+
+        if (!user) {
+            return res.status(400).json({
+                status: 'error',
+                message: 'Le lien de réinitialisation est invalide ou a expiré'
+            });
+        }
+
+        // Mettre à jour le mot de passe
+        user.password = password;
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpires = undefined;
+        await user.save();
+
+        res.json({
+            status: 'success',
+            message: 'Mot de passe réinitialisé avec succès'
+        });
+
+    } catch (error) {
+        console.error('Erreur lors de la réinitialisation:', error);
+        res.status(500).json({
+            status: 'error',
+            message: 'Erreur lors de la réinitialisation du mot de passe'
+        });
+    }
 });
 
 module.exports = router;

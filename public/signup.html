@@ -7,42 +7,122 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/form-validation.css">
     <style>
-        /* Styles pour le pop-up de succès */
-        .success-popup {
+        /* Styles pour les notifications */
+        #notification-container {
             position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0);
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .notification {
+            padding: 15px;
+            margin: 0;
+            text-align: center;
+            font-weight: 500;
+            display: none;
+            animation: slideDown 0.5s ease-out;
+        }
+
+        .notification.success {
             background-color: #4CAF50;
             color: white;
-            padding: 20px 40px;
-            border-radius: 10px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .notification.error {
+            background-color: #f44336;
+            color: white;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+            }
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        /* Styles pour le loader */
+        .signup-loader {
+            display: none;
             text-align: center;
-            z-index: 1000;
-            transition: all 0.3s ease;
-            opacity: 0;
+            margin-top: 20px;
         }
 
-        .success-popup.show {
-            transform: translate(-50%, -50%) scale(1);
-            opacity: 1;
+        .signup-loader .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
         }
 
-        .success-popup .icon {
-            font-size: 50px;
-            margin-bottom: 15px;
-            animation: bounce 0.5s ease;
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
-        @keyframes bounce {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.2); }
+        .password-criteria {
+            margin-top: 10px;
+            font-size: 0.875rem;
+        }
+
+        .criteria-item {
+            margin: 5px 0;
+            color: #6c757d;
+            transition: color 0.3s ease;
+        }
+
+        .criteria-item i {
+            font-size: 0.75rem;
+            margin-right: 5px;
+        }
+
+        .criteria-item.valid {
+            color: #28a745;
+        }
+
+        .criteria-item.valid i {
+            color: #28a745;
+        }
+
+        .criteria-item.invalid {
+            color: #dc3545;
+        }
+
+        .criteria-item.invalid i {
+            color: #dc3545;
+        }
+
+        /* Styles pour le champ de mot de passe */
+        #password {
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        #password.all-valid {
+            border-color: #28a745;
+            box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+        }
+
+        #password.some-invalid {
+            border-color: #dc3545;
+            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
         }
     </style>
 </head>
 <body>
+    <!-- Conteneur de notification -->
+    <div id="notification-container">
+        <div class="notification success"></div>
+        <div class="notification error"></div>
+    </div>
+
     <div id="header-placeholder"></div>
 
     <main class="container">
@@ -50,22 +130,43 @@
             <h2>Créer un compte</h2>
             <div id="errorMessage" class="alert alert-error" style="display: none;"></div>
             <div id="successMessage" class="alert alert-success" style="display: none;"></div>
-            <form id="signupForm" class="auth-form">
+            <form id="signupForm" class="needs-validation" novalidate>
                 <div class="form-group">
-                    <label for="name">Nom complet</label>
-                    <input type="text" id="name" name="name" class="form-control" required>
+                    <label for="name">Nom</label>
+                    <input type="text" class="form-control" id="name" name="name" required>
+                    <div class="validation-error"></div>
                 </div>
                 <div class="form-group">
                     <label for="email">Email</label>
-                    <input type="email" id="email" name="email" class="form-control" required>
+                    <input type="email" class="form-control" id="email" name="email" required>
+                    <div class="validation-error"></div>
                 </div>
                 <div class="form-group">
                     <label for="password">Mot de passe</label>
-                    <input type="password" id="password" name="password" class="form-control" required>
+                    <input type="password" class="form-control" id="password" name="password" required>
+                    <div class="validation-error"></div>
+                    <div class="password-criteria">
+                        <div class="criteria-item" id="length-criteria">
+                            <i class="fas fa-circle"></i> Au moins 8 caractères
+                        </div>
+                        <div class="criteria-item" id="uppercase-criteria">
+                            <i class="fas fa-circle"></i> Au moins une majuscule
+                        </div>
+                        <div class="criteria-item" id="lowercase-criteria">
+                            <i class="fas fa-circle"></i> Au moins une minuscule
+                        </div>
+                        <div class="criteria-item" id="number-criteria">
+                            <i class="fas fa-circle"></i> Au moins un chiffre
+                        </div>
+                        <div class="criteria-item" id="special-criteria">
+                            <i class="fas fa-circle"></i> Au moins un caractère spécial
+                        </div>
+                    </div>
                 </div>
                 <div class="form-group">
-                    <label for="confirmPassword">Confirmer le mot de passe</label>
-                    <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" required>
+                    <label for="confirm-password">Confirmer le mot de passe</label>
+                    <input type="password" class="form-control" id="confirm-password" name="confirm-password" required>
+                    <div class="validation-error"></div>
                 </div>
                 <button type="submit" class="btn btn-primary btn-block">
                     <i class="fas fa-user-plus"></i> S'inscrire
@@ -82,68 +183,335 @@
     <script src="/js/header-loader.js"></script>
     <script src="/js/footer-loader.js"></script>
     <script src="/js/auth.js"></script>
-
-    <!-- Pop-up de succès -->
-    <div id="successPopup" class="success-popup">
-        <div class="icon">✅</div>
-        <h3>Inscription réussie !</h3>
-        <p>Vous allez être redirigé...</p>
-    </div>
-
+    <script src="/js/form-validation.js"></script>
+    <script src="/js/security-guard.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Lien de navigation simple
-            document.querySelector('.auth-links a').addEventListener('click', (e) => {
-                e.preventDefault();
-                window.location.href = '/login.html';
+            const signupForm = document.getElementById('signupForm');
+            const nameInput = document.getElementById('name');
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            const confirmPasswordInput = document.getElementById('confirm-password');
+            const errorMessage = document.getElementById('errorMessage');
+            const successMessage = document.getElementById('successMessage');
+
+            // Critères de validation du mot de passe
+            const passwordCriteria = {
+                length: {
+                    regex: /.{8,}/,
+                    element: document.getElementById('length-criteria')
+                },
+                uppercase: {
+                    regex: /[A-Z]/,
+                    element: document.getElementById('uppercase-criteria')
+                },
+                lowercase: {
+                    regex: /[a-z]/,
+                    element: document.getElementById('lowercase-criteria')
+                },
+                number: {
+                    regex: /[0-9]/,
+                    element: document.getElementById('number-criteria')
+                },
+                special: {
+                    regex: /[@$!%*?&]/,
+                    element: document.getElementById('special-criteria')
+                }
+            };
+
+            // Fonction pour vérifier chaque critère du mot de passe
+            function validatePasswordCriteria(password) {
+                let allValid = true;
+                
+                // Vérifier chaque critère
+                Object.entries(passwordCriteria).forEach(([key, criteria]) => {
+                    const meetsRequirement = criteria.regex.test(password);
+                    criteria.element.classList.remove('valid', 'invalid');
+                    criteria.element.classList.add(meetsRequirement ? 'valid' : 'invalid');
+                    if (!meetsRequirement) allValid = false;
+                });
+
+                // Mettre à jour l'apparence du champ de mot de passe
+                passwordInput.classList.remove('is-valid', 'invalid');
+                if (password.length > 0) {
+                    if (allValid) {
+                        passwordInput.classList.add('is-valid');
+                    } else {
+                        passwordInput.classList.add('invalid');
+                    }
+                }
+
+                // Revalider la confirmation si elle existe
+                if (confirmPasswordInput.value) {
+                    validateConfirmPassword();
+                }
+
+                return allValid;
+            }
+
+            // Fonction pour vérifier la confirmation du mot de passe
+            function validateConfirmPassword() {
+                const confirmPassword = confirmPasswordInput.value;
+                const password = passwordInput.value;
+                
+                // Réinitialiser uniquement les classes et le message
+                confirmPasswordInput.classList.remove('is-valid', 'invalid');
+                const feedbackDiv = confirmPasswordInput.parentNode.querySelector('.validation-error');
+                if (feedbackDiv) {
+                    feedbackDiv.style.display = 'none';
+                    feedbackDiv.textContent = '';
+                }
+
+                // Si le champ est vide, afficher le message approprié
+                if (!confirmPassword) {
+                    confirmPasswordInput.classList.add('invalid');
+                    if (feedbackDiv) {
+                        feedbackDiv.textContent = 'Ce champ est obligatoire';
+                        feedbackDiv.style.display = 'block';
+                    }
+                    return false;
+                }
+
+                // Logique simplifiée : vert uniquement si les mots de passe sont identiques
+                // rouge dans tous les autres cas
+                if (confirmPassword === password && password.length > 0) {
+                    confirmPasswordInput.classList.add('is-valid');
+                    return true;
+                } else {
+                    confirmPasswordInput.classList.add('invalid');
+                    // Afficher le message d'erreur uniquement si les longueurs sont égales
+                    if (confirmPassword.length === password.length && password.length > 0) {
+                        if (feedbackDiv) {
+                            feedbackDiv.textContent = 'Les mots de passe ne correspondent pas';
+                            feedbackDiv.style.display = 'block';
+                        }
+                    }
+                    return false;
+                }
+            }
+
+            // Fonction de validation des champs
+            function validateField(input) {
+                // Validation du champ obligatoire
+                if (!input.value.trim()) {
+                    input.classList.add('invalid');
+                    input.classList.remove('is-valid');
+                    const feedbackDiv = input.parentNode.querySelector('.validation-error');
+                    if (feedbackDiv) {
+                        feedbackDiv.textContent = 'Ce champ est obligatoire';
+                        feedbackDiv.style.display = 'block';
+                    }
+                    return false;
+                }
+
+                // Validation spécifique selon le champ
+                switch(input.name) {
+                    case 'name':
+                        if (input.value.trim().length < 2) {
+                            input.classList.add('invalid');
+                            input.classList.remove('is-valid');
+                            const feedbackDiv = input.parentNode.querySelector('.validation-error');
+                            if (feedbackDiv) {
+                                feedbackDiv.textContent = 'Le nom doit contenir au moins 2 caractères';
+                                feedbackDiv.style.display = 'block';
+                            }
+                            return false;
+                        }
+                        break;
+                    case 'email':
+                        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                        if (!emailRegex.test(input.value)) {
+                            input.classList.add('invalid');
+                            input.classList.remove('is-valid');
+                            const feedbackDiv = input.parentNode.querySelector('.validation-error');
+                            if (feedbackDiv) {
+                                feedbackDiv.textContent = 'Format d\'email invalide';
+                                feedbackDiv.style.display = 'block';
+                            }
+                            return false;
+                        }
+                        break;
+                    case 'password':
+                        const isValidPassword = validatePasswordCriteria(input.value);
+                        if (!isValidPassword) {
+                            return false;
+                        }
+                        // Revalider la confirmation si elle existe
+                        if (confirmPasswordInput.value) {
+                            validateConfirmPassword();
+                        }
+                        break;
+                    case 'confirm-password':
+                        return validateConfirmPassword();
+                }
+
+                // Si tout est valide (sauf pour password qui est géré séparément)
+                if (input.name !== 'password') {
+                    input.classList.remove('invalid');
+                    input.classList.add('is-valid');
+                    const feedbackDiv = input.parentNode.querySelector('.validation-error');
+                    if (feedbackDiv) {
+                        feedbackDiv.textContent = '';
+                        feedbackDiv.style.display = 'none';
+                    }
+                }
+                return true;
+            }
+
+            // Validation en temps réel avec debounce
+            const debouncedValidation = debounce((input) => {
+                if (input === passwordInput) {
+                    validatePasswordCriteria(input.value);
+                    if (confirmPasswordInput.value) {
+                        validateConfirmPassword();
+                    }
+                } else {
+                    validateField(input);
+                }
+            }, 100);
+
+            // Ajouter les écouteurs d'événements
+            [nameInput, emailInput, passwordInput, confirmPasswordInput].forEach(input => {
+                ['input', 'paste', 'change'].forEach(eventType => {
+                    input.addEventListener(eventType, () => {
+                        debouncedValidation(input);
+                    });
+                });
+
+                input.addEventListener('blur', () => {
+                    if (input === passwordInput) {
+                        validatePasswordCriteria(input.value);
+                        if (confirmPasswordInput.value) {
+                            validateConfirmPassword();
+                        }
+                    } else {
+                        validateField(input);
+                    }
+                });
+            });
+
+            // Validation initiale
+            validatePasswordCriteria(passwordInput.value);
+
+            // Fonction globale de validation du formulaire
+            function validateForm(event) {
+                event.preventDefault(); // Toujours empêcher la soumission par défaut
+
+                // Collecter tous les champs à valider
+                const fieldsToValidate = [
+                    nameInput, 
+                    emailInput, 
+                    passwordInput, 
+                    confirmPasswordInput
+                ];
+
+                // Booléen pour suivre la validité globale du formulaire
+                let isFormValid = true;
+
+                // Valider chaque champ
+                fieldsToValidate.forEach(input => {
+                    let isFieldValid = false;
+
+                    // Validation spécifique selon le champ
+                    switch(input.name) {
+                        case 'name':
+                            isFieldValid = validateField(input);
+                            break;
+                        case 'email':
+                            isFieldValid = validateField(input);
+                            break;
+                        case 'password':
+                            isFieldValid = validatePasswordCriteria(input.value);
+                            break;
+                        case 'confirm-password':
+                            isFieldValid = validateConfirmPassword();
+                            break;
+                    }
+
+                    // Mettre à jour l'état global de validation
+                    if (!isFieldValid) {
+                        isFormValid = false;
+                    }
+                });
+
+                // Si tous les champs sont valides, soumettre le formulaire
+                if (isFormValid) {
+                    // Ici, vous pouvez ajouter la logique de soumission réelle
+                    // Par exemple, envoyer les données via fetch ou XMLHttpRequest
+                    console.log('Formulaire valide, prêt à être soumis');
+                    
+                    // Exemple de soumission (à adapter selon votre backend)
+                    fetch('/api/auth/signup', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            name: nameInput.value,
+                            email: emailInput.value,
+                            password: passwordInput.value
+                        })
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            // Gérer les erreurs HTTP
+                            return response.json().then(errorData => {
+                                throw new Error(errorData.message || 'Erreur lors de l\'inscription');
+                            });
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // Gérer la réponse du serveur
+                        if (data.status === 'success') {
+                            // Redirection ou message de succès
+                            window.location.href = '/login.html';
+                        } else {
+                            // Afficher les erreurs du serveur
+                            alert(data.message || 'Erreur lors de l\'inscription');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erreur:', error);
+                        alert(error.message || 'Une erreur est survenue. Veuillez réessayer.');
+                    });
+                } else {
+                    // Afficher un message global d'erreur si nécessaire
+                    alert('Veuillez corriger les erreurs dans le formulaire');
+                }
+            }
+
+            // Ajouter l'écouteur d'événement de soumission
+            signupForm.addEventListener('submit', validateForm);
+
+            // Protection du formulaire
+            window.securityGuard.protectForm(signupForm, {
+                validate: (form) => {
+                    const nameValid = validateField(nameInput);
+                    const emailValid = validateField(emailInput);
+                    const passwordValid = validateField(passwordInput);
+                    const confirmPasswordValid = validateField(confirmPasswordInput);
+
+                    errorMessage.style.display = 'none';
+                    successMessage.style.display = 'none';
+
+                    return nameValid && emailValid && passwordValid && confirmPasswordValid;
+                }
             });
         });
 
-        document.getElementById('signupForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
-            
-            // Vérification des mots de passe
-            if (password !== confirmPassword) {
-                document.getElementById('errorMessage').textContent = 'Les mots de passe ne correspondent pas.';
-                document.getElementById('errorMessage').style.display = 'block';
-                return;
-            }
-            
-            try {
-                const response = await fetch('/api/auth/signup', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ name, email, password })
-                });
-                
-                const data = await response.json();
-                
-                if (response.ok) {
-                    // Afficher le pop-up de succès
-                    const successPopup = document.getElementById('successPopup');
-                    successPopup.classList.add('show');
-                    
-                    // Rediriger après un délai
-                    setTimeout(() => {
-                        window.location.href = 'http://localhost:3000';
-                    }, 2000);
-                } else {
-                    document.getElementById('errorMessage').textContent = data.message;
-                    document.getElementById('errorMessage').style.display = 'block';
-                }
-            } catch (error) {
-                console.error('Erreur lors de l\'inscription:', error);
-                document.getElementById('errorMessage').textContent = 'Une erreur est survenue lors de l\'inscription.';
-                document.getElementById('errorMessage').style.display = 'block';
-            }
-        });
+        // Fonction debounce
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
     </script>
 </body>
 </html>

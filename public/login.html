@@ -7,8 +7,94 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/form-validation.css">
+    <style>
+        /* Styles pour les notifications */
+        #notification-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .notification {
+            padding: 15px;
+            margin: 0;
+            text-align: center;
+            font-weight: 500;
+            display: none;
+            animation: slideDown 0.5s ease-out;
+        }
+
+        .notification.success {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .notification.error {
+            background-color: #f44336;
+            color: white;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+            }
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        /* Styles pour le loader */
+        .login-loader {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .login-loader .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+    <script src="/js/advanced-form-validator.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Ajouter un validateur personnalisé pour l'email
+            window.advancedFormValidator.addCustomValidator('email', (value) => {
+                // Autoriser tous les domaines d'email
+                return true;
+            });
+
+            // Ajouter un validateur personnalisé pour le mot de passe
+            window.advancedFormValidator.addCustomValidator('password', (value) => {
+                // Exemple de vérification supplémentaire
+                const commonPasswords = ['password', '123456', 'qwerty'];
+                
+                return !commonPasswords.includes(value.toLowerCase()) ? true : 
+                    'Ce mot de passe est trop commun';
+            });
+        });
+    </script>
 </head>
 <body>
+    <!-- Conteneur de notification -->
+    <div id="notification-container">
+        <div class="notification success"></div>
+        <div class="notification error"></div>
+    </div>
+
     <div id="header-placeholder"></div>
 
     <main class="container">
@@ -16,14 +102,14 @@
             <h2>Se connecter</h2>
             <div id="errorMessage" class="alert alert-error" style="display: none;"></div>
             <div id="successMessage" class="alert alert-success" style="display: none;"></div>
-            <form id="loginForm" class="auth-form">
+            <form id="loginForm" class="needs-validation" novalidate>
                 <div class="form-group">
                     <label for="email">Email</label>
-                    <input type="email" id="email" name="email" class="form-control" required>
+                    <input type="email" class="form-control" id="email" name="email" required>
                 </div>
                 <div class="form-group">
                     <label for="password">Mot de passe</label>
-                    <input type="password" id="password" name="password" class="form-control" required>
+                    <input type="password" class="form-control" id="password" name="password" required>
                 </div>
                 <button type="submit" class="btn btn-primary btn-block">
                     <i class="fas fa-sign-in-alt"></i> Se connecter
@@ -40,8 +126,105 @@
 
     <script src="/js/header-loader.js"></script>
     <script src="/js/footer-loader.js"></script>
-    <script src="/js/auth.js"></script>
+    <script src="/js/auth-service.js"></script>
+    <script src="/js/session.js"></script>
+    <script src="/js/form-validation.js"></script>
+    <script src="/js/security-guard.js"></script>
     <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const loginForm = document.getElementById('loginForm');
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            const errorMessage = document.getElementById('errorMessage');
+            const successMessage = document.getElementById('successMessage');
+
+            // Protection du formulaire
+            window.securityGuard.protectForm(loginForm, {
+                validate: (form) => {
+                    // Validation personnalisée
+                    const email = emailInput.value.trim();
+                    const password = passwordInput.value;
+
+                    // Réinitialiser les messages
+                    errorMessage.style.display = 'none';
+                    successMessage.style.display = 'none';
+
+                    // Validation de base
+                    if (!email || !password) {
+                        errorMessage.textContent = 'Veuillez remplir tous les champs';
+                        errorMessage.style.display = 'block';
+                        return false;
+                    }
+
+                    // Validation de l'email
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailRegex.test(email)) {
+                        errorMessage.textContent = 'Format d\'email invalide';
+                        errorMessage.style.display = 'block';
+                        return false;
+                    }
+
+                    return true;
+                }
+            });
+
+            loginForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const email = emailInput.value.trim();
+                const password = passwordInput.value;
+                
+                try {
+                    // Vérifier les limitations de requêtes
+                    window.securityGuard.checkRateLimit();
+
+                    // Vérifier si le compte est verrouillé
+                    try {
+                        window.securityGuard.isAccountLocked(email);
+                    } catch (lockError) {
+                        errorMessage.textContent = lockError.message;
+                        errorMessage.style.display = 'block';
+                        return;
+                    }
+
+                    // Suivre la tentative de connexion
+                    window.securityGuard.trackLoginAttempt(email);
+                    
+                    // Utiliser le service d'authentification
+                    const result = await window.authService.login(email, password);
+                    
+                    // Cacher les messages précédents
+                    errorMessage.style.display = 'none';
+                    
+                    // Afficher le message de succès
+                    successMessage.textContent = 'Connexion réussie !';
+                    successMessage.style.display = 'block';
+                    
+                    // Utiliser le gestionnaire de session pour connecter l'utilisateur
+                    window.sessionManager.login({
+                        email: result.user.email,
+                        name: result.user.name,
+                        role: result.user.role,
+                        token: result.token
+                    });
+                    
+                    // Nettoyer les données de sécurité
+                    window.securityGuard.clearSecurityData(email);
+                    
+                    // Rediriger vers le tableau de bord
+                    setTimeout(() => {
+                        window.location.href = '/admin/dashboard.html';
+                    }, 1000);
+                    
+                } catch (error) {
+                    // Gérer les erreurs de connexion
+                    errorMessage.textContent = error.message || 'Erreur de connexion';
+                    errorMessage.style.display = 'block';
+                    successMessage.style.display = 'none';
+                }
+            });
+        });
+
         document.addEventListener('DOMContentLoaded', () => {
             // Liens de navigation simples
             document.getElementById('forgotPasswordLink').addEventListener('click', (e) => {
@@ -53,38 +236,6 @@
                 e.preventDefault();
                 window.location.href = '/signup.html';
             });
-        });
-
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            
-            try {
-                const response = await fetch('/auth/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ email, password })
-                });
-                
-                const data = await response.json();
-                
-                if (response.ok) {
-                    document.getElementById('successMessage').textContent = data.message;
-                    document.getElementById('successMessage').style.display = 'block';
-                    window.location.href = '/';
-                } else {
-                    document.getElementById('errorMessage').textContent = data.message;
-                    document.getElementById('errorMessage').style.display = 'block';
-                }
-            } catch (error) {
-                console.error('Erreur lors de la connexion:', error);
-                document.getElementById('errorMessage').textContent = 'Une erreur est survenue lors de la connexion.';
-                document.getElementById('errorMessage').style.display = 'block';
-            }
         });
     </script>
 </body>

@@ -7,7 +7,8 @@ const initPassport = require('./config/passport');
 const setupSecurity = require('./config/security');
 const authRoutes = require('./routes/auth');
 const quizRoutes = require('./routes/quiz');
-const passwordRoutes = require('./routes/password'); // Ajouter l'import des routes de mot de passe
+const passwordRoutes = require('./routes/password');
+const adminRoutes = require('./routes/admin'); // Ajouter l'import des routes d'administration
 
 const express = require('express');
 const path = require('path');
@@ -119,8 +120,9 @@ app.get('/quiz.html', checkAuth, (req, res) => {
 
 // Routes
 app.use('/api/auth', authRoutes);
-app.use('/api/auth', passwordRoutes); // Ajouter les routes de mot de passe
+app.use('/api/auth', passwordRoutes);
 app.use('/api/quiz', quizRoutes);
+app.use('/api/admin', adminRoutes); // Ajouter les routes d'administration
 
 // Routes pour les pages d'authentification
 app.get('/login', (req, res) => {

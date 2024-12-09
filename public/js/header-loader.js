@@ -38,9 +38,14 @@ async function checkAuthState() {
 
         const userInfo = document.getElementById('user-info');
         const authContainer = document.getElementById('auth-container');
+        const logoLink = document.querySelector('.logo-link');
 
         if (response.ok) {
             const data = await response.json();
+            // Utilisateur connecté
+            if (logoLink) {
+                logoLink.href = '/quiz.html';
+            }
             if (userInfo) {
                 userInfo.innerHTML = `
                     <div class="user-profile">
@@ -61,6 +66,10 @@ async function checkAuthState() {
                 authContainer.style.display = 'none';
             }
         } else {
+            // Utilisateur non connecté
+            if (logoLink) {
+                logoLink.href = '/login.html';
+            }
             if (userInfo) {
                 userInfo.style.display = 'none';
             }

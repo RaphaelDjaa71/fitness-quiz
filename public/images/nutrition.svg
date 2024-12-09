@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <style>
+        .primary { fill: #007AFF; }
+        .secondary { fill: #5856D6; }
+    </style>
+    <path d="M100 30 L130 80 L70 80 Z" class="primary"/>
+    <circle cx="100" cy="120" r="40" class="secondary"/>
+    <path d="M70 140 Q100 180 130 140" fill="none" stroke="#007AFF" stroke-width="8"/>
+</svg>

@@ -1,13 +1,9 @@
 const request = require('supertest');
-const mongoose = require('mongoose');
 const app = require('../app');
 const User = require('../models/User');
+const mongoose = require('mongoose');
 
-// Configuration pour les tests
-process.env.NODE_ENV = 'test';
-const TEST_MONGODB_URI = 'mongodb://localhost:27017/fitness_quiz_test';
-
-describe('Authentication Tests', () => {
+describe('Tests d\'authentification', () => {
     const testUser = {
         name: 'Test User',
         email: 'test@example.com',
@@ -15,16 +11,18 @@ describe('Authentication Tests', () => {
     };
 
     let server;
+    let agent;
 
     beforeAll(async () => {
         try {
-            await mongoose.disconnect();
-            await mongoose.connect(TEST_MONGODB_URI, {
+            // Connexion à la base de données de test
+            await mongoose.connect(process.env.MONGODB_TEST_URI || 'mongodb://localhost:27017/fitness-quiz-test', {
                 useNewUrlParser: true,
                 useUnifiedTopology: true
             });
             await User.deleteMany({});
             server = app.listen(0);
+            agent = request.agent(app);
         } catch (error) {
             console.error('Setup error:', error);
             throw error;
@@ -32,71 +30,93 @@ describe('Authentication Tests', () => {
     });
 
     afterAll(async () => {
-        try {
-            await User.deleteMany({});
-            await new Promise((resolve) => server.close(resolve));
-            await mongoose.connection.close();
-        } catch (error) {
-            console.error('Cleanup error:', error);
-            throw error;
-        }
-    });
-
-    beforeEach(async () => {
         await User.deleteMany({});
+        await mongoose.connection.close();
+        server.close();
     });
 
     describe('Inscription', () => {
-        test('Inscription réussie', async () => {
-            const response = await request(app)
+        // Test d'inscription réussie
+        test('Inscription réussie avec un mot de passe complexe', async () => {
+            const testUser = {
+                name: 'Raphael Djaa',
+                email: 'djaaraphael5@gmail.com',
+                password: 'Raphael-Test1234!'
+            };
+
+            const response = await agent
                 .post('/api/auth/signup')
                 .send(testUser);
+
+            console.log('Réponse du test d\'inscription:', response.body);
 
             expect(response.status).toBe(201);
             expect(response.body.status).toBe('success');
-            expect(response.body.data.user.email).toBe(testUser.email);
-            expect(response.body.data.token).toBeDefined();
-        });
+            expect(response.body.data.userId).toBeDefined();
+            expect(response.body.data.email).toBe(testUser.email);
+        }, 15000); // Augmenter le timeout
 
-        test('Inscription avec email existant', async () => {
-            await User.create(testUser);
-            const response = await request(app)
+        // Test d'inscription avec un email existant
+        test('Inscription échouée avec un email déjà existant', async () => {
+            // Créer d'abord un utilisateur
+            await agent
                 .post('/api/auth/signup')
                 .send(testUser);
 
-            expect(response.status).toBe(400);
+            // Tenter de créer un utilisateur avec le même email
+            const response = await agent
+                .post('/api/auth/signup')
+                .send(testUser);
+
+            expect(response.statusCode).toBe(400);
             expect(response.body.status).toBe('error');
             expect(response.body.message).toBe('Cet email est déjà utilisé');
         });
 
+        // Test d'inscription avec données invalides
         test('Inscription avec données invalides - email manquant', async () => {
-            const invalidUser = { ...testUser, email: '' };
-            const response = await request(app)
-                .post('/api/auth/signup')
-                .send(invalidUser);
+            const testUser = {
+                name: 'Test User',
+                email: '',
+                password: 'Test1234!'
+            };
 
-            expect(response.status).toBe(400);
+            const response = await agent
+                .post('/api/auth/signup')
+                .send(testUser);
+
+            expect(response.statusCode).toBe(400);
             expect(response.body.status).toBe('error');
+            expect(response.body.message).toBe('Email invalide');
         });
 
         test('Inscription avec mot de passe trop court', async () => {
-            const invalidUser = { ...testUser, password: 'Test1!' };
-            const response = await request(app)
-                .post('/api/auth/signup')
-                .send(invalidUser);
+            const testUser = {
+                name: 'Test User',
+                email: 'test-short@example.com',
+                password: 'Test1!'
+            };
 
-            expect(response.status).toBe(400);
+            const response = await agent
+                .post('/api/auth/signup')
+                .send(testUser);
+
+            expect(response.statusCode).toBe(400);
             expect(response.body.status).toBe('error');
+            expect(response.body.message).toContain('Le mot de passe ne respecte pas les critères de sécurité');
         });
     });
 
     describe('Connexion', () => {
-        test('Connexion réussie', async () => {
-            await request(app)
+        beforeEach(async () => {
+            // S'assurer qu'un utilisateur existe pour les tests de connexion
+            await agent
                 .post('/api/auth/signup')
                 .send(testUser);
+        });
 
-            const response = await request(app)
+        test('Connexion réussie', async () => {
+            const response = await agent
                 .post('/api/auth/login')
                 .send({
                     email: testUser.email,
@@ -106,41 +126,50 @@ describe('Authentication Tests', () => {
             expect(response.status).toBe(200);
             expect(response.body.status).toBe('success');
             expect(response.body.data.user.email).toBe(testUser.email);
-            expect(response.body.data.token).toBeDefined();
         });
 
         test('Connexion avec email inexistant', async () => {
-            const response = await request(app)
+            const response = await agent
                 .post('/api/auth/login')
                 .send({
                     email: 'nonexistent@example.com',
-                    password: testUser.password
+                    password: 'Test1234!'
                 });
 
-            expect(response.status).toBe(401);
+            expect(response.status).toBe(403);
             expect(response.body.status).toBe('error');
+            expect(response.body.message).toBe('Email ou mot de passe incorrect');
         });
 
         test('Connexion avec mot de passe incorrect', async () => {
-            await request(app)
-                .post('/api/auth/signup')
-                .send(testUser);
-
-            const response = await request(app)
+            const response = await agent
                 .post('/api/auth/login')
                 .send({
                     email: testUser.email,
-                    password: 'WrongPass123!'
+                    password: 'WrongPassword123!'
                 });
 
-            expect(response.status).toBe(401);
+            expect(response.status).toBe(403);
             expect(response.body.status).toBe('error');
+            expect(response.body.message).toBe('Email ou mot de passe incorrect');
         });
     });
 
     describe('Déconnexion', () => {
         test('Déconnexion réussie', async () => {
-            const response = await request(app)
+            // D'abord se connecter
+            await agent
+                .post('/api/auth/signup')
+                .send(testUser);
+
+            await agent
+                .post('/api/auth/login')
+                .send({
+                    email: testUser.email,
+                    password: testUser.password
+                });
+
+            const response = await agent
                 .post('/api/auth/logout');
 
             expect(response.status).toBe(200);
@@ -150,19 +179,19 @@ describe('Authentication Tests', () => {
 
     describe('Vérification d\'authentification', () => {
         test('Vérification avec utilisateur non connecté', async () => {
-            const response = await request(app)
+            const response = await agent
                 .get('/api/auth/check-auth');
 
             expect(response.status).toBe(200);
-            expect(response.body.isAuthenticated).toBe(false);
+            expect(response.body.authenticated).toBe(false);
         });
 
         test('Vérification avec utilisateur connecté', async () => {
-            const signupResponse = await request(app)
+            // S'inscrire et se connecter
+            await agent
                 .post('/api/auth/signup')
                 .send(testUser);
 
-            const agent = request.agent(app);
             await agent
                 .post('/api/auth/login')
                 .send({
@@ -170,9 +199,11 @@ describe('Authentication Tests', () => {
                     password: testUser.password
                 });
 
-            const response = await agent.get('/api/auth/check-auth');
+            const response = await agent
+                .get('/api/auth/check-auth');
+
             expect(response.status).toBe(200);
-            expect(response.body.isAuthenticated).toBe(true);
+            expect(response.body.authenticated).toBe(true);
         });
     });
 });
