@@ -89,33 +89,53 @@ if (process.env.NODE_ENV === 'test') {
     });
 }
 
-// Middleware de vérification d'authentification pour le quiz
-const checkAuth = (req, res, next) => {
-    if (req.isAuthenticated()) {
-        return next();
-    }
-    res.redirect('/login.html?redirect=/quiz-start.html');
-};
-
-// Route protégée pour la page d'accueil
-app.get('/', (req, res, next) => {
-    // Vérifier si l'utilisateur est authentifié
-    if (!req.isAuthenticated()) {
-        // Rediriger vers la page de connexion
-        return res.redirect('/login.html');
-    }
-    
-    // Si authentifié, servir la page d'accueil
+// Routes sans restrictions
+app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Route protégée pour le quiz
-app.get('/quiz-start.html', checkAuth, (req, res) => {
+// Routes du dashboard admin
+app.get('/admin/dashboard.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'admin', 'dashboard.html'));
+});
+
+app.get('/admin/users.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'admin', 'users.html'));
+});
+
+app.get('/admin/programs.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'admin', 'programs.html'));
+});
+
+app.get('/admin/quiz.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'admin', 'quiz.html'));
+});
+
+app.get('/admin/stats.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'admin', 'stats.html'));
+});
+
+app.get('/admin/settings.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'admin', 'settings.html'));
+});
+
+// Route pour les fichiers statiques dans le dossier admin
+app.use('/admin', express.static(path.join(__dirname, 'public', 'admin')));
+
+app.get('/quiz-start.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'quiz-start.html'));
 });
 
-app.get('/quiz.html', checkAuth, (req, res) => {
+app.get('/quiz.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'quiz.html'));
+});
+
+app.get('/users.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'users.html'));
+});
+
+app.get('/about.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'about.html'));
 });
 
 // Routes

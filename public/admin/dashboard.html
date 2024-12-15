@@ -4,333 +4,352 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Admin - FitnessWithRaph</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="/admin/css/admin.css">
-    <link rel="stylesheet" href="/css/styles.css">
-    
-    <!-- Styles de sécurité -->
-    <style>
-        .security-section {
-            background-color: #f4f6f9;
-            border: 1px solid #e1e6eb;
-            border-radius: 8px;
-            padding: 15px;
-            margin-top: 20px;
-        }
-
-        .trusted-device {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #ffffff;
-            border: 1px solid #e1e6eb;
-            border-radius: 6px;
-            padding: 10px;
-            margin-bottom: 10px;
-        }
-
-        .trusted-device .remove-device {
-            background-color: #ff4d4f;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            padding: 5px 10px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .trusted-device .remove-device:hover {
-            background-color: #ff7875;
-        }
-
-        #deviceTrustContainer {
-            max-height: 300px;
-            overflow-y: auto;
-        }
-    </style>
+    <link rel="stylesheet" href="css/admin.css">
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 </head>
-<body class="admin-body" data-required-roles="admin">
-    <div class="admin-layout">
-        <!-- Sidebar -->
-        <aside class="admin-sidebar">
-            <div class="sidebar-header">
-                <i class="fas fa-dumbbell"></i>
-                <h1>Admin Panel</h1>
-            </div>
-            <nav class="sidebar-nav">
-                <a href="/admin/dashboard.html" class="nav-item active">
-                    <i class="fas fa-chart-line"></i>
-                    <span>Dashboard</span>
-                </a>
-                <a href="/admin/users.html" class="nav-item">
-                    <i class="fas fa-users"></i>
-                    <span>Utilisateurs</span>
-                </a>
-                <a href="/admin/programs.html" class="nav-item">
-                    <i class="fas fa-dumbbell"></i>
-                    <span>Programmes</span>
-                </a>
-                <a href="/admin/quiz.html" class="nav-item">
-                    <i class="fas fa-tasks"></i>
-                    <span>Quiz</span>
-                </a>
-                <a href="/admin/settings.html" class="nav-item">
-                    <i class="fas fa-cog"></i>
-                    <span>Paramètres</span>
-                </a>
-            </nav>
-        </aside>
-
-        <!-- Main Content -->
+<body>
+    <nav class="admin-navbar">
+        <div class="nav-brand">
+            <i class="fas fa-dumbbell logo-icon"></i>
+            <span>FitnessWithRaph | Admin</span>
+        </div>
+        <div class="nav-links">
+            <a href="dashboard.html" class="nav-link active">
+                <i class="fas fa-chart-line"></i> Dashboard
+            </a>
+            <a href="users.html" class="nav-link">
+                <i class="fas fa-users"></i> Utilisateurs
+            </a>
+            <a href="quiz.html" class="nav-link">
+                <i class="fas fa-question-circle"></i> Quiz
+            </a>
+            <a href="programs.html" class="nav-link">
+                <i class="fas fa-dumbbell"></i> Programmes
+            </a>
+            <a href="stats.html" class="nav-link">
+                <i class="fas fa-chart-bar"></i> Statistiques
+            </a>
+            <a href="settings.html" class="nav-link">
+                <i class="fas fa-cog"></i> Paramètres
+            </a>
+        </div>
+    </nav>
+    
+    <div class="dashboard-container">
         <main class="admin-main">
-            <!-- Top Bar -->
-            <header class="admin-header">
-                <div class="header-search">
-                    <i class="fas fa-search"></i>
-                    <input type="text" placeholder="Rechercher...">
-                </div>
-                <div class="header-actions">
-                    <button class="btn-icon" id="notificationsBtn">
-                        <i class="fas fa-bell"></i>
-                        <span class="notification-badge">3</span>
+            <div class="dashboard-content">
+                <!-- Welcome Section -->
+                <section class="hero-section admin-hero">
+                    <div class="hero-content">
+                        <span class="hero-badge">Administration</span>
+                        <h1 class="hero-title">Tableau de Bord</h1>
+                        <p class="hero-subtitle">
+                            Vue d'ensemble des activités de la plateforme<br>
+                            et des performances globales
+                        </p>
+                    </div>
+                    <div class="hero-media">
+                        <div class="hero-stats">
+                            <div class="stat-item">
+                                <span class="stat-number">2,847</span>
+                                <span class="stat-label">Utilisateurs Actifs</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">88%</span>
+                                <span class="stat-label">Taux de Satisfaction</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">4,586€</span>
+                                <span class="stat-label">Revenus Mensuels</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Stats Grid -->
+                <div class="stats-grid-container">
+                    <div class="stats-grid">
+                        <!-- Total Users Stats -->
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon users">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <h3>Utilisateurs Totaux</h3>
+                                    <p class="stat-value">2,847</p>
+                                    <p class="stat-change positive">
+                                        <i class="fas fa-arrow-up"></i>
+                                        +12.5% ce mois
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="stat-chart">
+                                <div id="usersChart"></div>
+                                <div class="chart-legend">
+                                    <div class="legend-item">
+                                        <span class="dot active"></span>
+                                        <span>Actifs</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <span class="dot new"></span>
+                                        <span>Nouveaux</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Revenue Stats -->
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon revenue">
+                                    <i class="fas fa-euro-sign"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <h3>Revenus</h3>
+                                    <p class="stat-value">4,586 €</p>
+                                    <p class="stat-change positive">
+                                        <i class="fas fa-arrow-up"></i>
+                                        +8.3% ce mois
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="stat-chart">
+                                <div id="revenueChart"></div>
+                                <div class="chart-legend">
+                                    <div class="legend-item">
+                                        <span class="dot revenue"></span>
+                                        <span>Revenus</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <span class="dot target"></span>
+                                        <span>Objectif</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Program Completion Stats -->
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon programs">
+                                    <i class="fas fa-dumbbell"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <h3>Programmes Complétés</h3>
+                                    <p class="stat-value">1,234</p>
+                                    <p class="stat-change positive">
+                                        <i class="fas fa-arrow-up"></i>
+                                        +15.2% ce mois
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="stat-chart">
+                                <div id="programsChart"></div>
+                                <div class="chart-legend">
+                                    <div class="legend-item">
+                                        <span class="dot completed"></span>
+                                        <span>Complétés</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <span class="dot ongoing"></span>
+                                        <span>En cours</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- User Retention Stats -->
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon retention">
+                                    <i class="fas fa-user-check"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <h3>Rétention Utilisateurs</h3>
+                                    <p class="stat-value">78%</p>
+                                    <p class="stat-change negative">
+                                        <i class="fas fa-arrow-down"></i>
+                                        -2.4% ce mois
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="stat-chart">
+                                <div id="retentionChart"></div>
+                                <div class="chart-legend">
+                                    <div class="legend-item">
+                                        <span class="dot retained"></span>
+                                        <span>Retenus</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <span class="dot churned"></span>
+                                        <span>Perdus</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Additional Stats Card -->
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon quiz">
+                                    <i class="fas fa-trophy"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <h3>Taux de Réussite</h3>
+                                    <p class="stat-value">92%</p>
+                                    <p class="stat-change positive">
+                                        <i class="fas fa-arrow-up"></i>
+                                        +5.2% ce mois
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="stat-chart">
+                                <div id="successRateChart"></div>
+                                <div class="chart-legend">
+                                    <div class="legend-item">
+                                        <span class="dot success"></span>
+                                        <span>Réussite</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <span class="dot target"></span>
+                                        <span>Objectif</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Satisfaction Stats Card -->
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon satisfaction">
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <h3>Satisfaction Client</h3>
+                                    <p class="stat-value">4.8/5</p>
+                                    <p class="stat-change positive">
+                                        <i class="fas fa-arrow-up"></i>
+                                        +0.3 ce mois
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="stat-chart">
+                                <div id="satisfactionChart"></div>
+                                <div class="chart-legend">
+                                    <div class="legend-item">
+                                        <span class="dot satisfaction"></span>
+                                        <span>Note moyenne</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Scroll Buttons -->
+                    <button class="scroll-btn scroll-left">
+                        <i class="fas fa-chevron-left"></i>
                     </button>
-                    <div class="admin-profile">
-                        <img src="/images/default-avatar.png" alt="Admin" class="profile-avatar">
-                        <div class="profile-info">
-                            <span class="profile-name" id="userInfo"></span>
-                            <button class="btn-text" id="logoutButton">
-                                <i class="fas fa-sign-out-alt"></i> Déconnexion
+                    <button class="scroll-btn scroll-right">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+
+                <!-- Main Charts Section -->
+                <div class="charts-grid">
+                    <!-- User Activity Chart -->
+                    <div class="chart-card main-chart">
+                        <div class="chart-header">
+                            <div class="chart-title">
+                                <h3>Activité Globale</h3>
+                                <p>Nombre d'utilisateurs actifs et engagement</p>
+                            </div>
+                            <div class="chart-actions">
+                                <div class="period-selector">
+                                    <button class="period-btn active">Jour</button>
+                                    <button class="period-btn">Semaine</button>
+                                    <button class="period-btn">Mois</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="mainActivityChart"></div>
+                    </div>
+
+                    <!-- Program Performance Chart -->
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <div class="chart-title">
+                                <h3>Performance des Programmes</h3>
+                                <p>Taux de complétion et satisfaction par programme</p>
+                            </div>
+                        </div>
+                        <div id="programPerformanceChart"></div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity Section -->
+                <section class="recent-activity">
+                    <div class="section-header">
+                        <h2>Activités Récentes</h2>
+                        <div class="header-actions">
+                            <select class="activity-filter">
+                                <option value="all">Toutes les activités</option>
+                                <option value="users">Utilisateurs</option>
+                                <option value="programs">Programmes</option>
+                                <option value="payments">Paiements</option>
+                            </select>
+                            <button class="btn-secondary">
+                                <i class="fas fa-download"></i>
+                                Exporter
                             </button>
                         </div>
                     </div>
-                </div>
-            </header>
-
-            <!-- Dashboard Content -->
-            <div class="dashboard-content">
-                <!-- Stats Overview -->
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-icon users">
-                            <i class="fas fa-users"></i>
+                    <div class="activity-list">
+                        <div class="activity-item">
+                            <div class="activity-icon payment">
+                                <i class="fas fa-euro-sign"></i>
+                            </div>
+                            <div class="activity-details">
+                                <p class="activity-title">Nouveau paiement reçu</p>
+                                <p class="activity-desc">Marie D. a souscrit au programme Premium</p>
+                                <p class="activity-time">Il y a 5 minutes</p>
+                            </div>
+                            <div class="activity-amount">89.99 €</div>
                         </div>
-                        <div class="stat-info">
-                            <h3>Utilisateurs</h3>
-                            <p class="stat-number" id="totalUsers">0</p>
-                            <span class="stat-change positive">+5.2% <i class="fas fa-arrow-up"></i></span>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon quizzes">
-                            <i class="fas fa-tasks"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3>Quiz Complétés</h3>
-                            <p class="stat-number" id="totalQuizzes">0</p>
-                            <span class="stat-change positive">+12.5% <i class="fas fa-arrow-up"></i></span>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon programs">
-                            <i class="fas fa-dumbbell"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3>Programmes</h3>
-                            <p class="stat-number" id="totalPrograms">0</p>
-                            <span class="stat-change neutral">0% <i class="fas fa-minus"></i></span>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon revenue">
-                            <i class="fas fa-euro-sign"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3>Revenus</h3>
-                            <p class="stat-number" id="totalRevenue">0€</p>
-                            <span class="stat-change positive">+8.3% <i class="fas fa-arrow-up"></i></span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Charts Section -->
-                <div class="charts-grid">
-                    <div class="chart-card">
-                        <div class="card-header">
-                            <h3>Activité Utilisateurs</h3>
-                            <div class="card-actions">
-                                <button class="btn-icon">
-                                    <i class="fas fa-ellipsis-v"></i>
-                                </button>
+                        <div class="activity-item">
+                            <div class="activity-icon user">
+                                <i class="fas fa-user-plus"></i>
+                            </div>
+                            <div class="activity-details">
+                                <p class="activity-title">Nouvelle inscription</p>
+                                <p class="activity-desc">Pierre M. a rejoint la plateforme</p>
+                                <p class="activity-time">Il y a 15 minutes</p>
                             </div>
                         </div>
-                        <canvas id="userActivityChart"></canvas>
-                    </div>
-                    <div class="chart-card">
-                        <div class="card-header">
-                            <h3>Répartition des Quiz</h3>
-                            <div class="card-actions">
-                                <button class="btn-icon">
-                                    <i class="fas fa-ellipsis-v"></i>
-                                </button>
+                        <div class="activity-item">
+                            <div class="activity-icon program">
+                                <i class="fas fa-dumbbell"></i>
                             </div>
+                            <div class="activity-details">
+                                <p class="activity-title">Programme terminé</p>
+                                <p class="activity-desc">Sophie L. a terminé "Remise en forme 30 jours"</p>
+                                <p class="activity-time">Il y a 1 heure</p>
+                            </div>
+                            <div class="activity-rating">4.8 ★</div>
                         </div>
-                        <canvas id="quizDistributionChart"></canvas>
                     </div>
-                </div>
-
-                <!-- Recent Activity -->
-                <div class="recent-activity">
-                    <div class="card-header">
-                        <h3>Activité Récente</h3>
-                        <button class="btn-text">Voir tout</button>
-                    </div>
-                    <div class="activity-list" id="activityList">
-                        <!-- Activity items will be inserted here -->
-                    </div>
-                </div>
-
-                <!-- User Management Section -->
-                <div id="userManagement">
-                    <h3>Gestion des Utilisateurs</h3>
-                    <!-- User management content will be inserted here -->
-                </div>
+                    <button class="load-more">
+                        Charger plus
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                </section>
             </div>
         </main>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="/js/role-service.js"></script>
-    <script src="/admin/js/admin-dashboard.js"></script>
-    <script src="/js/session.js"></script>
-    <script src="/js/activity-logger.js"></script>
-    <script src="/js/notification-service.js"></script>
-    
-    <!-- Services d'accessibilité et de langue -->
-    <script src="/js/language-service.js"></script>
-    <script src="/js/accessibility-service.js"></script>
-    <script src="/js/admin-dashboard-security.js"></script>
-    <script src="/js/advanced-role-service.js"></script>
-    <script src="/js/anti-phishing-service.js"></script>
-    
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Vérifier les permissions d'accès
-            const canAccessDashboard = window.roleService.restrictPageAccess('dashboard.view');
-            
-            if (canAccessDashboard) {
-                // Initialisation des services de sécurité avancés
-                window.advancedRoleService.init();
-                window.antiPhishingService.init();
-
-                // Filtrer les éléments d'interface en fonction des permissions
-                const user = window.sessionManager.getUserFromSession();
-                if (user) {
-                    // Génération d'un rapport de sécurité
-                    const securityReport = window.advancedRoleService.generateSecurityReport(user);
-                    console.log('Rapport de sécurité :', securityReport);
-
-                    // Log de l'accès au tableau de bord
-                    window.activityLogger.log('dashboard.access', {
-                        role: user.role,
-                        securityLevel: securityReport.accessLevel
-                    });
-
-                    // Notification de bienvenue personnalisée
-                    window.notificationService.success(
-                        `Bienvenue, ${user.name} ! Votre tableau de bord est prêt. Niveau de sécurité : ${securityReport.accessLevel}/100`,
-                        { duration: 3000 }
-                    );
-
-                    // Log de l'accès au tableau de bord
-                    window.activityLogger.log('dashboard.access', {
-                        role: user.role
-                    });
-
-                    // Notification de bienvenue
-                    window.notificationService.success(
-                        `Bienvenue, ${user.name} ! Votre tableau de bord est prêt.`,
-                        { duration: 3000 }
-                    );
-
-                    // Mettre à jour le header avec les informations de l'utilisateur
-                    const userInfoElement = document.getElementById('userInfo');
-                    if (userInfoElement) {
-                        userInfoElement.innerHTML = `
-                            <strong>${user.name}</strong> 
-                            <span class="badge badge-info">${user.role.toUpperCase()}</span>
-                            <span class="badge badge-warning">Niveau ${securityReport.accessLevel}</span>
-                        `;
-                    }
-
-                    // Gestion du bouton de déconnexion
-                    const logoutButton = document.getElementById('logoutButton');
-                    if (logoutButton) {
-                        logoutButton.addEventListener('click', () => {
-                            // Log de déconnexion
-                            window.activityLogger.logLogout();
-                            
-                            // Notification de déconnexion
-                            window.notificationService.info(
-                                'Vous avez été déconnecté avec succès.',
-                                { duration: 2000 }
-                            );
-
-                            // Déconnexion
-                            window.sessionManager.logout();
-                            
-                            // Redirection différée pour permettre l'affichage de la notification
-                            setTimeout(() => {
-                                window.location.href = '/login.html';
-                            }, 2000);
-                        });
-                    }
-                }
-
-                // Exemple de section avec permissions
-                const userManagementSection = document.getElementById('userManagement');
-                if (userManagementSection) {
-                    // N'afficher que si l'utilisateur a la permission de gérer les utilisateurs
-                    if (!window.roleService.hasPermissionUser(user, 'users.manage')) {
-                        userManagementSection.style.display = 'none';
-                        
-                        // Log de tentative d'accès non autorisé
-                        window.activityLogger.log('unauthorized_access_attempt', {
-                            section: 'user_management',
-                            userRole: user.role
-                        });
-                    }
-                }
-
-                // Afficher les dernières activités
-                const displayActivities = () => {
-                    const activityList = document.getElementById('activityList');
-                    if (activityList) {
-                        const logs = window.activityLogger.getLogs().slice(-5).reverse();
-                        activityList.innerHTML = logs.map(log => `
-                            <div class="activity-item">
-                                <span class="activity-time">${new Date(log.timestamp).toLocaleString()}</span>
-                                <span class="activity-description">${log.activity}</span>
-                            </div>
-                        `).join('');
-                    }
-                };
-                displayActivities();
-            }
-            
-            // Initialisation des services
-            // Initialiser le service de langue
-            window.languageService.init();
-            
-            // Initialiser le service d'accessibilité
-            window.accessibilityService.init();
-            
-            // Événement personnalisé pour la gestion des langues
-            window.addEventListener('languageChanged', (e) => {
-                console.log(`Langue changée : ${e.detail.language}`);
-                // Vous pouvez ajouter des actions supplémentaires ici
-            });
-        });
-    </script>
+    <script src="js/admin-dashboard.js"></script>
 </body>
 </html>

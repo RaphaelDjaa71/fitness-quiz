@@ -4,7 +4,7 @@ class AuthManager {
         this.baseUrl = '/api/auth';
         this.setupFormValidation();
         this.setupEventListeners();
-        this.checkAuthState();
+        // this.checkAuthState();
     }
 
     // Configuration de la validation des formulaires
@@ -43,13 +43,13 @@ class AuthManager {
         
         // Si l'utilisateur est authentifié et essaie d'accéder aux pages d'auth
         if (isAuthenticated && authPages.includes(currentPath) && !publicPages.includes(currentPath)) {
-            window.location.href = '/quiz-start.html'; // Rediriger vers la page de démarrage du quiz
+            // window.location.href = '/quiz-start.html'; // Rediriger vers la page de démarrage du quiz
             return;
         }
         
         // Si l'utilisateur n'est pas authentifié et essaie d'accéder à une page protégée
         if (!isAuthenticated && !authPages.includes(currentPath) && !publicPages.includes(currentPath) && currentPath !== '/') {
-            window.location.href = '/login.html';
+            // window.location.href = '/login.html';
         }
     }
 
@@ -130,7 +130,7 @@ class AuthManager {
         try {
             localStorage.removeItem('token');
             localStorage.removeItem('user');
-            window.location.href = '/login.html';
+            // window.location.href = '/login.html';
         } catch (error) {
             console.error('❌ Erreur de déconnexion:', error);
         }
@@ -171,7 +171,7 @@ class AuthManager {
                 }
                 
                 // Redirection
-                window.location.href = '/quiz-start.html';
+                // window.location.href = '/quiz-start.html';
             } else {
                 // Afficher l'erreur
                 this.showError(form, result.message || 'Erreur de connexion');
@@ -210,9 +210,9 @@ class AuthManager {
                 form.reset();
                 
                 // Redirection vers la page de connexion après 3 secondes
-                setTimeout(() => {
-                    window.location.href = '/login.html';
-                }, 3000);
+                // setTimeout(() => {
+                //     window.location.href = '/login.html';
+                // }, 3000);
             } else {
                 const signupStatus = document.getElementById('signup-status');
                 const errorMessage = document.getElementById('error-message');

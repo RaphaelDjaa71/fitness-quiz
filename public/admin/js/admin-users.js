@@ -1,169 +1,229 @@
-// État global
-let currentPage = 1;
-let totalPages = 1;
-let selectedUserId = null;
-let users = [];
+// Configuration
+const CONFIG = {
+    itemsPerPage: 10,
+    currentPage: 1,
+    totalItems: 0,
+    users: []
+};
 
-// Initialisation
-document.addEventListener('DOMContentLoaded', async () => {
-    await roleService.initialize();
-    if (!roleService.isAdmin()) {
-        window.location.href = '/unauthorized.html';
-        return;
-    }
-    initializeUsersPage();
+// DOM Elements
+const elements = {
+    userModal: document.getElementById('userModal'),
+    userForm: document.getElementById('userForm'),
+    userSearch: document.querySelector('.header-search input'),
+    roleFilter: document.getElementById('roleFilter'),
+    statusFilter: document.getElementById('statusFilter'),
+    usersTableBody: document.getElementById('usersTableBody'),
+    paginationNumbers: document.getElementById('paginationNumbers'),
+    prevPage: document.getElementById('prevPage'),
+    nextPage: document.getElementById('nextPage'),
+    startRange: document.getElementById('startRange'),
+    endRange: document.getElementById('endRange'),
+    totalItems: document.getElementById('totalItems'),
+    totalUsersCount: document.getElementById('totalUsersCount'),
+    activeUsersCount: document.getElementById('activeUsersCount'),
+    premiumUsersCount: document.getElementById('premiumUsersCount'),
+    newUsersCount: document.getElementById('newUsersCount')
+};
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+    initializeEventListeners();
+    loadUsers();
+    updateStatistics();
 });
 
-async function initializeUsersPage() {
-    setupEventListeners();
-    await loadUsers();
+// Event Listeners
+function initializeEventListeners() {
+    elements.userSearch.addEventListener('input', debounce(handleSearch, 300));
+    elements.roleFilter.addEventListener('change', handleFilters);
+    elements.statusFilter.addEventListener('change', handleFilters);
+    elements.userForm.addEventListener('submit', handleUserSubmit);
+    elements.prevPage.addEventListener('click', () => changePage(CONFIG.currentPage - 1));
+    elements.nextPage.addEventListener('click', () => changePage(CONFIG.currentPage + 1));
 }
 
-// Configuration des écouteurs d'événements
-function setupEventListeners() {
-    // Filtres
-    document.getElementById('userSearch').addEventListener('input', debounce(loadUsers, 300));
-    document.getElementById('roleFilter').addEventListener('change', loadUsers);
-    document.getElementById('statusFilter').addEventListener('change', loadUsers);
-    document.getElementById('sortFilter').addEventListener('change', loadUsers);
-
-    // Pagination
-    document.getElementById('prevPage').addEventListener('click', () => changePage(-1));
-    document.getElementById('nextPage').addEventListener('click', () => changePage(1));
-
-    // Sélection multiple
-    document.getElementById('selectAll').addEventListener('change', toggleSelectAll);
-
-    // Formulaire utilisateur
-    document.getElementById('userForm').addEventListener('submit', handleUserSubmit);
-}
-
-// Chargement des utilisateurs
+// API Calls
 async function loadUsers() {
     try {
         const searchQuery = document.getElementById('userSearch').value;
         const roleFilter = document.getElementById('roleFilter').value;
         const statusFilter = document.getElementById('statusFilter').value;
-        const sortBy = document.getElementById('sortFilter').value;
 
-        const response = await fetch(`/api/admin/users?page=${currentPage}&search=${searchQuery}&role=${roleFilter}&status=${statusFilter}&sort=${sortBy}`);
+        const response = await fetch(`/api/admin/users?page=${CONFIG.currentPage}&search=${searchQuery}&role=${roleFilter}&status=${statusFilter}`);
         const data = await response.json();
 
-        users = data.users;
-        totalPages = data.totalPages;
+        CONFIG.users = data.users;
+        CONFIG.totalItems = data.totalItems;
         
-        updateUsersTable();
+        updateTable();
         updatePagination();
     } catch (error) {
-        console.error('Erreur lors du chargement des utilisateurs:', error);
+        console.error('Error loading users:', error);
         showNotification('Erreur lors du chargement des utilisateurs', 'error');
     }
 }
 
-// Mise à jour du tableau des utilisateurs
-function updateUsersTable() {
-    const tbody = document.getElementById('usersTableBody');
-    tbody.innerHTML = users.map(user => `
-        <tr>
-            <td>
-                <input type="checkbox" class="user-select" value="${user._id}">
-            </td>
-            <td>
-                <div class="user-info">
-                    <img src="${user.avatar || '/images/default-avatar.png'}" alt="${user.name}" class="user-avatar">
-                    <div>
-                        <div class="user-name">${user.name}</div>
-                        <div class="user-id">ID: ${user._id}</div>
-                    </div>
-                </div>
-            </td>
-            <td>${user.email}</td>
-            <td>
-                <span class="badge ${getRoleBadgeClass(user.role)}">${user.role}</span>
-            </td>
-            <td>
-                <span class="badge ${getStatusBadgeClass(user.status)}">${user.status}</span>
-            </td>
-            <td>${formatDate(user.lastLogin)}</td>
-            <td>
-                <div class="action-buttons">
-                    <button class="btn-icon" onclick="editUser('${user._id}')" title="Modifier">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="btn-icon" onclick="showDeleteModal('${user._id}')" title="Supprimer">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                    <button class="btn-icon" onclick="impersonateUser('${user._id}')" title="Se connecter en tant que">
-                        <i class="fas fa-user-secret"></i>
-                    </button>
-                </div>
-            </td>
-        </tr>
-    `).join('');
-}
-
-// Gestion de la pagination
-function updatePagination() {
-    const pageInfo = document.getElementById('pageInfo');
-    pageInfo.textContent = `Page ${currentPage} sur ${totalPages}`;
-
-    document.getElementById('prevPage').disabled = currentPage === 1;
-    document.getElementById('nextPage').disabled = currentPage === totalPages;
-}
-
-function changePage(delta) {
-    const newPage = currentPage + delta;
-    if (newPage >= 1 && newPage <= totalPages) {
-        currentPage = newPage;
-        loadUsers();
+async function updateStatistics() {
+    try {
+        // Simuler un appel API pour les statistiques
+        const stats = {
+            total: 2845,
+            active: 2156,
+            premium: 892,
+            new: 145
+        };
+        
+        elements.totalUsersCount.textContent = stats.total;
+        elements.activeUsersCount.textContent = stats.active;
+        elements.premiumUsersCount.textContent = stats.premium;
+        elements.newUsersCount.textContent = stats.new;
+    } catch (error) {
+        console.error('Error updating statistics:', error);
     }
 }
 
-// Gestion du modal utilisateur
-function showAddUserModal() {
-    selectedUserId = null;
-    document.getElementById('modalTitle').textContent = 'Ajouter un Utilisateur';
-    document.getElementById('userForm').reset();
-    document.getElementById('userModal').classList.add('show');
+// Table Management
+function updateTable() {
+    const startIndex = (CONFIG.currentPage - 1) * CONFIG.itemsPerPage;
+    const endIndex = startIndex + CONFIG.itemsPerPage;
+    const filteredUsers = getFilteredUsers();
+    
+    elements.usersTableBody.innerHTML = '';
+    
+    filteredUsers.slice(startIndex, endIndex).forEach(user => {
+        const row = createUserRow(user);
+        elements.usersTableBody.appendChild(row);
+    });
+    
+    updateTableInfo(startIndex, endIndex, filteredUsers.length);
 }
 
-function editUser(userId) {
-    selectedUserId = userId;
-    const user = users.find(u => u._id === userId);
-    if (!user) return;
+function createUserRow(user) {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+        <td><input type="checkbox" class="user-select" value="${user._id}"></td>
+        <td>
+            <div class="user-info">
+                <img src="${user.avatar || '/images/default-avatar.png'}" alt="${user.name}" class="user-avatar">
+                <div>
+                    <div class="user-name">${user.name}</div>
+                    <div class="user-id">ID: ${user._id}</div>
+                </div>
+            </div>
+        </td>
+        <td>${user.email}</td>
+        <td><span class="badge badge-${getRoleBadgeClass(user.role)}">${user.role}</span></td>
+        <td><span class="badge badge-${getStatusBadgeClass(user.status)}">${user.status}</span></td>
+        <td>${formatDate(user.lastLogin)}</td>
+        <td>
+            <div class="action-buttons">
+                <button class="btn-icon" onclick="editUser('${user._id}')" title="Éditer">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn-icon" onclick="showDeleteModal('${user._id}')" title="Supprimer">
+                    <i class="fas fa-trash"></i>
+                </button>
+                <button class="btn-icon" onclick="impersonateUser('${user._id}')" title="Se connecter en tant que">
+                    <i class="fas fa-user-secret"></i>
+                </button>
+            </div>
+        </td>
+    `;
+    return tr;
+}
 
-    document.getElementById('modalTitle').textContent = 'Modifier l\'Utilisateur';
-    document.getElementById('userName').value = user.name;
-    document.getElementById('userEmail').value = user.email;
-    document.getElementById('userRole').value = user.role;
-    document.getElementById('userStatus').value = user.status;
+// Pagination
+function updatePagination() {
+    const totalPages = Math.ceil(CONFIG.totalItems / CONFIG.itemsPerPage);
+    elements.paginationNumbers.innerHTML = '';
     
-    document.getElementById('userModal').classList.add('show');
+    for (let i = 1; i <= totalPages; i++) {
+        const button = document.createElement('button');
+        button.className = `btn-page ${i === CONFIG.currentPage ? 'active' : ''}`;
+        button.textContent = i;
+        button.addEventListener('click', () => changePage(i));
+        elements.paginationNumbers.appendChild(button);
+    }
+    
+    elements.prevPage.disabled = CONFIG.currentPage === 1;
+    elements.nextPage.disabled = CONFIG.currentPage === totalPages;
+}
+
+function changePage(page) {
+    const totalPages = Math.ceil(CONFIG.totalItems / CONFIG.itemsPerPage);
+    if (page >= 1 && page <= totalPages) {
+        CONFIG.currentPage = page;
+        loadUsers();
+        updatePagination();
+    }
+}
+
+// Filters and Search
+function handleSearch(event) {
+    CONFIG.currentPage = 1;
+    loadUsers();
+    updatePagination();
+}
+
+function handleFilters() {
+    CONFIG.currentPage = 1;
+    loadUsers();
+    updatePagination();
+}
+
+function getFilteredUsers() {
+    let filtered = [...CONFIG.users];
+    
+    const searchTerm = elements.userSearch.value.toLowerCase();
+    const roleFilter = elements.roleFilter.value;
+    const statusFilter = elements.statusFilter.value;
+    
+    if (searchTerm) {
+        filtered = filtered.filter(user => 
+            user.name.toLowerCase().includes(searchTerm) ||
+            user.email.toLowerCase().includes(searchTerm)
+        );
+    }
+    
+    if (roleFilter !== 'all') {
+        filtered = filtered.filter(user => user.role === roleFilter);
+    }
+    
+    if (statusFilter !== 'all') {
+        filtered = filtered.filter(user => user.status === statusFilter);
+    }
+    
+    return filtered;
+}
+
+// Modal Management
+function openAddUserModal() {
+    elements.userModal.classList.add('show');
+    elements.userForm.reset();
+    document.getElementById('modalTitle').textContent = 'Ajouter un Utilisateur';
 }
 
 function closeUserModal() {
-    document.getElementById('userModal').classList.remove('show');
-    document.getElementById('userForm').reset();
-    selectedUserId = null;
+    elements.userModal.classList.remove('show');
 }
 
-// Gestion du formulaire utilisateur
 async function handleUserSubmit(event) {
     event.preventDefault();
-
+    
     const userData = {
         name: document.getElementById('userName').value,
         email: document.getElementById('userEmail').value,
         role: document.getElementById('userRole').value,
         status: document.getElementById('userStatus').value
     };
-
+    
     try {
-        const url = selectedUserId 
-            ? `/api/admin/users/${selectedUserId}`
+        const url = document.getElementById('userId').value 
+            ? `/api/admin/users/${document.getElementById('userId').value}`
             : '/api/admin/users';
         
-        const method = selectedUserId ? 'PUT' : 'POST';
+        const method = document.getElementById('userId').value ? 'PUT' : 'POST';
 
         const response = await fetch(url, {
             method,
@@ -175,7 +235,7 @@ async function handleUserSubmit(event) {
 
         if (response.ok) {
             showNotification(
-                selectedUserId ? 'Utilisateur modifié avec succès' : 'Utilisateur créé avec succès',
+                document.getElementById('userId').value ? 'Utilisateur modifié avec succès' : 'Utilisateur créé avec succès',
                 'success'
             );
             closeUserModal();
@@ -185,27 +245,75 @@ async function handleUserSubmit(event) {
             showNotification(error.message, 'error');
         }
     } catch (error) {
-        console.error('Erreur lors de la sauvegarde:', error);
+        console.error('Error saving user:', error);
         showNotification('Erreur lors de la sauvegarde', 'error');
     }
 }
 
-// Gestion de la suppression
+// Utility Functions
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+function formatDate(date) {
+    return new Date(date).toLocaleDateString('fr-FR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+    });
+}
+
+function getRoleBadgeClass(role) {
+    const classes = {
+        admin: 'primary',
+        trainer: 'success',
+        user: 'secondary'
+    };
+    return classes[role] || 'secondary';
+}
+
+function getStatusBadgeClass(status) {
+    const classes = {
+        active: 'success',
+        inactive: 'danger',
+        pending: 'warning'
+    };
+    return classes[status] || 'secondary';
+}
+
+function updateTableInfo(start, end, total) {
+    elements.startRange.textContent = Math.min(start + 1, total);
+    elements.endRange.textContent = Math.min(end, total);
+    elements.totalItems.textContent = total;
+}
+
+function showNotification(message, type) {
+    // Implement notification system
+    console.log(`${type}: ${message}`);
+}
+
+// Delete User
 function showDeleteModal(userId) {
-    selectedUserId = userId;
     document.getElementById('deleteModal').classList.add('show');
+    document.getElementById('deleteUserId').value = userId;
 }
 
 function closeDeleteModal() {
     document.getElementById('deleteModal').classList.remove('show');
-    selectedUserId = null;
 }
 
 async function confirmDelete() {
-    if (!selectedUserId) return;
-
+    const userId = document.getElementById('deleteUserId').value;
     try {
-        const response = await fetch(`/api/admin/users/${selectedUserId}`, {
+        const response = await fetch(`/api/admin/users/${userId}`, {
             method: 'DELETE'
         });
 
@@ -218,12 +326,12 @@ async function confirmDelete() {
             showNotification(error.message, 'error');
         }
     } catch (error) {
-        console.error('Erreur lors de la suppression:', error);
+        console.error('Error deleting user:', error);
         showNotification('Erreur lors de la suppression', 'error');
     }
 }
 
-// Fonctionnalité d'impersonation
+// Impersonate User
 async function impersonateUser(userId) {
     try {
         const response = await fetch(`/api/admin/users/${userId}/impersonate`, {
@@ -239,67 +347,26 @@ async function impersonateUser(userId) {
             showNotification(error.message, 'error');
         }
     } catch (error) {
-        console.error('Erreur lors de l\'impersonation:', error);
+        console.error('Error impersonating user:', error);
         showNotification('Erreur lors de l\'impersonation', 'error');
     }
 }
 
-// Fonctions utilitaires
-function getRoleBadgeClass(role) {
-    const classes = {
-        admin: 'badge-danger',
-        trainer: 'badge-warning',
-        user: 'badge-success'
-    };
-    return classes[role] || 'badge-secondary';
-}
-
-function getStatusBadgeClass(status) {
-    const classes = {
-        active: 'badge-success',
-        inactive: 'badge-secondary',
-        pending: 'badge-warning'
-    };
-    return classes[status] || 'badge-secondary';
-}
-
-function formatDate(date) {
-    if (!date) return 'Jamais';
-    return new Date(date).toLocaleDateString('fr-FR', {
-        day: 'numeric',
-        month: 'short',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-    });
-}
-
-function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
-}
-
-function showNotification(message, type = 'info') {
-    // Implémenter le système de notification
-    alert(message);
-}
-
-// Gestion de la sélection multiple
-function toggleSelectAll(event) {
-    const checkboxes = document.querySelectorAll('.user-select');
-    checkboxes.forEach(checkbox => checkbox.checked = event.target.checked);
-}
-
-// Gestion de la déconnexion
-function logout() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('impersonateToken');
-    window.location.href = '/login.html';
+// Edit User
+async function editUser(userId) {
+    try {
+        const user = CONFIG.users.find(u => u._id === userId);
+        if (user) {
+            document.getElementById('modalTitle').textContent = 'Modifier l\'Utilisateur';
+            document.getElementById('userId').value = user._id;
+            document.getElementById('userName').value = user.name;
+            document.getElementById('userEmail').value = user.email;
+            document.getElementById('userRole').value = user.role;
+            document.getElementById('userStatus').value = user.status;
+            elements.userModal.classList.add('show');
+        }
+    } catch (error) {
+        console.error('Error loading user details:', error);
+        showNotification('Erreur lors du chargement des détails', 'error');
+    }
 }

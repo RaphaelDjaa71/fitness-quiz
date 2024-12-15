@@ -2,20 +2,39 @@ class QuizFlow {
     constructor() {
         this.user = null;
         this.quizAnswers = null;
-        this.initEventListeners();
+        this.init();
     }
 
-    initEventListeners() {
-        document.addEventListener('DOMContentLoaded', () => {
-            this.checkAuthStatus();
-        });
+    async init() {
+        // Initialisation directe sans vérification
+        await this.loadQuestions();
+    }
+
+    async loadQuestions() {
+        try {
+            const response = await fetch('/api/questions');
+            if (!response.ok) {
+                throw new Error('Erreur lors du chargement des questions');
+            }
+            const questions = await response.json();
+            this.displayQuestion(questions[0]);
+        } catch (error) {
+            console.error('Erreur:', error);
+        }
+    }
+
+    displayQuestion(question) {
+        // Afficher la question
+        const questionContainer = document.getElementById('question-container');
+        if (questionContainer) {
+            questionContainer.innerHTML = question.text;
+        }
     }
 
     async checkAuthStatus() {
         try {
             const token = localStorage.getItem('authToken');
             if (!token) {
-                this.redirectToLogin();
                 return;
             }
 
@@ -35,12 +54,7 @@ class QuizFlow {
             this.enableQuizInteraction();
         } catch (error) {
             console.error('Erreur de vérification:', error);
-            this.redirectToLogin();
         }
-    }
-
-    redirectToLogin() {
-        window.location.href = '/login.html?redirect=/quiz.html';
     }
 
     enableQuizInteraction() {

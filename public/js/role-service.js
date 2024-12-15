@@ -111,7 +111,8 @@ class RoleService {
         if (requiredPageRoles) {
             const roles = requiredPageRoles.split(',');
             if (!this.hasAnyRole(roles)) {
-                window.location.href = '/unauthorized.html';
+                // Supprimer la redirection vers login
+                // window.location.href = '/unauthorized.html';
             }
         }
     }
@@ -150,7 +151,8 @@ class RoleService {
     // Gérer la redirection basée sur les rôles
     handleRoleBasedRedirect(user) {
         if (!user) {
-            window.location.href = '/login.html';
+            // Supprimer la redirection vers login
+            // window.location.href = '/login.html';
             return false;
         }
 
@@ -168,7 +170,8 @@ class RoleService {
                 window.location.href = '/trainer/dashboard.html';
                 break;
             default:
-                window.location.href = '/login.html';
+                // Supprimer la redirection vers login
+                // window.location.href = '/login.html';
                 return false;
         }
         return true;
@@ -179,13 +182,14 @@ class RoleService {
         const user = window.sessionManager.getUserFromSession();
         
         if (!user) {
-            window.location.href = '/login.html';
+            // Supprimer la redirection vers login
+            // window.location.href = '/login.html';
             return false;
         }
 
         if (!this.hasPermissionUser(user, requiredPermission)) {
-            // Rediriger vers une page d'accès non autorisé
-            window.location.href = '/unauthorized.html';
+            // Supprimer la redirection vers login
+            // window.location.href = '/unauthorized.html';
             return false;
         }
 

@@ -1,18 +1,22 @@
-// Vérification de l'authentification côté client
-document.addEventListener('DOMContentLoaded', async () => {
-    try {
-        // Vérifier le statut de l'authentification
-        const response = await fetch('/api/auth/status');
-        const data = await response.json();
+// Désactivation de toutes les vérifications d'authentification
+function checkAuthentication() {
+    // Toujours considérer l'utilisateur comme authentifié
+    return Promise.resolve(true);
+}
 
-        // Si l'utilisateur n'est pas authentifié
-        if (!data.isAuthenticated) {
-            // Rediriger vers la page de connexion
-            window.location.href = '/login.html';
-        }
-    } catch (error) {
-        console.error('Erreur de vérification d\'authentification:', error);
-        // En cas d'erreur, rediriger par précaution
-        window.location.href = '/login.html';
-    }
-});
+function redirectIfNotAuthenticated() {
+    // Ne jamais rediriger
+    return Promise.resolve();
+}
+
+function checkAdminAccess() {
+    // Toujours autoriser l'accès admin
+    return Promise.resolve(true);
+}
+
+// Exporter les fonctions modifiées
+export { 
+    checkAuthentication, 
+    redirectIfNotAuthenticated, 
+    checkAdminAccess 
+};

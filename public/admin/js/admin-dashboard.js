@@ -1,181 +1,175 @@
-// Vérification de l'authentification et des rôles
-document.addEventListener('DOMContentLoaded', async () => {
-    await roleService.initialize();
-    if (!roleService.isAdmin()) {
-        window.location.href = '/unauthorized.html';
-        return;
+// Fonction pour générer des données aléatoires
+function generateData(count, min, max) {
+    const data = [];
+    for (let i = 0; i < count; i++) {
+        data.push(Math.floor(Math.random() * (max - min + 1)) + min);
     }
-    initializeDashboard();
-});
-
-async function initializeDashboard() {
-    await Promise.all([
-        loadStats(),
-        initializeCharts(),
-        loadRecentActivity()
-    ]);
+    return data;
 }
 
-// Chargement des statistiques
-async function loadStats() {
-    try {
-        const response = await fetch('/api/admin/stats');
-        const stats = await response.json();
-
-        document.getElementById('totalUsers').textContent = stats.totalUsers.toLocaleString();
-        document.getElementById('totalQuizzes').textContent = stats.totalQuizzes.toLocaleString();
-        document.getElementById('totalPrograms').textContent = stats.totalPrograms.toLocaleString();
-        document.getElementById('totalRevenue').textContent = `${stats.totalRevenue.toLocaleString()}€`;
-    } catch (error) {
-        console.error('Erreur lors du chargement des statistiques:', error);
-    }
-}
-
-// Initialisation des graphiques
+// Configuration des graphiques
 function initializeCharts() {
-    initializeUserActivityChart();
-    initializeQuizDistributionChart();
-}
-
-function initializeUserActivityChart() {
-    const ctx = document.getElementById('userActivityChart').getContext('2d');
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin'],
-            datasets: [{
-                label: 'Nouveaux Utilisateurs',
-                data: [65, 78, 90, 85, 99, 112],
-                borderColor: '#4CAF50',
-                tension: 0.4,
-                fill: false
-            }, {
-                label: 'Quiz Complétés',
-                data: [45, 55, 65, 70, 85, 95],
-                borderColor: '#2196F3',
-                tension: 0.4,
-                fill: false
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'bottom'
-                }
+    // Configuration du graphique des utilisateurs
+    const usersChartOptions = {
+        series: [{
+            name: 'Utilisateurs Actifs',
+            data: generateData(7, 2000, 3000)
+        }, {
+            name: 'Nouveaux Utilisateurs',
+            data: generateData(7, 100, 500)
+        }],
+        chart: {
+            type: 'area',
+            height: 150,
+            sparkline: {
+                enabled: true
             },
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
+            toolbar: {
+                show: false
             }
-        }
-    });
-}
-
-function initializeQuizDistributionChart() {
-    const ctx = document.getElementById('quizDistributionChart').getContext('2d');
-    new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Débutant', 'Intermédiaire', 'Avancé'],
-            datasets: [{
-                data: [30, 45, 25],
-                backgroundColor: [
-                    '#4CAF50',
-                    '#2196F3',
-                    '#FFC107'
-                ]
-            }]
         },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'bottom'
+        stroke: {
+            curve: 'smooth',
+            width: 2
+        },
+        fill: {
+            type: 'gradient',
+            gradient: {
+                shadeIntensity: 1,
+                opacityFrom: 0.7,
+                opacityTo: 0.3
+            }
+        },
+        colors: ['#007AFF', '#FF2D55']
+    };
+
+    // Configuration du graphique des revenus
+    const revenueChartOptions = {
+        series: [{
+            name: 'Revenus',
+            data: generateData(7, 3000, 5000)
+        }, {
+            name: 'Objectif',
+            data: generateData(7, 4000, 6000)
+        }],
+        chart: {
+            type: 'line',
+            height: 150,
+            sparkline: {
+                enabled: true
+            }
+        },
+        stroke: {
+            curve: 'smooth',
+            width: [2, 2],
+            dashArray: [0, 5]
+        },
+        colors: ['#00a854', '#faad14']
+    };
+
+    // Configuration du graphique des programmes
+    const programsChartOptions = {
+        series: [{
+            name: 'Programmes Complétés',
+            data: generateData(7, 800, 1500)
+        }, {
+            name: 'Programmes En Cours',
+            data: generateData(7, 1000, 2000)
+        }],
+        chart: {
+            type: 'bar',
+            height: 150,
+            sparkline: {
+                enabled: true
+            }
+        },
+        plotOptions: {
+            bar: {
+                columnWidth: '60%'
+            }
+        },
+        colors: ['#fa8c16', '#1890ff']
+    };
+
+    // Configuration du graphique de rétention
+    const retentionChartOptions = {
+        series: [78],
+        chart: {
+            type: 'radialBar',
+            height: 150,
+            sparkline: {
+                enabled: true
+            }
+        },
+        plotOptions: {
+            radialBar: {
+                hollow: {
+                    margin: 0,
+                    size: '70%'
+                },
+                track: {
+                    margin: 0
+                },
+                dataLabels: {
+                    show: false
                 }
             }
+        },
+        colors: ['#52c41a']
+    };
+
+    // Initialisation des graphiques
+    new ApexCharts(document.querySelector("#usersChart"), usersChartOptions).render();
+    new ApexCharts(document.querySelector("#revenueChart"), revenueChartOptions).render();
+    new ApexCharts(document.querySelector("#programsChart"), programsChartOptions).render();
+    new ApexCharts(document.querySelector("#retentionChart"), retentionChartOptions).render();
+}
+
+// Gestion du défilement horizontal
+document.addEventListener('DOMContentLoaded', function() {
+    const container = document.querySelector('.stats-grid');
+    const leftButton = document.querySelector('.scroll-left');
+    const rightButton = document.querySelector('.scroll-right');
+    const scrollAmount = 400; // Ajustez cette valeur selon vos besoins
+
+    // Fonction pour vérifier si les boutons doivent être affichés
+    function updateScrollButtons() {
+        if (container.scrollLeft <= 0) {
+            leftButton.style.opacity = '0';
+            leftButton.style.pointerEvents = 'none';
+        } else {
+            leftButton.style.opacity = '1';
+            leftButton.style.pointerEvents = 'auto';
         }
-    });
-}
 
-// Chargement de l'activité récente
-async function loadRecentActivity() {
-    try {
-        const response = await fetch('/api/admin/recent-activity');
-        const activities = await response.json();
-        
-        const activityList = document.getElementById('recentActivityList');
-        activityList.innerHTML = activities.map(activity => `
-            <div class="activity-item">
-                <div class="activity-icon" style="background-color: ${getActivityColor(activity.type)}">
-                    <i class="${getActivityIcon(activity.type)}"></i>
-                </div>
-                <div class="activity-details">
-                    <div class="activity-title">${activity.title}</div>
-                    <div class="activity-time">${formatActivityTime(activity.timestamp)}</div>
-                </div>
-            </div>
-        `).join('');
-    } catch (error) {
-        console.error('Erreur lors du chargement de l\'activité récente:', error);
+        if (container.scrollLeft + container.clientWidth >= container.scrollWidth) {
+            rightButton.style.opacity = '0';
+            rightButton.style.pointerEvents = 'none';
+        } else {
+            rightButton.style.opacity = '1';
+            rightButton.style.pointerEvents = 'auto';
+        }
     }
-}
 
-// Fonctions utilitaires
-function getActivityColor(type) {
-    const colors = {
-        user: 'rgba(33, 150, 243, 0.1)',
-        quiz: 'rgba(76, 175, 80, 0.1)',
-        program: 'rgba(255, 193, 7, 0.1)',
-        system: 'rgba(244, 67, 54, 0.1)'
-    };
-    return colors[type] || colors.system;
-}
-
-function getActivityIcon(type) {
-    const icons = {
-        user: 'fas fa-user',
-        quiz: 'fas fa-tasks',
-        program: 'fas fa-dumbbell',
-        system: 'fas fa-cog'
-    };
-    return icons[type] || icons.system;
-}
-
-function formatActivityTime(timestamp) {
-    const date = new Date(timestamp);
-    const now = new Date();
-    const diff = now - date;
-    
-    if (diff < 60000) { // moins d'une minute
-        return 'À l\'instant';
-    } else if (diff < 3600000) { // moins d'une heure
-        const minutes = Math.floor(diff / 60000);
-        return `Il y a ${minutes} minute${minutes > 1 ? 's' : ''}`;
-    } else if (diff < 86400000) { // moins d'un jour
-        const hours = Math.floor(diff / 3600000);
-        return `Il y a ${hours} heure${hours > 1 ? 's' : ''}`;
-    } else {
-        return date.toLocaleDateString('fr-FR', {
-            day: 'numeric',
-            month: 'short',
-            hour: '2-digit',
-            minute: '2-digit'
+    // Gestionnaires d'événements pour les boutons
+    leftButton.addEventListener('click', () => {
+        container.scrollBy({
+            left: -scrollAmount,
+            behavior: 'smooth'
         });
-    }
-}
+    });
 
-// Gestion de la déconnexion
-function logout() {
-    localStorage.removeItem('token');
-    window.location.href = '/login.html';
-}
+    rightButton.addEventListener('click', () => {
+        container.scrollBy({
+            left: scrollAmount,
+            behavior: 'smooth'
+        });
+    });
 
-// Gestion des notifications
-document.getElementById('notificationsBtn').addEventListener('click', () => {
-    // Implémenter l'affichage des notifications
-    alert('Fonctionnalité de notifications à venir');
+    // Mettre à jour les boutons lors du défilement
+    container.addEventListener('scroll', updateScrollButtons);
+    
+    // Initialisation
+    updateScrollButtons();
+    initializeCharts();
 });

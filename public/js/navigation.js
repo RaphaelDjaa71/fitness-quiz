@@ -6,31 +6,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const aboutButton = document.querySelector('a[href="/about.html"]');
 
         if (quizButton) {
-            quizButton.addEventListener('click', async (e) => {
+            quizButton.addEventListener('click', (e) => {
                 e.preventDefault();
-                try {
-                    // Vérifier l'authentification avant de rediriger
-                    const response = await fetch('/auth/check-auth', {
-                        method: 'GET',
-                        credentials: 'include',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
-                    });
-
-                    const data = await response.json();
-
-                    if (data.isAuthenticated) {
-                        window.location.href = '/quiz.html';
-                    } else {
-                        // Si non authentifié, rediriger vers la page de connexion
-                        window.location.href = '/login.html?redirect=/quiz.html';
-                    }
-                } catch (error) {
-                    console.error('Erreur lors de la vérification de l\'authentification:', error);
-                    // En cas d'erreur, rediriger vers la page de connexion
-                    window.location.href = '/login.html?redirect=/quiz.html';
-                }
+                window.location.href = '/quiz.html';
             });
         }
 

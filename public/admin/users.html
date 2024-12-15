@@ -4,140 +4,204 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestion des Utilisateurs - FitnessWithRaph</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="/admin/css/admin.css">
-    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="css/admin.css">
 </head>
-<body class="admin-body" data-required-roles="admin">
-    <div class="admin-layout">
-        <!-- Sidebar (même que dashboard.html) -->
-        <aside class="admin-sidebar">
-            <div class="sidebar-header">
-                <i class="fas fa-dumbbell"></i>
-                <h1>Admin Panel</h1>
-            </div>
-            <nav class="sidebar-nav">
-                <a href="/admin/dashboard.html" class="nav-item">
-                    <i class="fas fa-chart-line"></i>
-                    <span>Dashboard</span>
-                </a>
-                <a href="/admin/users.html" class="nav-item active">
-                    <i class="fas fa-users"></i>
-                    <span>Utilisateurs</span>
-                </a>
-                <a href="/admin/programs.html" class="nav-item">
-                    <i class="fas fa-dumbbell"></i>
-                    <span>Programmes</span>
-                </a>
-                <a href="/admin/quiz.html" class="nav-item">
-                    <i class="fas fa-tasks"></i>
-                    <span>Quiz</span>
-                </a>
-                <a href="/admin/settings.html" class="nav-item">
-                    <i class="fas fa-cog"></i>
-                    <span>Paramètres</span>
-                </a>
-            </nav>
-        </aside>
-
-        <!-- Main Content -->
+<body>
+    <nav class="admin-navbar">
+        <div class="nav-brand">
+            <i class="fas fa-dumbbell logo-icon"></i>
+            <span>FitnessWithRaph | Admin</span>
+        </div>
+        <div class="nav-links">
+            <a href="dashboard.html" class="nav-link">
+                <i class="fas fa-chart-line"></i> Dashboard
+            </a>
+            <a href="users.html" class="nav-link active">
+                <i class="fas fa-users"></i> Utilisateurs
+            </a>
+            <a href="quiz.html" class="nav-link">
+                <i class="fas fa-question-circle"></i> Quiz
+            </a>
+            <a href="programs.html" class="nav-link">
+                <i class="fas fa-dumbbell"></i> Programmes
+            </a>
+            <a href="stats.html" class="nav-link">
+                <i class="fas fa-chart-bar"></i> Statistiques
+            </a>
+            <a href="settings.html" class="nav-link">
+                <i class="fas fa-cog"></i> Paramètres
+            </a>
+        </div>
+    </nav>
+    
+    <div class="dashboard-container">
         <main class="admin-main">
-            <!-- Top Bar (même que dashboard.html) -->
-            <header class="admin-header">
-                <div class="header-search">
-                    <i class="fas fa-search"></i>
-                    <input type="text" id="userSearch" placeholder="Rechercher un utilisateur...">
-                </div>
-                <div class="header-actions">
-                    <button class="btn-icon" id="notificationsBtn">
-                        <i class="fas fa-bell"></i>
-                        <span class="notification-badge">3</span>
+            <div class="dashboard-content">
+                <!-- Welcome Section -->
+                <section class="hero-section admin-hero">
+                    <div class="hero-content">
+                        <span class="hero-badge">Utilisateurs</span>
+                        <h1 class="hero-title">Gestion des Utilisateurs</h1>
+                        <p class="hero-subtitle">
+                            Vue d'ensemble et gestion des utilisateurs<br>
+                            de la plateforme FitnessWithRaph
+                        </p>
+                    </div>
+                    <div class="hero-media">
+                        <div class="hero-stats">
+                            <div class="stat-item">
+                                <span class="stat-number" id="totalUsersCount">2,847</span>
+                                <span class="stat-label">Total Utilisateurs</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number" id="activeUsersCount">1,923</span>
+                                <span class="stat-label">Utilisateurs Actifs</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number" id="premiumUsersCount">486</span>
+                                <span class="stat-label">Utilisateurs Premium</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Search and Actions -->
+                <div class="actions-bar">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Rechercher un utilisateur...">
+                    </div>
+                    <button class="btn-primary" onclick="openAddUserModal()">
+                        <i class="fas fa-user-plus"></i>
+                        <span>Nouvel Utilisateur</span>
                     </button>
-                    <div class="admin-profile">
-                        <img src="/images/default-avatar.png" alt="Admin" class="profile-avatar">
-                        <div class="profile-info">
-                            <span class="profile-name">Admin</span>
-                            <button class="btn-text" onclick="logout()">
-                                <i class="fas fa-sign-out-alt"></i> Déconnexion
+                </div>
+
+                <!-- Users Table Section -->
+                <section class="table-section">
+                    <div class="table-header">
+                        <div class="filter-group">
+                            <select id="roleFilter" class="filter-select">
+                                <option value="">Tous les rôles</option>
+                                <option value="user">Utilisateur</option>
+                                <option value="premium">Premium</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                            <select id="statusFilter" class="filter-select">
+                                <option value="">Tous les statuts</option>
+                                <option value="active">Actif</option>
+                                <option value="inactive">Inactif</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <input type="checkbox" id="selectAll">
+                                    </th>
+                                    <th>Utilisateur</th>
+                                    <th>Email</th>
+                                    <th>Rôle</th>
+                                    <th>Statut</th>
+                                    <th>Date d'inscription</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody">
+                                <tr>
+                                    <td><input type="checkbox" class="row-checkbox"></td>
+                                    <td>
+                                        <div class="user-info">
+                                            <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&q=80" alt="Sophie Martin" class="user-avatar">
+                                            <div class="user-details">
+                                                <span class="user-name">Sophie Martin</span>
+                                                <span class="user-email">sophie.m@example.com</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>sophie.m@example.com</td>
+                                    <td><span class="role-badge premium">Premium</span></td>
+                                    <td><span class="status-badge active">Actif</span></td>
+                                    <td>13 Dec 2023</td>
+                                    <td>
+                                        <div class="row-actions">
+                                            <button class="action-btn edit"><i class="fas fa-edit"></i></button>
+                                            <button class="action-btn delete"><i class="fas fa-trash"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" class="row-checkbox"></td>
+                                    <td>
+                                        <div class="user-info">
+                                            <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&q=80" alt="Lucas Dubois" class="user-avatar">
+                                            <div class="user-details">
+                                                <span class="user-name">Lucas Dubois</span>
+                                                <span class="user-email">lucas.d@example.com</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>lucas.d@example.com</td>
+                                    <td><span class="role-badge user">Utilisateur</span></td>
+                                    <td><span class="status-badge active">Actif</span></td>
+                                    <td>10 Dec 2023</td>
+                                    <td>
+                                        <div class="row-actions">
+                                            <button class="action-btn edit"><i class="fas fa-edit"></i></button>
+                                            <button class="action-btn delete"><i class="fas fa-trash"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" class="row-checkbox"></td>
+                                    <td>
+                                        <div class="user-info">
+                                            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80" alt="Emma Bernard" class="user-avatar">
+                                            <div class="user-details">
+                                                <span class="user-name">Emma Bernard</span>
+                                                <span class="user-email">emma.b@example.com</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>emma.b@example.com</td>
+                                    <td><span class="role-badge premium">Premium</span></td>
+                                    <td><span class="status-badge inactive">Inactif</span></td>
+                                    <td>5 Dec 2023</td>
+                                    <td>
+                                        <div class="row-actions">
+                                            <button class="action-btn edit"><i class="fas fa-edit"></i></button>
+                                            <button class="action-btn delete"><i class="fas fa-trash"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="table-footer">
+                        <div class="table-info">
+                            Affichage de 1-10 sur 2,847 utilisateurs
+                        </div>
+                        <div class="pagination">
+                            <button class="pagination-btn" disabled>
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <button class="pagination-btn active">1</button>
+                            <button class="pagination-btn">2</button>
+                            <button class="pagination-btn">3</button>
+                            <span class="pagination-ellipsis">...</span>
+                            <button class="pagination-btn">285</button>
+                            <button class="pagination-btn">
+                                <i class="fas fa-chevron-right"></i>
                             </button>
                         </div>
                     </div>
-                </div>
-            </header>
-
-            <!-- Users Content -->
-            <div class="users-content">
-                <!-- Users Header -->
-                <div class="content-header">
-                    <h2>Gestion des Utilisateurs</h2>
-                    <button class="btn btn-primary" onclick="showAddUserModal()">
-                        <i class="fas fa-plus"></i> Ajouter un Utilisateur
-                    </button>
-                </div>
-
-                <!-- Users Filters -->
-                <div class="filters-bar">
-                    <div class="filters-group">
-                        <label>Rôle:</label>
-                        <select id="roleFilter">
-                            <option value="">Tous</option>
-                            <option value="user">Utilisateur</option>
-                            <option value="admin">Admin</option>
-                            <option value="trainer">Coach</option>
-                        </select>
-                    </div>
-                    <div class="filters-group">
-                        <label>Statut:</label>
-                        <select id="statusFilter">
-                            <option value="">Tous</option>
-                            <option value="active">Actif</option>
-                            <option value="inactive">Inactif</option>
-                            <option value="pending">En attente</option>
-                        </select>
-                    </div>
-                    <div class="filters-group">
-                        <label>Trier par:</label>
-                        <select id="sortFilter">
-                            <option value="name">Nom</option>
-                            <option value="date">Date d'inscription</option>
-                            <option value="last_login">Dernière connexion</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Users Table -->
-                <div class="table-container">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>
-                                    <input type="checkbox" id="selectAll">
-                                </th>
-                                <th>Utilisateur</th>
-                                <th>Email</th>
-                                <th>Rôle</th>
-                                <th>Statut</th>
-                                <th>Dernière Connexion</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="usersTableBody">
-                            <!-- Users will be inserted here -->
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Pagination -->
-                <div class="pagination">
-                    <button class="btn-icon" id="prevPage">
-                        <i class="fas fa-chevron-left"></i>
-                    </button>
-                    <span id="pageInfo">Page 1 sur 1</span>
-                    <button class="btn-icon" id="nextPage">
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
-                </div>
+                </section>
             </div>
         </main>
     </div>
@@ -153,7 +217,7 @@
             </div>
             <form id="userForm">
                 <div class="form-group">
-                    <label for="userName">Nom</label>
+                    <label for="userName">Nom complet</label>
                     <input type="text" id="userName" required>
                 </div>
                 <div class="form-group">
@@ -173,37 +237,16 @@
                     <select id="userStatus" required>
                         <option value="active">Actif</option>
                         <option value="inactive">Inactif</option>
-                        <option value="pending">En attente</option>
                     </select>
                 </div>
                 <div class="modal-actions">
-                    <button type="button" class="btn btn-secondary" onclick="closeUserModal()">Annuler</button>
-                    <button type="submit" class="btn btn-primary">Sauvegarder</button>
+                    <button type="button" class="btn-secondary" onclick="closeUserModal()">Annuler</button>
+                    <button type="submit" class="btn-primary">Sauvegarder</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Delete Confirmation Modal -->
-    <div class="modal" id="deleteModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Confirmer la Suppression</h3>
-                <button class="btn-icon" onclick="closeDeleteModal()">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <p>Êtes-vous sûr de vouloir supprimer cet utilisateur ? Cette action est irréversible.</p>
-            </div>
-            <div class="modal-actions">
-                <button class="btn btn-secondary" onclick="closeDeleteModal()">Annuler</button>
-                <button class="btn btn-danger" onclick="confirmDelete()">Supprimer</button>
-            </div>
-        </div>
-    </div>
-
-    <script src="/js/role-service.js"></script>
-    <script src="/admin/js/admin-users.js"></script>
+    <script src="js/admin-users.js"></script>
 </body>
 </html>

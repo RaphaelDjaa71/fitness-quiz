@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Quiz - FitnessWithRaph</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/admin.css">
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+</head>
+<body>
+    <nav class="admin-navbar">
+        <div class="nav-brand">
+            <i class="fas fa-dumbbell logo-icon"></i>
+            <span>FitnessWithRaph | Admin</span>
+        </div>
+        <div class="nav-links">
+            <a href="dashboard.html" class="nav-link">
+                <i class="fas fa-chart-line"></i> Dashboard
+            </a>
+            <a href="users.html" class="nav-link">
+                <i class="fas fa-users"></i> Utilisateurs
+            </a>
+            <a href="quiz.html" class="nav-link active">
+                <i class="fas fa-question-circle"></i> Quiz
+            </a>
+            <a href="programs.html" class="nav-link">
+                <i class="fas fa-dumbbell"></i> Programmes
+            </a>
+            <a href="stats.html" class="nav-link">
+                <i class="fas fa-chart-bar"></i> Statistiques
+            </a>
+            <a href="settings.html" class="nav-link">
+                <i class="fas fa-cog"></i> Paramètres
+            </a>
+        </div>
+    </nav>
+    
+    <div class="dashboard-container">
+        <main class="admin-main">
+            <div class="dashboard-content">
+                <!-- Welcome Section -->
+                <section class="hero-section admin-hero">
+                    <div class="hero-content">
+                        <span class="hero-badge">Quiz</span>
+                        <h1 class="hero-title">Gestion des Quiz</h1>
+                        <p class="hero-subtitle">
+                            Créez et gérez les quiz d'évaluation de la condition physique
+                        </p>
+                    </div>
+                </section>
+
+                <!-- Stats Grid -->
+                <div class="stats-grid-container">
+                    <div class="stats-grid">
+                        <!-- Total Quiz Stats -->
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon quiz">
+                                    <i class="fas fa-clipboard-list"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <h3>Quiz Actifs</h3>
+                                    <p class="stat-value">12</p>
+                                    <p class="stat-change positive">
+                                        <i class="fas fa-arrow-up"></i>
+                                        +3 ce mois
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="stat-chart">
+                                <div id="quizChart"></div>
+                                <div class="chart-legend">
+                                    <div class="legend-item">
+                                        <span class="dot active"></span>
+                                        <span>En cours</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <span class="dot new"></span>
+                                        <span>Nouveaux</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Completion Rate -->
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon completion">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <h3>Taux de Complétion</h3>
+                                    <p class="stat-value">87%</p>
+                                    <p class="stat-change positive">
+                                        <i class="fas fa-arrow-up"></i>
+                                        +5% ce mois
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="stat-chart">
+                                <div id="completionChart"></div>
+                                <div class="chart-legend">
+                                    <div class="legend-item">
+                                        <span class="dot active"></span>
+                                        <span>Terminés</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <span class="dot new"></span>
+                                        <span>En cours</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Average Score -->
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon score">
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <h3>Score Moyen</h3>
+                                    <p class="stat-value">76/100</p>
+                                    <p class="stat-change positive">
+                                        <i class="fas fa-arrow-up"></i>
+                                        +2 points ce mois
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="stat-chart">
+                                <div id="scoreChart"></div>
+                                <div class="chart-legend">
+                                    <div class="legend-item">
+                                        <span class="dot active"></span>
+                                        <span>Score global</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <span class="dot new"></span>
+                                        <span>Tendance</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Response Time -->
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon time">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <h3>Temps de Réponse</h3>
+                                    <p class="stat-value">8.5 min</p>
+                                    <p class="stat-change negative">
+                                        <i class="fas fa-arrow-down"></i>
+                                        -1.2 min ce mois
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="stat-chart">
+                                <div id="timeChart"></div>
+                                <div class="chart-legend">
+                                    <div class="legend-item">
+                                        <span class="dot active"></span>
+                                        <span>Temps moyen</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <span class="dot new"></span>
+                                        <span>Objectif</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Scroll Buttons -->
+                    <button class="scroll-btn scroll-left">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="scroll-btn scroll-right">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+
+                <!-- Actions Bar -->
+                <div class="actions-bar">
+                    <div class="search-box">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" placeholder="Rechercher un quiz...">
+                    </div>
+                    <button class="btn-primary">
+                        <i class="fas fa-plus"></i>
+                        Nouveau Quiz
+                    </button>
+                </div>
+
+                <!-- Quiz List -->
+                <section class="table-section">
+                    <div class="table-header">
+                        <div class="filter-group">
+                            <select id="categoryFilter" class="filter-select">
+                                <option value="">Toutes les catégories</option>
+                                <option value="fitness">Fitness</option>
+                                <option value="nutrition">Nutrition</option>
+                                <option value="lifestyle">Style de vie</option>
+                            </select>
+                            <select id="difficultyFilter" class="filter-select">
+                                <option value="">Toutes les difficultés</option>
+                                <option value="beginner">Débutant</option>
+                                <option value="intermediate">Intermédiaire</option>
+                                <option value="advanced">Avancé</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <input type="checkbox" id="selectAll">
+                                    </th>
+                                    <th>Quiz</th>
+                                    <th>Catégorie</th>
+                                    <th>Difficulté</th>
+                                    <th>Questions</th>
+                                    <th>Complétions</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="quizTableBody">
+                                <tr>
+                                    <td><input type="checkbox" class="row-checkbox"></td>
+                                    <td>
+                                        <div class="quiz-info">
+                                            <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=100&q=80" alt="Évaluation Fitness" class="quiz-avatar">
+                                            <div class="quiz-details">
+                                                <span class="quiz-name">Évaluation Fitness Générale</span>
+                                                <span class="quiz-description">Quiz complet d'évaluation physique</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><span class="category-badge fitness">Fitness</span></td>
+                                    <td><span class="difficulty-badge intermediate">Intermédiaire</span></td>
+                                    <td>15 questions</td>
+                                    <td>
+                                        <div class="completion-info">
+                                            <span class="completion-number">2,847</span>
+                                            <div class="completion-bar">
+                                                <div class="completion-progress" style="width: 75%"></div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="row-actions">
+                                            <button class="action-btn edit" title="Modifier">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="action-btn delete" title="Supprimer">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" class="row-checkbox"></td>
+                                    <td>
+                                        <div class="quiz-info">
+                                            <img src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=100&q=80" alt="Quiz Nutrition" class="quiz-avatar">
+                                            <div class="quiz-details">
+                                                <span class="quiz-name">Nutrition et Alimentation</span>
+                                                <span class="quiz-description">Évaluation des habitudes alimentaires</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><span class="category-badge nutrition">Nutrition</span></td>
+                                    <td><span class="difficulty-badge beginner">Débutant</span></td>
+                                    <td>12 questions</td>
+                                    <td>
+                                        <div class="completion-info">
+                                            <span class="completion-number">1,923</span>
+                                            <div class="completion-bar">
+                                                <div class="completion-progress" style="width: 60%"></div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="row-actions">
+                                            <button class="action-btn edit" title="Modifier">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="action-btn delete" title="Supprimer">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="table-footer">
+                        <div class="table-info">
+                            Affichage de 1-10 sur 100 quiz
+                        </div>
+                        <div class="pagination">
+                            <button class="pagination-btn" disabled>
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <button class="pagination-btn active">1</button>
+                            <button class="pagination-btn">2</button>
+                            <button class="pagination-btn">3</button>
+                            <span class="pagination-ellipsis">...</span>
+                            <button class="pagination-btn">10</button>
+                            <button class="pagination-btn">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/admin-quiz.js"></script>
+</body>
+</html>

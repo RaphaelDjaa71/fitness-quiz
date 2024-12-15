@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Programmes - FitnessWithRaph</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/admin.css">
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+</head>
+<body>
+    <nav class="admin-navbar">
+        <div class="nav-brand">
+            <i class="fas fa-dumbbell logo-icon"></i>
+            <span>FitnessWithRaph | Admin</span>
+        </div>
+        <div class="nav-links">
+            <a href="dashboard.html" class="nav-link">
+                <i class="fas fa-chart-line"></i> Dashboard
+            </a>
+            <a href="users.html" class="nav-link">
+                <i class="fas fa-users"></i> Utilisateurs
+            </a>
+            <a href="quiz.html" class="nav-link">
+                <i class="fas fa-question-circle"></i> Quiz
+            </a>
+            <a href="programs.html" class="nav-link active">
+                <i class="fas fa-dumbbell"></i> Programmes
+            </a>
+            <a href="stats.html" class="nav-link">
+                <i class="fas fa-chart-bar"></i> Statistiques
+            </a>
+            <a href="settings.html" class="nav-link">
+                <i class="fas fa-cog"></i> Paramètres
+            </a>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <main class="admin-main">
+            <div class="dashboard-content">
+                <!-- Welcome Section -->
+                <section class="hero-section admin-hero">
+                    <div class="hero-content">
+                        <span class="hero-badge">Programmes</span>
+                        <h1 class="hero-title">Gestion des Programmes</h1>
+                        <p class="hero-subtitle">
+                            Créez et gérez les programmes d'entraînement personnalisés
+                        </p>
+                    </div>
+                </section>
+
+                <!-- Actions Bar -->
+                <div class="actions-bar">
+                    <div class="actions-group">
+                        <div class="filter-group">
+                            <select id="categoryFilter" class="filter-select">
+                                <option value="all">Toutes les catégories</option>
+                                <option value="strength">Force</option>
+                                <option value="cardio">Cardio</option>
+                                <option value="flexibility">Flexibilité</option>
+                                <option value="hiit">HIIT</option>
+                            </select>
+                            <select id="difficultyFilter" class="filter-select">
+                                <option value="all">Toutes les difficultés</option>
+                                <option value="beginner">Débutant</option>
+                                <option value="intermediate">Intermédiaire</option>
+                                <option value="advanced">Avancé</option>
+                            </select>
+                        </div>
+                        <div class="dropdown">
+                            <button class="btn-secondary dropdown-toggle">
+                                <i class="fas fa-ellipsis-v"></i>
+                                <span>Actions</span>
+                            </button>
+                            <div class="dropdown-menu">
+                                <a href="#" class="dropdown-item">
+                                    <i class="fas fa-download"></i>
+                                    <span>Exporter en CSV</span>
+                                </a>
+                                <a href="#" class="dropdown-item">
+                                    <i class="fas fa-file-pdf"></i>
+                                    <span>Exporter en PDF</span>
+                                </a>
+                                <a href="#" class="dropdown-item">
+                                    <i class="fas fa-print"></i>
+                                    <span>Imprimer</span>
+                                </a>
+                            </div>
+                        </div>
+                        <button class="btn-primary" onclick="openAddProgramModal()">
+                            <i class="fas fa-plus"></i>
+                            <span>Nouveau Programme</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="stats-grid-container">
+                    <div class="stats-grid">
+                        <!-- Total Programs -->
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon programs">
+                                    <i class="fas fa-dumbbell"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <h3>Total Programmes</h3>
+                                    <p class="stat-value">24</p>
+                                    <p class="stat-change positive">
+                                        <i class="fas fa-arrow-up"></i>
+                                        +3 ce mois
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="stat-chart">
+                                <div id="programsChart"></div>
+                                <div class="chart-legend">
+                                    <div class="legend-item">
+                                        <span class="dot active"></span>
+                                        <span>Actifs</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <span class="dot new"></span>
+                                        <span>Nouveaux</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Active Users -->
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon users">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <h3>Utilisateurs Actifs</h3>
+                                    <p class="stat-value">1,234</p>
+                                    <p class="stat-change positive">
+                                        <i class="fas fa-arrow-up"></i>
+                                        +12% ce mois
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="stat-chart">
+                                <div id="usersChart"></div>
+                                <div class="chart-legend">
+                                    <div class="legend-item">
+                                        <span class="dot active"></span>
+                                        <span>Actifs</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <span class="dot new"></span>
+                                        <span>Inactifs</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Average Rating -->
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon rating">
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <h3>Note Moyenne</h3>
+                                    <p class="stat-value">4.8/5</p>
+                                    <p class="stat-change positive">
+                                        <i class="fas fa-arrow-up"></i>
+                                        +0.2 ce mois
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="stat-chart">
+                                <div id="ratingChart"></div>
+                                <div class="chart-legend">
+                                    <div class="legend-item">
+                                        <span class="dot active"></span>
+                                        <span>Note globale</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <span class="dot new"></span>
+                                        <span>Tendance</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Completion Rate -->
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon completion">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <h3>Taux de Complétion</h3>
+                                    <p class="stat-value">87%</p>
+                                    <p class="stat-change positive">
+                                        <i class="fas fa-arrow-up"></i>
+                                        +5% ce mois
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="stat-chart">
+                                <div id="completionChart"></div>
+                                <div class="chart-legend">
+                                    <div class="legend-item">
+                                        <span class="dot active"></span>
+                                        <span>Terminés</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <span class="dot new"></span>
+                                        <span>En cours</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Scroll Buttons -->
+                    <button class="scroll-btn scroll-left">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="scroll-btn scroll-right">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+
+                <!-- Programs List -->
+                <section class="data-section">
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th><input type="checkbox" class="header-checkbox"></th>
+                                    <th>Programme</th>
+                                    <th>Catégorie</th>
+                                    <th>Difficulté</th>
+                                    <th>Durée</th>
+                                    <th>Prix</th>
+                                    <th>Note</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="programsTableBody">
+                                <!-- Table content will be dynamically populated -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add/Edit Program Modal -->
+    <div class="modal" id="programModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Ajouter un Programme</h3>
+                <button class="btn-icon" onclick="closeProgramModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="programForm">
+                <div class="form-group">
+                    <label for="programName">Nom du programme</label>
+                    <input type="text" id="programName" required>
+                </div>
+                <div class="form-group">
+                    <label for="programDescription">Description</label>
+                    <textarea id="programDescription" rows="4" required></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="programCategory">Catégorie</label>
+                        <select id="programCategory" required>
+                            <option value="strength">Force</option>
+                            <option value="cardio">Cardio</option>
+                            <option value="flexibility">Flexibilité</option>
+                            <option value="hiit">HIIT</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="programDifficulty">Difficulté</label>
+                        <select id="programDifficulty" required>
+                            <option value="beginner">Débutant</option>
+                            <option value="intermediate">Intermédiaire</option>
+                            <option value="advanced">Avancé</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="programDuration">Durée (semaines)</label>
+                        <input type="number" id="programDuration" min="1" max="52" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="programPrice">Prix (€)</label>
+                        <input type="number" id="programPrice" min="0" step="0.01" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="programImage">Image</label>
+                    <input type="file" id="programImage" accept="image/*">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="closeProgramModal()">Annuler</button>
+                    <button type="submit" class="btn-primary">Sauvegarder</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/admin-programs.js"></script>
+</body>
+</html>
