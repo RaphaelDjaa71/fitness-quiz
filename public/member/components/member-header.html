@@ -1,0 +1,38 @@
+<header class="main-header">
+    <nav class="nav-container">
+        <div class="logo">
+            <a href="/member/dashboard.html" class="logo-link">
+                <i class="fas fa-dumbbell logo-icon"></i>
+                <h1>FitnessWithRaph</h1>
+            </a>
+        </div>
+        
+        <div class="header-right">
+            <h2 class="welcome-message">Bienvenue dans votre espace personnel</h2>
+            <div class="user-menu-container">
+                <button class="user-menu-btn" onclick="toggleUserMenu()">
+                    <div class="user-info-header">
+                        <div class="user-header-line">
+                            <span id="user-name-display" class="user-name">Raphaël Dorgans</span>
+                            <span class="user-status premium">Premium</span>
+                        </div>
+                    </div>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                
+                <div class="user-dropdown" id="user-dropdown">
+                    <a href="/member/profile.html">
+                        <i class="fas fa-user"></i> Mon Profil
+                    </a>
+                    <a href="/member/settings.html">
+                        <i class="fas fa-cog"></i> Paramètres
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a href="/" onclick="logout()" class="logout-link">
+                        <i class="fas fa-sign-out-alt"></i> Déconnexion
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>

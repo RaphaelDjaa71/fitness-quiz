@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plan d'entraînement - FitnessWithRaph</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/member/css/member.css">
+    <link rel="stylesheet" href="/member/css/training.css">
+</head>
+<body class="member-body">
+    <div id="header-placeholder"></div>
+
+    <div class="member-container">
+        <!-- Navigation latérale -->
+        <nav class="member-sidebar">
+            <div class="sidebar-search">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Rechercher...">
+                </div>
+            </div>
+            <div class="sidebar-spacing"></div>
+            <ul class="sidebar-menu">
+                <li>
+                    <a href="dashboard.html">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Tableau de bord</span>
+                    </a>
+                </li>
+                <li class="active">
+                    <a href="training-program.html">
+                        <i class="fas fa-dumbbell"></i>
+                        <span>Plan d'entraînement</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="nutrition-plan.html">
+                        <i class="fas fa-apple-alt"></i>
+                        <span>Plan nutritionnel</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Contenu principal -->
+        <main class="member-content">
+            <div class="training-header">
+                <div class="training-title">
+                    <h1>Plan d'entraînement</h1>
+                    <div class="training-stats">
+                        <div class="stat-item">
+                            <span class="stat-value">28</span>
+                            <span class="stat-label">Séances terminées</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value">45</span>
+                            <span class="stat-label">Jours consécutifs</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value">85%</span>
+                            <span class="stat-label">Objectif atteint</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="training-actions">
+                    <button class="btn-secondary" onclick="showExerciseLibrary()">
+                        <i class="fas fa-book"></i> Bibliothèque d'exercices
+                    </button>
+                    <button class="btn-primary" onclick="startWorkout()">
+                        <i class="fas fa-play"></i> Commencer l'entraînement
+                    </button>
+                </div>
+            </div>
+
+            <div class="training-grid">
+                <!-- Calendrier d'entraînement -->
+                <section class="training-section calendar-section">
+                    <h2><i class="fas fa-calendar"></i> Calendrier d'entraînement</h2>
+                    <div id="training-calendar"></div>
+                </section>
+
+                <!-- Programme de la semaine -->
+                <section class="training-section weekly-program">
+                    <h2><i class="fas fa-calendar-week"></i> Programme de la semaine</h2>
+                    <div class="program-days">
+                        <div class="program-day">
+                            <div class="day-header">
+                                <h3>Lundi</h3>
+                                <span class="workout-type">Haut du corps</span>
+                            </div>
+                            <div class="workout-preview">
+                                <div class="exercise-item">
+                                    <span class="exercise-name">Développé couché</span>
+                                    <span class="exercise-details">4 × 12</span>
+                                </div>
+                                <div class="exercise-item">
+                                    <span class="exercise-name">Tractions</span>
+                                    <span class="exercise-details">3 × 10</span>
+                                </div>
+                                <div class="exercise-count">+3 exercices</div>
+                            </div>
+                        </div>
+                        <div class="program-day">
+                            <div class="day-header">
+                                <h3>Mercredi</h3>
+                                <span class="workout-type">Bas du corps</span>
+                            </div>
+                            <div class="workout-preview">
+                                <div class="exercise-item">
+                                    <span class="exercise-name">Squats</span>
+                                    <span class="exercise-details">4 × 10</span>
+                                </div>
+                                <div class="exercise-item">
+                                    <span class="exercise-name">Soulevé de terre</span>
+                                    <span class="exercise-details">3 × 8</span>
+                                </div>
+                                <div class="exercise-count">+4 exercices</div>
+                            </div>
+                        </div>
+                        <div class="program-day">
+                            <div class="day-header">
+                                <h3>Vendredi</h3>
+                                <span class="workout-type">Full body</span>
+                            </div>
+                            <div class="workout-preview">
+                                <div class="exercise-item">
+                                    <span class="exercise-name">Épaulé-jeté</span>
+                                    <span class="exercise-details">4 × 8</span>
+                                </div>
+                                <div class="exercise-item">
+                                    <span class="exercise-name">Burpees</span>
+                                    <span class="exercise-details">3 × 15</span>
+                                </div>
+                                <div class="exercise-count">+5 exercices</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Prochain entraînement -->
+                <section class="training-section next-workout">
+                    <div class="section-header">
+                        <h2><i class="fas fa-stopwatch"></i> Prochain entraînement</h2>
+                        <button class="btn-secondary" onclick="editWorkout()">
+                            <i class="fas fa-edit"></i> Modifier
+                        </button>
+                    </div>
+                    <div class="workout-details">
+                        <div class="workout-header">
+                            <div class="workout-info">
+                                <h3>Haut du corps</h3>
+                                <p>Lundi, 18 décembre - 45 minutes</p>
+                            </div>
+                            <div class="difficulty">
+                                <span class="difficulty-label">Difficulté</span>
+                                <div class="difficulty-dots">
+                                    <span class="dot filled"></span>
+                                    <span class="dot filled"></span>
+                                    <span class="dot"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="exercises-list">
+                            <div class="exercise-detail">
+                                <div class="exercise-info">
+                                    <h4>Développé couché</h4>
+                                    <p>4 séries × 12 répétitions</p>
+                                </div>
+                                <button class="btn-icon" onclick="showExerciseVideo('bench-press')">
+                                    <i class="fas fa-play-circle"></i>
+                                </button>
+                            </div>
+                            <div class="exercise-detail">
+                                <div class="exercise-info">
+                                    <h4>Tractions</h4>
+                                    <p>3 séries × 10 répétitions</p>
+                                </div>
+                                <button class="btn-icon" onclick="showExerciseVideo('pull-ups')">
+                                    <i class="fas fa-play-circle"></i>
+                                </button>
+                            </div>
+                            <div class="exercise-detail">
+                                <div class="exercise-info">
+                                    <h4>Développé militaire</h4>
+                                    <p>3 séries × 12 répétitions</p>
+                                </div>
+                                <button class="btn-icon" onclick="showExerciseVideo('military-press')">
+                                    <i class="fas fa-play-circle"></i>
+                                </button>
+                            </div>
+                            <div class="exercise-detail">
+                                <div class="exercise-info">
+                                    <h4>Rowing haltère</h4>
+                                    <p>3 séries × 15 répétitions</p>
+                                </div>
+                                <button class="btn-icon" onclick="showExerciseVideo('dumbbell-row')">
+                                    <i class="fas fa-play-circle"></i>
+                                </button>
+                            </div>
+                            <div class="exercise-detail">
+                                <div class="exercise-info">
+                                    <h4>Extensions triceps</h4>
+                                    <p>3 séries × 15 répétitions</p>
+                                </div>
+                                <button class="btn-icon" onclick="showExerciseVideo('tricep-extension')">
+                                    <i class="fas fa-play-circle"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Progression -->
+                <section class="training-section progress-section">
+                    <h2><i class="fas fa-chart-line"></i> Progression</h2>
+                    <div class="progress-charts">
+                        <div class="chart-container">
+                            <canvas id="weightProgressChart"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="volumeProgressChart"></canvas>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal Bibliothèque d'exercices -->
+    <div id="exerciseLibraryModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Bibliothèque d'exercices</h2>
+                <button class="btn-icon" onclick="closeModal('exerciseLibraryModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="library-filters">
+                <div class="filter-group">
+                    <label>Groupe musculaire</label>
+                    <select id="muscleGroupFilter">
+                        <option value="all">Tous</option>
+                        <option value="chest">Pectoraux</option>
+                        <option value="back">Dos</option>
+                        <option value="legs">Jambes</option>
+                        <option value="shoulders">Épaules</option>
+                        <option value="arms">Bras</option>
+                        <option value="core">Abdominaux</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Équipement</label>
+                    <select id="equipmentFilter">
+                        <option value="all">Tous</option>
+                        <option value="barbell">Barre</option>
+                        <option value="dumbbell">Haltères</option>
+                        <option value="machine">Machines</option>
+                        <option value="bodyweight">Poids du corps</option>
+                        <option value="cables">Câbles</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Difficulté</label>
+                    <select id="difficultyFilter">
+                        <option value="all">Tous</option>
+                        <option value="beginner">Débutant</option>
+                        <option value="intermediate">Intermédiaire</option>
+                        <option value="advanced">Avancé</option>
+                    </select>
+                </div>
+            </div>
+            <div class="library-exercises">
+                <!-- Les exercices seront chargés dynamiquement ici -->
+            </div>
+        </div>
+    </div>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/member/js/member-header.js"></script>
+    <script src="/js/footer-loader.js"></script>
+    <script src="/member/js/training.js"></script>
+</body>
+</html>

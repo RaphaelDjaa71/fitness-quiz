@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de Bord - FitnessWithRaph</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/apexcharts/dist/apexcharts.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/member/css/member.css">
+</head>
+<body class="member-body">
+    <div id="header-placeholder"></div>
+
+    <div class="member-container">
+        <!-- Navigation latérale -->
+        <nav class="member-sidebar">
+            <div class="sidebar-search">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Rechercher...">
+                </div>
+            </div>
+            <div class="sidebar-spacing"></div>
+            <ul class="sidebar-menu">
+                <li class="active">
+                    <a href="dashboard.html">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Tableau de bord</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="training-program.html">
+                        <i class="fas fa-dumbbell"></i>
+                        <span>Plan d'entraînement</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="nutrition-program.html">
+                        <i class="fas fa-apple-alt"></i>
+                        <span>Plan nutritionnel</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Contenu principal -->
+        <main class="member-content">
+            <div class="dashboard-header">
+                <h1>Tableau de Bord</h1>
+            </div>
+
+            <!-- KPIs -->
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-content">
+                        <div class="kpi-header">
+                            <div class="kpi-icon">
+                                <i class="fas fa-fire"></i>
+                            </div>
+                            <div class="kpi-text">
+                                <h3>Calories brûlées</h3>
+                                <p class="kpi-value">2,450</p>
+                                <span class="kpi-trend positive">
+                                    <i class="fas fa-arrow-up"></i> +12%
+                                </span>
+                            </div>
+                        </div>
+                        <div class="kpi-chart" id="calories-chart"></div>
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-content">
+                        <div class="kpi-header">
+                            <div class="kpi-icon">
+                                <i class="fas fa-dumbbell"></i>
+                            </div>
+                            <div class="kpi-text">
+                                <h3>Séances</h3>
+                                <p class="kpi-value">8/12</p>
+                                <span class="kpi-trend">Cette semaine</span>
+                            </div>
+                        </div>
+                        <div class="kpi-chart" id="sessions-chart"></div>
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-content">
+                        <div class="kpi-header">
+                            <div class="kpi-icon">
+                                <i class="fas fa-weight"></i>
+                            </div>
+                            <div class="kpi-text">
+                                <h3>Poids actuel</h3>
+                                <p class="kpi-value">75.5 kg</p>
+                                <span class="kpi-trend negative">
+                                    <i class="fas fa-arrow-down"></i> -2.3 kg
+                                </span>
+                            </div>
+                        </div>
+                        <div class="kpi-chart" id="weight-mini-chart"></div>
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-content">
+                        <div class="kpi-header">
+                            <div class="kpi-icon">
+                                <i class="fas fa-trophy"></i>
+                            </div>
+                            <div class="kpi-text">
+                                <h3>Objectifs</h3>
+                                <p class="kpi-value">4/6</p>
+                                <span class="kpi-trend">En cours</span>
+                            </div>
+                        </div>
+                        <div class="kpi-chart" id="goals-mini-chart"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Graphiques -->
+            <div class="charts-grid">
+                <div class="chart-card large">
+                    <div class="chart-header">
+                        <h3>Progression du poids</h3>
+                        <div class="chart-actions">
+                            <button class="chart-period active">Semaine</button>
+                            <button class="chart-period">Mois</button>
+                            <button class="chart-period">Année</button>
+                        </div>
+                    </div>
+                    <div id="weight-chart"></div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3>Répartition des exercices</h3>
+                    </div>
+                    <div id="exercise-distribution-chart"></div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3>Objectifs hebdomadaires</h3>
+                    </div>
+                    <div id="goals-chart"></div>
+                </div>
+            </div>
+
+            <!-- Calendrier et activités récentes -->
+            <div class="dashboard-bottom">
+                <div class="calendar-section">
+                    <h3>Calendrier</h3>
+                    <div class="calendar-container">
+                        <!-- Le calendrier sera injecté ici par JavaScript -->
+                    </div>
+                </div>
+                <div class="recent-activities">
+                    <h3>Activités récentes</h3>
+                    <div class="activity-list">
+                        <div class="activity-item">
+                            <div class="activity-icon">
+                                <i class="fas fa-dumbbell"></i>
+                            </div>
+                            <div class="activity-content">
+                                <p>Séance de musculation terminée</p>
+                                <span>Il y a 2 heures</span>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon">
+                                <i class="fas fa-trophy"></i>
+                            </div>
+                            <div class="activity-content">
+                                <p>Objectif atteint : 5 séances cette semaine</p>
+                                <span>Hier</span>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon">
+                                <i class="fas fa-weight"></i>
+                            </div>
+                            <div class="activity-content">
+                                <p>Nouveau poids enregistré : 75.5 kg</p>
+                                <span>Il y a 2 jours</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="/member/js/member-header.js"></script>
+    <script src="/js/footer-loader.js"></script>
+    <script src="/member/js/dashboard.js"></script>
+</body>
+</html>

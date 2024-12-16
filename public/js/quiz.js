@@ -321,12 +321,14 @@ class FitnessQuiz {
         const prevButton = document.querySelector('.prev-button');
         const nextButton = document.querySelector('.next-button');
 
-        prevButton.style.visibility = this.currentStep === 0 ? 'hidden' : 'visible';
-        
+        // Afficher le bouton précédent uniquement si on n'est pas à la première question
+        prevButton.style.display = this.currentStep > 0 ? 'flex' : 'none';
+
+        // Mettre à jour le texte du bouton suivant
         if (this.currentStep === this.questions.length - 1) {
-            nextButton.textContent = 'Voir les résultats';
+            nextButton.innerHTML = 'Terminer <i class="fas fa-check"></i>';
         } else {
-            nextButton.textContent = 'Suivant';
+            nextButton.innerHTML = 'Suivant <i class="fas fa-arrow-right"></i>';
         }
     }
 
@@ -380,11 +382,8 @@ class FitnessQuiz {
         // Sauvegarder les réponses dans le localStorage
         localStorage.setItem('quizAnswers', JSON.stringify(this.answers));
 
-        // Déclencher un événement personnalisé
-        const quizCompletedEvent = new CustomEvent('quiz-completed', {
-            detail: { answers: this.answers }
-        });
-        document.dispatchEvent(quizCompletedEvent);
+        // Rediriger vers la page des résultats
+        window.location.href = '/quiz-results.html';
     }
 }
 

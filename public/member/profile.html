@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Profil - FitnessWithRaph</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/apexcharts/dist/apexcharts.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/member/css/member.css">
+    <link rel="stylesheet" href="/member/css/profile.css">
+</head>
+<body class="member-body">
+    <div id="header-placeholder"></div>
+
+    <div class="member-container">
+        <!-- Navigation latérale -->
+        <nav class="member-sidebar">
+            <div class="sidebar-search">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Rechercher...">
+                </div>
+            </div>
+            <div class="sidebar-spacing"></div>
+            <ul class="sidebar-menu">
+                <li>
+                    <a href="dashboard.html">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Tableau de bord</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="training-program.html">
+                        <i class="fas fa-dumbbell"></i>
+                        <span>Plan d'entraînement</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="nutrition-program.html">
+                        <i class="fas fa-apple-alt"></i>
+                        <span>Plan nutritionnel</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Contenu principal -->
+        <main class="member-content">
+            <div class="profile-header">
+                <h1>Mon Profil</h1>
+                <button class="btn-primary" onclick="saveProfile()">
+                    <i class="fas fa-save"></i> Enregistrer les modifications
+                </button>
+            </div>
+
+            <div class="profile-grid">
+                <!-- Informations personnelles -->
+                <section class="profile-section">
+                    <h2><i class="fas fa-user"></i> Informations personnelles</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="firstName">Prénom</label>
+                            <input type="text" id="firstName" value="Raphaël">
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">Nom</label>
+                            <input type="text" id="lastName" value="Dorgans">
+                        </div>
+                        <div class="form-group">
+                            <label for="birthDate">Date de naissance</label>
+                            <input type="date" id="birthDate">
+                        </div>
+                        <div class="form-group">
+                            <label for="gender">Sexe</label>
+                            <select id="gender">
+                                <option value="male">Homme</option>
+                                <option value="female">Femme</option>
+                                <option value="other">Autre</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Mesures physiques -->
+                <section class="profile-section">
+                    <h2><i class="fas fa-ruler"></i> Mesures physiques</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="height">Taille (cm)</label>
+                            <input type="number" id="height" value="175">
+                        </div>
+                        <div class="form-group">
+                            <label for="currentWeight">Poids actuel (kg)</label>
+                            <input type="number" id="currentWeight" value="75.5">
+                        </div>
+                        <div class="form-group">
+                            <label for="targetWeight">Poids cible (kg)</label>
+                            <input type="number" id="targetWeight" value="70">
+                        </div>
+                        <div class="form-group">
+                            <label for="activityLevel">Niveau d'activité</label>
+                            <select id="activityLevel">
+                                <option value="sedentary">Sédentaire</option>
+                                <option value="light">Légèrement actif</option>
+                                <option value="moderate" selected>Modérément actif</option>
+                                <option value="very">Très actif</option>
+                                <option value="extra">Extrêmement actif</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Objectifs -->
+                <section class="profile-section">
+                    <h2><i class="fas fa-bullseye"></i> Objectifs</h2>
+                    <div class="goals-grid">
+                        <div class="goal-item">
+                            <input type="checkbox" id="goal1" checked>
+                            <label for="goal1">Perte de poids</label>
+                        </div>
+                        <div class="goal-item">
+                            <input type="checkbox" id="goal2">
+                            <label for="goal2">Prise de masse musculaire</label>
+                        </div>
+                        <div class="goal-item">
+                            <input type="checkbox" id="goal3" checked>
+                            <label for="goal3">Amélioration de l'endurance</label>
+                        </div>
+                        <div class="goal-item">
+                            <input type="checkbox" id="goal4">
+                            <label for="goal4">Gain de force</label>
+                        </div>
+                        <div class="goal-item">
+                            <input type="checkbox" id="goal5" checked>
+                            <label for="goal5">Mode de vie plus sain</label>
+                        </div>
+                        <div class="goal-item">
+                            <input type="checkbox" id="goal6">
+                            <label for="goal6">Amélioration de la flexibilité</label>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Historique du quiz -->
+                <section class="profile-section quiz-history">
+                    <h2><i class="fas fa-history"></i> Historique du quiz</h2>
+                    <div class="quiz-results">
+                        <div class="quiz-result-item">
+                            <div class="quiz-date">15 décembre 2023</div>
+                            <div class="quiz-summary">
+                                <p><strong>Objectif principal :</strong> Perte de poids</p>
+                                <p><strong>Niveau de forme :</strong> Intermédiaire</p>
+                                <p><strong>Disponibilité :</strong> 3-4 fois par semaine</p>
+                            </div>
+                            <button class="btn-secondary" onclick="viewQuizDetails()">
+                                Voir les détails
+                            </button>
+                        </div>
+                    </div>
+                    <button class="btn-primary" onclick="retakeQuiz()">
+                        <i class="fas fa-redo"></i> Refaire le quiz
+                    </button>
+                </section>
+
+                <!-- Statistiques -->
+                <section class="profile-section statistics">
+                    <h2><i class="fas fa-chart-bar"></i> Statistiques</h2>
+                    <div class="stats-grid">
+                        <div class="stat-chart" id="weightChart"></div>
+                        <div class="stat-chart" id="workoutChart"></div>
+                        <div class="stat-metrics">
+                            <div class="metric-item">
+                                <span class="metric-value">45</span>
+                                <span class="metric-label">Jours consécutifs</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-value">28</span>
+                                <span class="metric-label">Séances terminées</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-value">5.5</span>
+                                <span class="metric-label">Kg perdus</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Badges -->
+                <section class="profile-section badges">
+                    <h2><i class="fas fa-medal"></i> Badges et récompenses</h2>
+                    <div class="badges-grid">
+                        <div class="badge-item achieved">
+                            <i class="fas fa-fire"></i>
+                            <span class="badge-name">Premier pas</span>
+                            <span class="badge-description">A complété le quiz initial</span>
+                        </div>
+                        <div class="badge-item achieved">
+                            <i class="fas fa-dumbbell"></i>
+                            <span class="badge-name">Persévérant</span>
+                            <span class="badge-description">10 séances consécutives</span>
+                        </div>
+                        <div class="badge-item">
+                            <i class="fas fa-balance-scale"></i>
+                            <span class="badge-name">Objectif atteint</span>
+                            <span class="badge-description">Premier objectif de poids</span>
+                        </div>
+                        <div class="badge-item achieved">
+                            <i class="fas fa-clock"></i>
+                            <span class="badge-name">Régulier</span>
+                            <span class="badge-description">30 jours d'activité</span>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="/member/js/member-header.js"></script>
+    <script src="/js/footer-loader.js"></script>
+    <script src="/member/js/profile.js"></script>
+</body>
+</html>

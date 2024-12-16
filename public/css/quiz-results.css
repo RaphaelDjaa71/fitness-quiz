@@ -227,140 +227,60 @@ body {
     color: var(--primary-color);
 }
 
-.recommendations,
-.next-steps {
+.recommendations {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 2rem;
+    margin-top: 2rem;
 }
 
-.recommendation-card,
-.next-step-card {
-    background-color: white;
-    border-radius: var(--border-radius);
+.recommendation-card {
+    background: white;
+    border-radius: 15px;
     padding: 2rem;
     text-align: center;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
-    transition: all 0.4s ease;
-    border: 2px solid transparent;
-    position: relative;
-    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-.recommendation-card::before,
-.next-step-card::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(
-        45deg, 
-        transparent, 
-        rgba(0, 123, 255, 0.05), 
-        transparent
-    );
-    transform: rotate(-45deg);
-    opacity: 0;
-    transition: opacity 0.4s ease;
+.recommendation-card:hover {
+    transform: translateY(-5px);
 }
 
-.recommendation-card:hover::before,
-.next-step-card:hover::before {
-    opacity: 1;
-}
-
-.recommendation-card:hover,
-.next-step-card:hover {
-    transform: translateY(-10px);
-    border-color: rgba(0, 123, 255, 0.2);
-    box-shadow: 0 12px 30px rgba(0, 123, 255, 0.1);
-}
-
-.recommendation-icon,
-.next-step-card i {
-    width: 90px;
-    height: 90px;
+.recommendation-icon {
+    width: 70px;
+    height: 70px;
+    background: var(--primary-light);
     border-radius: 50%;
-    background-color: rgba(0, 123, 255, 0.1);
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 0 auto 1.5rem;
+}
+
+.recommendation-icon i {
+    font-size: 1.8rem;
     color: var(--primary-color);
-    font-size: 3rem;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease;
 }
 
-.recommendation-card:hover .recommendation-icon,
-.next-step-card:hover i {
-    transform: scale(1.1) rotate(10deg);
-}
-
-.recommendation-card h3,
-.next-step-card h3 {
-    margin-bottom: 1rem;
+.recommendation-card h3 {
     color: var(--text-color);
-    font-size: 1.3rem;
+    font-size: 1.4rem;
+    margin: 1rem 0;
     font-weight: 600;
+    text-align: center;
+    width: 100%;
 }
 
-.recommendation-card p,
-.next-step-card p {
+.recommendation-card p {
     color: var(--secondary-color);
     font-size: 1rem;
     line-height: 1.6;
-}
-
-.next-steps {
-    display: flex;
-    justify-content: space-between;
-    background-color: #f4f7f9;
-    border-radius: 15px;
-    padding: 2rem;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
-}
-
-.next-step-card {
-    flex: 1;
-    margin: 0 1rem;
-    background-color: white;
-    border-radius: 10px;
-    padding: 2rem;
+    margin: 0;
     text-align: center;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease;
-}
-
-.next-step-card:hover {
-    transform: scale(1.05);
-}
-
-.next-step-card i {
-    width: 80px;
-    height: 80px;
-    border-radius: 15px;
-    background-color: rgba(0, 123, 255, 0.1);
-    color: var(--primary-color);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 1rem;
-    font-size: 2.5rem;
-    transition: background-color 0.3s ease;
-}
-
-.next-step-card:hover i {
-    background-color: rgba(0, 123, 255, 0.2);
-}
-
-.next-step-card h3 {
-    color: var(--text-color);
-    font-size: 1.2rem;
-    margin-bottom: 0;
-    font-weight: 600;
 }
 
 .recommendations-grid {
@@ -429,9 +349,64 @@ body {
     font-weight: 500;
 }
 
-#footer-placeholder {
-    padding: 2rem 0;
-    margin-top: auto;
+.next-steps {
+    display: flex;
+    justify-content: space-between;
+    background-color: #f4f7f9;
+    border-radius: 15px;
+    padding: 2rem;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+}
+
+.next-step-card {
+    flex: 1;
+    margin: 0 1rem;
+    background-color: white;
+    border-radius: 10px;
+    padding: 2rem;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.next-step-card:hover {
+    transform: scale(1.05);
+}
+
+.next-step-card i {
+    width: 80px;
+    height: 80px;
+    border-radius: 15px;
+    background-color: rgba(0, 123, 255, 0.1);
+    color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    font-size: 2.5rem;
+    transition: background-color 0.3s ease;
+}
+
+.next-step-card:hover i {
+    background-color: rgba(0, 123, 255, 0.2);
+}
+
+.next-step-card h3 {
+    color: var(--text-color);
+    font-size: 1.2rem;
+    margin-bottom: 0;
+    font-weight: 600;
+}
+
+/* Responsive design pour les recommandations */
+@media (max-width: 768px) {
+    .recommendations {
+        grid-template-columns: 1fr;
+    }
+    
+    .recommendation-card {
+        margin-bottom: 1.5rem;
+    }
 }
 
 /* Profil et Morphotype */
@@ -582,6 +557,148 @@ body {
     left: 0.5rem;
 }
 
+/* Générateur de Programme */
+.workout-generator {
+    margin-top: 3rem;
+}
+
+.generator-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.generator-card {
+    background: white;
+    border-radius: 15px;
+    padding: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.generator-card:hover {
+    transform: translateY(-5px);
+}
+
+.generator-icon {
+    width: 80px;
+    height: 80px;
+    background: var(--primary-light);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+}
+
+.generator-icon i {
+    font-size: 2rem;
+    color: var(--primary-color);
+}
+
+.generator-features {
+    list-style: none;
+    padding: 0;
+    margin: 1.5rem 0;
+    text-align: left;
+}
+
+.generator-features li {
+    margin: 0.8rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.generator-features i {
+    color: var(--primary-color);
+}
+
+.generate-btn {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 25px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.generate-btn:hover {
+    background: var(--primary-dark);
+}
+
+/* Prochaines Étapes */
+.next-steps {
+    margin-top: 3rem;
+}
+
+.next-steps-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.next-step-card {
+    background: white;
+    border-radius: 15px;
+    padding: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.next-step-card:hover {
+    transform: translateY(-5px);
+}
+
+.step-icon {
+    width: 70px;
+    height: 70px;
+    background: var(--primary-light);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+}
+
+.step-icon i {
+    font-size: 1.8rem;
+    color: var(--primary-color);
+}
+
+.action-btn {
+    background: var(--primary-light);
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
+    padding: 1rem 2rem;
+    border-radius: 25px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    margin-top: 1.5rem;
+}
+
+.action-btn:hover {
+    background: var(--primary-color);
+    color: white;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .meals-grid {
@@ -656,4 +773,32 @@ body {
         margin-right: 0;
         margin-bottom: 1rem;
     }
+}
+
+@media (max-width: 768px) {
+    .generator-grid,
+    .next-steps-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .generator-card,
+    .next-step-card {
+        padding: 1.5rem;
+    }
+
+    .generator-icon,
+    .step-icon {
+        width: 60px;
+        height: 60px;
+    }
+
+    .generator-icon i,
+    .step-icon i {
+        font-size: 1.5rem;
+    }
+}
+
+#footer-placeholder {
+    padding: 2rem 0;
+    margin-top: auto;
 }

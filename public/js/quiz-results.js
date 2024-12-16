@@ -139,7 +139,7 @@ class QuizResults {
         const frequency = this.answers.frequency;
         const locations = this.answers.location || [];
 
-        let title = 'Programme d\'entraînement';
+        let title = 'Plan d\'entraînement';
         let icon = 'fa-dumbbell';
         let description = '';
         let list = [];
@@ -257,6 +257,11 @@ class QuizResults {
                 'Maintenir un apport protéique adéquat',
                 'Surveiller les électrolytes'
             ];
+        } else if (diet === 'paleo') {
+            list = [
+                'Focus sur les aliments non transformés, viandes maigres et légumes',
+                'Éliminer les glucides raffinés et les produits laitiers'
+            ];
         }
 
         return { title, icon, description, list, emphasis };
@@ -295,7 +300,24 @@ class QuizResults {
         const recommendationsContainer = document.querySelector('.recommendations');
         if (!recommendationsContainer) return;
 
-        const recommendations = this.generateRecommendations();
+        const recommendations = [
+            {
+                icon: 'fa-dumbbell',
+                title: 'Plan d\'entraînement',
+                description: 'Programme personnalisé avec exercices adaptés à votre niveau et objectifs.'
+            },
+            {
+                icon: 'fa-utensils',
+                title: 'Plan nutritionnel',
+                description: 'Conseils nutritionnels et plan alimentaire adapté à vos besoins.'
+            },
+            {
+                icon: 'fa-heart',
+                title: 'Mode de vie',
+                description: 'Recommandations pour un mode de vie équilibré et durable.'
+            }
+        ];
+
         recommendationsContainer.innerHTML = recommendations.map(rec => `
             <div class="recommendation-card">
                 <div class="recommendation-icon">
@@ -329,15 +351,6 @@ class QuizResults {
                 description: this.getGoalRecommendations()
             }
         ];
-
-        // Add equipment-specific recommendation if needed
-        if (equipment.length === 0 || equipment.includes('none')) {
-            recommendations.push({
-                icon: 'fa-dumbbell',
-                title: 'Équipement recommandé',
-                description: 'Pour optimiser vos résultats, nous vous recommandons de vous procurer au minimum une paire d\'haltères et un tapis de fitness.'
-            });
-        }
 
         return recommendations;
     }
@@ -771,6 +784,20 @@ class QuizResults {
 }
 
 // Initialiser les résultats quand la page est chargée
-document.addEventListener('DOMContentLoaded', () => {
-    new QuizResults();
+document.addEventListener('DOMContentLoaded', function() {
+    const quizResults = new QuizResults();
+
+    // Ajouter le bouton de connexion à l'espace membre
+    const memberButton = document.createElement('button');
+    memberButton.className = 'cta-button';
+    memberButton.innerHTML = '<i class="fas fa-user"></i> Accéder à mon espace membre';
+    memberButton.onclick = function() {
+        window.location.href = '/member/dashboard.html';
+    };
+    
+    // Ajouter le bouton après les recommandations
+    const recommendationsSection = document.querySelector('.recommendations');
+    if (recommendationsSection) {
+        recommendationsSection.appendChild(memberButton);
+    }
 });

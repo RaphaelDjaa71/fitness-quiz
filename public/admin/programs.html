@@ -30,9 +30,6 @@
             <a href="programs.html" class="nav-link active">
                 <i class="fas fa-dumbbell"></i> Programmes
             </a>
-            <a href="stats.html" class="nav-link">
-                <i class="fas fa-chart-bar"></i> Statistiques
-            </a>
             <a href="settings.html" class="nav-link">
                 <i class="fas fa-cog"></i> Paramètres
             </a>
@@ -188,47 +185,14 @@
 
                 <!-- Actions Bar -->
                 <div class="actions-bar">
-                    <div class="actions-group">
-                        <div class="filter-group">
-                            <select id="categoryFilter" class="filter-select">
-                                <option value="all">Toutes les catégories</option>
-                                <option value="strength">Force</option>
-                                <option value="cardio">Cardio</option>
-                                <option value="flexibility">Flexibilité</option>
-                                <option value="hiit">HIIT</option>
-                            </select>
-                            <select id="difficultyFilter" class="filter-select">
-                                <option value="all">Toutes les difficultés</option>
-                                <option value="beginner">Débutant</option>
-                                <option value="intermediate">Intermédiaire</option>
-                                <option value="advanced">Avancé</option>
-                            </select>
-                        </div>
-                        <div class="dropdown">
-                            <button class="btn-secondary dropdown-toggle">
-                                <i class="fas fa-ellipsis-v"></i>
-                                <span>Actions</span>
-                            </button>
-                            <div class="dropdown-menu">
-                                <a href="#" class="dropdown-item">
-                                    <i class="fas fa-download"></i>
-                                    <span>Exporter en CSV</span>
-                                </a>
-                                <a href="#" class="dropdown-item">
-                                    <i class="fas fa-file-pdf"></i>
-                                    <span>Exporter en PDF</span>
-                                </a>
-                                <a href="#" class="dropdown-item">
-                                    <i class="fas fa-print"></i>
-                                    <span>Imprimer</span>
-                                </a>
-                            </div>
-                        </div>
-                        <button class="btn-primary" onclick="openAddProgramModal()">
-                            <i class="fas fa-plus"></i>
-                            <span>Nouveau Programme</span>
-                        </button>
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Rechercher un programme...">
                     </div>
+                    <button class="btn-primary">
+                        <i class="fas fa-plus"></i>
+                        Nouveau programme
+                    </button>
                 </div>
 
                 <!-- Programs List -->
@@ -270,7 +234,7 @@
                                     <td><input type="checkbox" class="row-checkbox"></td>
                                     <td>
                                         <div class="program-info">
-                                            <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=100&q=80" alt="Programme Full Body" class="program-avatar">
+                                            <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=300&q=80" alt="Programme Full Body" class="program-image">
                                             <div class="program-details">
                                                 <span class="program-name">Programme Full Body</span>
                                                 <span class="program-description">Programme complet de musculation pour tout le corps</span>
@@ -302,7 +266,7 @@
                                     <td><input type="checkbox" class="row-checkbox"></td>
                                     <td>
                                         <div class="program-info">
-                                            <img src="https://images.unsplash.com/photo-1601422407692-ec4eeec1d9b3?w=100&q=80" alt="Cardio Intensif" class="program-avatar">
+                                            <img src="https://images.unsplash.com/photo-1601422407692-ec4eeec1d9b3?w=300&q=80" alt="Cardio Intensif" class="program-image">
                                             <div class="program-details">
                                                 <span class="program-name">Cardio Intensif</span>
                                                 <span class="program-description">Programme HIIT pour améliorer votre endurance</span>

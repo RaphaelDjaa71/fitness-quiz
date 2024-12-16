@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paramètres - FitnessWithRaph</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/member/css/member.css">
+    <link rel="stylesheet" href="/member/css/settings.css">
+</head>
+<body class="member-body">
+    <div id="header-placeholder"></div>
+
+    <div class="member-container">
+        <!-- Navigation latérale -->
+        <nav class="member-sidebar">
+            <div class="sidebar-search">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Rechercher...">
+                </div>
+            </div>
+            <div class="sidebar-spacing"></div>
+            <ul class="sidebar-menu">
+                <li>
+                    <a href="dashboard.html">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Tableau de bord</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="training-program.html">
+                        <i class="fas fa-dumbbell"></i>
+                        <span>Plan d'entraînement</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="nutrition-program.html">
+                        <i class="fas fa-apple-alt"></i>
+                        <span>Plan nutritionnel</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Contenu principal -->
+        <main class="member-content">
+            <div class="settings-header">
+                <h1>Paramètres</h1>
+                <button class="btn-primary" onclick="saveSettings()">
+                    <i class="fas fa-save"></i> Enregistrer les modifications
+                </button>
+            </div>
+
+            <div class="settings-grid">
+                <!-- Préférences de compte -->
+                <section class="settings-section">
+                    <h2><i class="fas fa-user-cog"></i> Préférences de compte</h2>
+                    <div class="form-group">
+                        <label for="language">Langue de l'interface</label>
+                        <select id="language">
+                            <option value="fr" selected>Français</option>
+                            <option value="en">English</option>
+                            <option value="es">Español</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="units">Unités de mesure</label>
+                        <select id="units">
+                            <option value="metric" selected>Métrique (kg, cm)</option>
+                            <option value="imperial">Impérial (lb, in)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="timezone">Fuseau horaire</label>
+                        <select id="timezone">
+                            <option value="Europe/Paris" selected>Europe/Paris (UTC+1)</option>
+                            <option value="UTC">UTC</option>
+                            <option value="America/New_York">New York (UTC-5)</option>
+                        </select>
+                    </div>
+                </section>
+
+                <!-- Notifications -->
+                <section class="settings-section">
+                    <h2><i class="fas fa-bell"></i> Notifications</h2>
+                    <div class="notification-settings">
+                        <div class="notification-item">
+                            <div class="notification-info">
+                                <h3>Rappels d'entraînement</h3>
+                                <p>Recevez des rappels pour vos séances programmées</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="notification-item">
+                            <div class="notification-info">
+                                <h3>Rappels de repas</h3>
+                                <p>Notifications pour suivre votre plan alimentaire</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="notification-item">
+                            <div class="notification-info">
+                                <h3>Mises à jour du programme</h3>
+                                <p>Informations sur les changements de votre programme</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="notification-item">
+                            <div class="notification-info">
+                                <h3>Newsletter et offres</h3>
+                                <p>Actualités et offres spéciales</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Confidentialité -->
+                <section class="settings-section">
+                    <h2><i class="fas fa-shield-alt"></i> Confidentialité</h2>
+                    <div class="privacy-settings">
+                        <div class="form-group">
+                            <label for="profileVisibility">Visibilité du profil</label>
+                            <select id="profileVisibility">
+                                <option value="private" selected>Privé</option>
+                                <option value="friends">Amis uniquement</option>
+                                <option value="public">Public</option>
+                            </select>
+                        </div>
+                        <div class="privacy-item">
+                            <div class="privacy-info">
+                                <h3>Partage de données</h3>
+                                <p>Autoriser le partage de données avec des partenaires</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Sécurité -->
+                <section class="settings-section">
+                    <h2><i class="fas fa-lock"></i> Sécurité</h2>
+                    <div class="security-settings">
+                        <button class="btn-secondary" onclick="changePassword()">
+                            <i class="fas fa-key"></i> Changer le mot de passe
+                        </button>
+                        <div class="security-item">
+                            <div class="security-info">
+                                <h3>Authentification à deux facteurs</h3>
+                                <p>Sécurité renforcée pour votre compte</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <button class="btn-secondary" onclick="viewLoginHistory()">
+                            <i class="fas fa-history"></i> Historique des connexions
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Abonnement -->
+                <section class="settings-section subscription">
+                    <h2><i class="fas fa-crown"></i> Abonnement</h2>
+                    <div class="subscription-info">
+                        <div class="current-plan">
+                            <h3>Plan actuel : <span class="premium-badge">Premium</span></h3>
+                            <p>Prochain renouvellement : 15 janvier 2024</p>
+                        </div>
+                        <div class="subscription-actions">
+                            <button class="btn-secondary" onclick="viewBillingHistory()">
+                                <i class="fas fa-receipt"></i> Historique des paiements
+                            </button>
+                            <button class="btn-secondary" onclick="managePlan()">
+                                <i class="fas fa-cog"></i> Gérer l'abonnement
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Intégrations -->
+                <section class="settings-section">
+                    <h2><i class="fas fa-plug"></i> Intégrations</h2>
+                    <div class="integrations-list">
+                        <div class="integration-item">
+                            <img src="/images/integrations/fitbit.png" alt="Fitbit">
+                            <div class="integration-info">
+                                <h3>Fitbit</h3>
+                                <p>Synchroniser les données d'activité</p>
+                            </div>
+                            <button class="btn-secondary">Connecter</button>
+                        </div>
+                        <div class="integration-item">
+                            <img src="/images/integrations/myfitnesspal.png" alt="MyFitnessPal">
+                            <div class="integration-info">
+                                <h3>MyFitnessPal</h3>
+                                <p>Synchroniser les données nutritionnelles</p>
+                            </div>
+                            <button class="btn-secondary">Connecter</button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Données -->
+                <section class="settings-section">
+                    <h2><i class="fas fa-database"></i> Données</h2>
+                    <div class="data-actions">
+                        <button class="btn-secondary" onclick="exportData()">
+                            <i class="fas fa-download"></i> Exporter mes données
+                        </button>
+                        <button class="btn-danger" onclick="deleteAccount()">
+                            <i class="fas fa-trash-alt"></i> Supprimer mon compte
+                        </button>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <div id="footer-placeholder"></div>
+
+    <!-- Modals -->
+    <div id="passwordModal" class="modal">
+        <div class="modal-content">
+            <h2>Changer le mot de passe</h2>
+            <form id="passwordForm">
+                <div class="form-group">
+                    <label for="currentPassword">Mot de passe actuel</label>
+                    <input type="password" id="currentPassword" required>
+                </div>
+                <div class="form-group">
+                    <label for="newPassword">Nouveau mot de passe</label>
+                    <input type="password" id="newPassword" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Confirmer le mot de passe</label>
+                    <input type="password" id="confirmPassword" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="closeModal('passwordModal')">Annuler</button>
+                    <button type="submit" class="btn-primary">Confirmer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/member/js/member-header.js"></script>
+    <script src="/js/footer-loader.js"></script>
+    <script src="/member/js/settings.js"></script>
+</body>
+</html>
