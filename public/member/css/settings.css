@@ -207,40 +207,102 @@ input:checked + .slider:before {
 }
 
 /* Abonnement */
-.subscription-info {
-    background: var(--bg-light);
-    padding: 1.75rem;
-    border-radius: 8px;
-    border: 1px solid var(--border-color);
+.subscription {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border: 1px solid rgba(59, 130, 246, 0.1);
 }
 
-.current-plan {
+.subscription h2 {
+    color: #1f2937;
     margin-bottom: 1.5rem;
 }
 
+.subscription h2 i {
+    color: #3b82f6;
+}
+
+.subscription-info {
+    display: grid;
+    gap: 2rem;
+    padding: 1rem;
+    background: white;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.current-plan {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
 .current-plan h3 {
-    font-size: 1.1rem;
-    color: var(--text-color);
-    margin-bottom: 0.75rem;
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    font-weight: 600;
+    color: #1f2937;
+    font-size: 1.125rem;
 }
 
 .premium-badge {
-    background: linear-gradient(45deg, #f59e0b, #d97706);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0.75rem;
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
     color: white;
-    padding: 0.375rem 1rem;
-    border-radius: 20px;
-    font-size: 0.85rem;
+    border-radius: 1rem;
+    font-size: 0.875rem;
     font-weight: 500;
+}
+
+.premium-badge::before {
+    content: '★';
+    font-size: 0.75rem;
+}
+
+.current-plan p {
+    color: #6b7280;
+    font-size: 0.875rem;
 }
 
 .subscription-actions {
     display: flex;
+    flex-wrap: wrap;
     gap: 1rem;
-    margin-top: 1.5rem;
+    padding-top: 1rem;
+}
+
+.subscription-actions button {
+    flex: 1;
+    min-width: 200px;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.subscription-actions button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.subscription-actions button i {
+    font-size: 1rem;
+    margin-right: 0.5rem;
+}
+
+@media (max-width: 640px) {
+    .subscription-actions {
+        flex-direction: column;
+    }
+    
+    .subscription-actions button {
+        width: 100%;
+    }
 }
 
 /* Intégrations */

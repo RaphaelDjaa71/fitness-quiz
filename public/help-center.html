@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centre d'Aide - FitnessWithRaph</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/help-center.css">
+</head>
+<body>
+    <div id="header-placeholder"></div>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <span class="hero-badge">Centre d'Aide</span>
+            <h1 class="hero-title">Comment pouvons-nous vous aider ?</h1>
+            <p class="hero-subtitle">
+                Trouvez rapidement des réponses à vos questions<br>
+                et découvrez nos guides détaillés.
+            </p>
+            <div class="search-container">
+                <input type="text" id="helpSearch" placeholder="Rechercher une réponse...">
+                <button type="button" class="search-button">
+                    <i class="fas fa-search"></i>
+                </button>
+                <div id="searchSuggestions" class="search-suggestions"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section class="categories-section">
+        <div class="section-header">
+            <h2>Explorez nos catégories</h2>
+            <p>Sélectionnez une catégorie pour trouver votre réponse</p>
+        </div>
+        <div class="categories-grid">
+            <div class="category-card">
+                <div class="category-icon">
+                    <i class="fas fa-dumbbell"></i>
+                </div>
+                <h3>Programmes d'entraînement</h3>
+                <p>Tout sur vos programmes personnalisés</p>
+                <a href="#" class="category-link">Explorer <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="category-card">
+                <div class="category-icon">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <h3>Compte et Profil</h3>
+                <p>Gérez vos informations personnelles</p>
+                <a href="#" class="category-link">Explorer <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="category-card">
+                <div class="category-icon">
+                    <i class="fas fa-credit-card"></i>
+                </div>
+                <h3>Abonnement et Paiement</h3>
+                <p>Questions sur la facturation</p>
+                <a href="#" class="category-link">Explorer <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="category-card">
+                <div class="category-icon">
+                    <i class="fas fa-cogs"></i>
+                </div>
+                <h3>Support Technique</h3>
+                <p>Résolution des problèmes techniques</p>
+                <a href="#" class="category-link">Explorer <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section">
+        <div class="section-header">
+            <h2>Questions Fréquentes</h2>
+            <p>Les réponses aux questions les plus posées</p>
+        </div>
+        <div class="faq-container">
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>Comment personnaliser mon programme d'entraînement ?</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>Vous pouvez personnaliser votre programme en accédant à votre tableau de bord, puis en cliquant sur "Modifier mon programme". Vous pourrez ajuster l'intensité, la fréquence et les types d'exercices selon vos préférences.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>Comment suivre mes progrès ?</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>Votre tableau de bord affiche des graphiques détaillés de vos progrès, incluant les poids soulevés, les mesures corporelles et les performances. Vous pouvez également ajouter des notes et des photos pour suivre votre transformation.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>Comment modifier mon abonnement ?</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>Pour modifier votre abonnement, rendez-vous dans les paramètres de votre compte, section "Abonnement". Vous pourrez y changer de formule ou mettre à jour vos informations de paiement.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>Comment contacter un coach ?</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>Vous pouvez contacter un coach directement depuis votre espace membre en utilisant la fonction "Message à mon coach" ou en programmant une consultation vidéo dans la section "Rendez-vous".</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Community Section -->
+    <section class="community-section">
+        <div class="section-header">
+            <h2>Rejoignez notre Communauté</h2>
+            <p>Partagez votre expérience et apprenez des autres</p>
+        </div>
+        <div class="community-stats">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <span class="stat-number">10k+</span>
+                <span class="stat-label">Membres Actifs</span>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-comments"></i>
+                </div>
+                <span class="stat-number">5k+</span>
+                <span class="stat-label">Discussions</span>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-trophy"></i>
+                </div>
+                <span class="stat-number">1k+</span>
+                <span class="stat-label">Succès Partagés</span>
+            </div>
+        </div>
+        <div class="community-cta">
+            <a href="#" class="cta-button">
+                <span class="cta-text">Rejoindre la Communauté</span>
+                <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+    </section>
+
+    <!-- Contact CTA Section -->
+    <section class="contact-cta-section">
+        <div class="cta-content">
+            <h2>Vous ne trouvez pas ce que vous cherchez ?</h2>
+            <p>Notre équipe de support est là pour vous aider</p>
+            <a href="/contact.html" class="cta-button">
+                <span class="cta-text">Contactez-nous</span>
+                <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+    </section>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="/js/help-center.js"></script>
+    <script src="/js/header-loader.js"></script>
+    <script src="/js/footer-loader.js"></script>
+</body>
+</html>

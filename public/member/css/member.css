@@ -40,7 +40,6 @@
     position: fixed;
     left: 0;
     top: 0;
-    margin-top: -10px; /* Optionnel, un petit décalage depuis le haut */
     border-right: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;

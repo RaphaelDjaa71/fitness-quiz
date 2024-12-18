@@ -19,12 +19,9 @@
     <div class="member-container">
         <!-- Navigation latérale -->
         <nav class="member-sidebar">
-            <div class="sidebar-search">
-                <div class="search-bar">
-                    <i class="fas fa-search"></i>
-                    <input type="text" placeholder="Rechercher...">
-                </div>
-            </div>
+            <div class="sidebar-spacing"></div>
+            <div class="sidebar-spacing"></div>
+            <div class="sidebar-spacing"></div>
             <div class="sidebar-spacing"></div>
             <ul class="sidebar-menu">
                 <li>
@@ -51,8 +48,10 @@
         <!-- Contenu principal -->
         <main class="member-content">
             <div class="training-header">
-                <div class="training-title">
+                <div class="dashboard-header">
                     <h1>Plan d'entraînement</h1>
+                </div>    
+                <div class="training-title">
                     <div class="training-stats">
                         <div class="stat-item">
                             <span class="stat-value">28</span>
@@ -229,60 +228,61 @@
                     </div>
                 </section>
             </div>
-        </main>
-    </div>
 
-    <!-- Modal Bibliothèque d'exercices -->
-    <div id="exerciseLibraryModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Bibliothèque d'exercices</h2>
-                <button class="btn-icon" onclick="closeModal('exerciseLibraryModal')">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="library-filters">
-                <div class="filter-group">
-                    <label>Groupe musculaire</label>
-                    <select id="muscleGroupFilter">
-                        <option value="all">Tous</option>
-                        <option value="chest">Pectoraux</option>
-                        <option value="back">Dos</option>
-                        <option value="legs">Jambes</option>
-                        <option value="shoulders">Épaules</option>
-                        <option value="arms">Bras</option>
-                        <option value="core">Abdominaux</option>
-                    </select>
+            <!-- Modal Bibliothèque d'exercices -->
+            <div id="exerciseLibraryModal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2>Bibliothèque d'exercices</h2>
+                        <button class="btn-icon" onclick="closeModal('exerciseLibraryModal')">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="library-filters">
+                        <div class="filter-group">
+                            <label>Groupe musculaire</label>
+                            <select id="muscleGroupFilter">
+                                <option value="all">Tous</option>
+                                <option value="chest">Pectoraux</option>
+                                <option value="back">Dos</option>
+                                <option value="legs">Jambes</option>
+                                <option value="shoulders">Épaules</option>
+                                <option value="arms">Bras</option>
+                                <option value="core">Abdominaux</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>Équipement</label>
+                            <select id="equipmentFilter">
+                                <option value="all">Tous</option>
+                                <option value="barbell">Barre</option>
+                                <option value="dumbbell">Haltères</option>
+                                <option value="machine">Machines</option>
+                                <option value="bodyweight">Poids du corps</option>
+                                <option value="cables">Câbles</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>Difficulté</label>
+                            <select id="difficultyFilter">
+                                <option value="all">Tous</option>
+                                <option value="beginner">Débutant</option>
+                                <option value="intermediate">Intermédiaire</option>
+                                <option value="advanced">Avancé</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="library-exercises">
+                        <!-- Les exercices seront chargés dynamiquement ici -->
+                    </div>
                 </div>
-                <div class="filter-group">
-                    <label>Équipement</label>
-                    <select id="equipmentFilter">
-                        <option value="all">Tous</option>
-                        <option value="barbell">Barre</option>
-                        <option value="dumbbell">Haltères</option>
-                        <option value="machine">Machines</option>
-                        <option value="bodyweight">Poids du corps</option>
-                        <option value="cables">Câbles</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>Difficulté</label>
-                    <select id="difficultyFilter">
-                        <option value="all">Tous</option>
-                        <option value="beginner">Débutant</option>
-                        <option value="intermediate">Intermédiaire</option>
-                        <option value="advanced">Avancé</option>
-                    </select>
-                </div>
             </div>
-            <div class="library-exercises">
-                <!-- Les exercices seront chargés dynamiquement ici -->
-            </div>
-        </div>
+        </main>
     </div>
 
     <div id="footer-placeholder"></div>
 
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="/member/js/member-header.js"></script>

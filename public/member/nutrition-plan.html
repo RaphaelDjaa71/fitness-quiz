@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plan Nutritionnel - FitnessWithRaph</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/apexcharts/dist/apexcharts.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/member/css/member.css">
+    <link rel="stylesheet" href="/member/css/nutrition.css">
+</head>
+<body class="member-body">
+    <div id="header-placeholder"></div>
+
+    <div class="member-container">
+        <!-- Navigation latérale -->
+        <nav class="member-sidebar">
+            <div class="sidebar-spacing"></div>
+            <div class="sidebar-spacing"></div>
+            <div class="sidebar-spacing"></div>
+            <div class="sidebar-spacing"></div>
+            <ul class="sidebar-menu">
+                <li>
+                    <a href="dashboard.html">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Tableau de bord</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="training-program.html">
+                        <i class="fas fa-dumbbell"></i>
+                        <span>Plan d'entraînement</span>
+                    </a>
+                </li>
+                <li class="active">
+                    <a href="nutrition-plan.html">
+                        <i class="fas fa-apple-alt"></i>
+                        <span>Plan nutritionnel</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Contenu principal -->
+        <main class="member-content">
+            <div class="dashboard-header">
+                <h1>Plan Nutritionnel</h1>
+            </div>
+
+            <!-- KPIs -->
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-content">
+                        <div class="kpi-header">
+                            <div class="kpi-icon">
+                                <i class="fas fa-fire"></i>
+                            </div>
+                            <div class="kpi-text">
+                                <h3>Calories</h3>
+                                <p class="kpi-value">1,850 / 2,100</p>
+                                <span class="kpi-trend positive">
+                                    <i class="fas fa-arrow-up"></i> 88% atteint
+                                </span>
+                            </div>
+                        </div>
+                        <div class="kpi-chart" id="caloriesGaugeChart"></div>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-content">
+                        <div class="kpi-header">
+                            <div class="kpi-icon">
+                                <i class="fas fa-chart-pie"></i>
+                            </div>
+                            <div class="kpi-text">
+                                <h3>Macronutriments</h3>
+                                <p class="kpi-value">2,100 kcal</p>
+                                <span class="kpi-trend">Distribution journalière</span>
+                            </div>
+                        </div>
+                        <div class="kpi-chart">
+                            <div class="macros-chart-container">
+                                <div id="macrosChart"></div>
+                                <div class="macros-total">
+                                    <span class="total-value">2100</span>
+                                    <span class="total-label">kcal / jour</span>
+                                </div>
+                            </div>
+                            <div class="macros-legend">
+                                <div class="legend-item protein">
+                                    <div class="legend-header">
+                                        <i class="fas fa-circle"></i>
+                                        <span class="legend-label">Protéines</span>
+                                        <span class="legend-value">150g / 180g</span>
+                                    </div>
+                                    <div class="legend-bar-wrapper">
+                                        <div class="legend-bar">
+                                            <div class="progress" style="width: 83%"></div>
+                                        </div>
+                                        <span class="percentage">83%</span>
+                                    </div>
+                                </div>
+                                <div class="legend-item carbs">
+                                    <div class="legend-header">
+                                        <i class="fas fa-circle"></i>
+                                        <span class="legend-label">Glucides</span>
+                                        <span class="legend-value">220g / 250g</span>
+                                    </div>
+                                    <div class="legend-bar-wrapper">
+                                        <div class="legend-bar">
+                                            <div class="progress" style="width: 88%"></div>
+                                        </div>
+                                        <span class="percentage">88%</span>
+                                    </div>
+                                </div>
+                                <div class="legend-item fats">
+                                    <div class="legend-header">
+                                        <i class="fas fa-circle"></i>
+                                        <span class="legend-label">Lipides</span>
+                                        <span class="legend-value">70g / 80g</span>
+                                    </div>
+                                    <div class="legend-bar-wrapper">
+                                        <div class="legend-bar">
+                                            <div class="progress" style="width: 87%"></div>
+                                        </div>
+                                        <span class="percentage">87%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-content">
+                        <div class="kpi-header">
+                            <div class="kpi-icon">
+                                <i class="fas fa-tint"></i>
+                            </div>
+                            <div class="kpi-text">
+                                <h3>Hydratation</h3>
+                                <p class="kpi-value">1.8L / 2.5L</p>
+                                <span class="kpi-trend">72% de l'objectif</span>
+                            </div>
+                        </div>
+                        <div class="kpi-chart" id="hydrationChart"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section Planification -->
+            <div class="dashboard-grid">
+                <!-- Journal Alimentaire -->
+                <section class="dashboard-card food-journal">
+                    <div class="card-header">
+                        <h2>Journal Alimentaire</h2>
+                        <button class="btn btn-primary" onclick="addMeal()">
+                            <i class="fas fa-plus"></i> Ajouter un repas
+                        </button>
+                    </div>
+                    <div class="card-content">
+                        <div id="foodJournalChart"></div>
+                        <div class="journal-entries">
+                            <div class="meal-entry">
+                                <h4>Petit-déjeuner <span class="meal-time">8:00</span></h4>
+                                <ul class="meal-items">
+                                    <li>Porridge aux fruits rouges (300 kcal)</li>
+                                    <li>Yaourt grec (150 kcal)</li>
+                                    <li>Café noir (0 kcal)</li>
+                                </ul>
+                            </div>
+                            <div class="meal-entry">
+                                <h4>Déjeuner <span class="meal-time">12:30</span></h4>
+                                <ul class="meal-items">
+                                    <li>Salade de quinoa au poulet (450 kcal)</li>
+                                    <li>Pomme (80 kcal)</li>
+                                    <li>Eau (500ml)</li>
+                                </ul>
+                            </div>
+                            <div class="meal-entry">
+                                <h4>Dîner <span class="meal-time">19:30</span></h4>
+                                <ul class="meal-items">
+                                    <li>Saumon grillé aux légumes (400 kcal)</li>
+                                    <li>Riz complet (200 kcal)</li>
+                                    <li>Eau (500ml)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Liste de Courses -->
+                <section class="dashboard-card shopping-list">
+                    <div class="card-header">
+                        <h2>Liste de Courses</h2>
+                        <button class="btn btn-primary" onclick="generateList()">
+                            <i class="fas fa-sync"></i> Générer la liste
+                        </button>
+                    </div>
+                    <div class="card-content">
+                        <div id="shoppingChart"></div>
+                        <div class="shopping-categories">
+                            <div class="category">
+                                <h4>Fruits & Légumes (25%)</h4>
+                                <ul>
+                                    <li>Pommes (6 pièces)</li>
+                                    <li>Bananes (4 pièces)</li>
+                                    <li>Épinards (200g)</li>
+                                    <li>Carottes (500g)</li>
+                                    <li>Courgettes (3 pièces)</li>
+                                    <li>Tomates cerises (250g)</li>
+                                    <li>Avocat (2 pièces)</li>
+                                </ul>
+                            </div>
+                            <div class="category">
+                                <h4>Protéines (30%)</h4>
+                                <ul>
+                                    <li>Poulet bio (800g)</li>
+                                    <li>Saumon frais (400g)</li>
+                                    <li>Œufs bio (12 pièces)</li>
+                                    <li>Tofu ferme (400g)</li>
+                                    <li>Lentilles vertes (500g)</li>
+                                    <li>Pois chiches (400g)</li>
+                                </ul>
+                            </div>
+                            <div class="category">
+                                <h4>Féculents (20%)</h4>
+                                <ul>
+                                    <li>Riz complet (1kg)</li>
+                                    <li>Quinoa (500g)</li>
+                                    <li>Pain complet (1 pièce)</li>
+                                    <li>Patates douces (600g)</li>
+                                    <li>Flocons d'avoine (400g)</li>
+                                </ul>
+                            </div>
+                            <div class="category">
+                                <h4>Produits Laitiers (15%)</h4>
+                                <ul>
+                                    <li>Yaourt grec (4 pots)</li>
+                                    <li>Fromage blanc 0% (500g)</li>
+                                    <li>Lait d'amande (1L)</li>
+                                    <li>Fromage de chèvre (200g)</li>
+                                </ul>
+                            </div>
+                            <div class="category">
+                                <h4>Autres (10%)</h4>
+                                <ul>
+                                    <li>Huile d'olive (500ml)</li>
+                                    <li>Noix (200g)</li>
+                                    <li>Graines de chia (100g)</li>
+                                    <li>Miel (250g)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Section Analyse -->
+            <div class="dashboard-grid">
+                <section class="dashboard-card analysis-section">
+                    <div class="card-header">
+                        <h2>Analyse et Recommandations</h2>
+                    </div>
+                    <div class="card-content">
+                        <div class="analysis-grid">
+                            <div class="analysis-card">
+                                <h3><i class="fas fa-chart-line"></i>Tendances Nutritionnelles</h3>
+                                <ul class="analysis-list">
+                                    <li class="positive">
+                                        <i class="fas fa-check-circle"></i>
+                                        <div class="content">
+                                            <div class="title">Équilibre protéique atteint</div>
+                                            <div class="description">Vous maintenez un bon apport en protéines, essentiel pour la récupération musculaire.</div>
+                                        </div>
+                                    </li>
+                                    <li class="negative">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        <div class="content">
+                                            <div class="title">Hydratation à améliorer</div>
+                                            <div class="description">Votre consommation d'eau est en dessous de l'objectif. Pensez à boire régulièrement.</div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                            
+                            <div class="analysis-card">
+                                <h3><i class="fas fa-lightbulb"></i>Recommandations</h3>
+                                <ul class="analysis-list">
+                                    <li>
+                                        <i class="fas fa-star"></i>
+                                        <div class="content">
+                                            <div class="title">Augmentez les fibres</div>
+                                            <div class="description">Intégrez plus de légumes et fruits entiers dans vos repas pour atteindre l'objectif de fibres.</div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <i class="fas fa-star"></i>
+                                        <div class="content">
+                                            <div class="title">Collations intelligentes</div>
+                                            <div class="description">Optez pour des fruits secs et oléagineux comme collation pour maintenir l'énergie.</div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                            
+                            <div class="analysis-card">
+                                <h3><i class="fas fa-clock"></i>Timing des Repas</h3>
+                                <ul class="analysis-list">
+                                    <li>
+                                        <i class="fas fa-check"></i>
+                                        <div class="content">
+                                            <div class="title">Petit-déjeuner (8h00)</div>
+                                            <div class="description">Excellent timing pour le premier repas, maintient le métabolisme actif.</div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <i class="fas fa-check"></i>
+                                        <div class="content">
+                                            <div class="title">Post-entraînement</div>
+                                            <div class="description">Prenez votre repas dans les 30 minutes après l'exercice pour optimiser la récupération.</div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <div id="footer-placeholder"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/js/common.js"></script>
+    <script src="/member/js/member-header.js"></script>
+    <script src="/js/footer-loader.js"></script>
+    <script src="/member/js/nutrition.js"></script>
+</body>
+</html>
